@@ -1,0 +1,14 @@
+obj/
+bin/
+codeanalysis/
+.vs/
+.vscode/
+
+experimental.bat
+release.bat
+analize.bat
+uEssentials.sln.DotSettings.user
+
+node_modules/
+package-lock.json
+.idea/
