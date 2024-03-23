@@ -48,14 +48,10 @@ namespace Essentials.Commands
             }
 
             var player = src.ToPlayer();
-<<<<<<< HEAD
             // not used
             // player.Movement.sendPluginSpeedMultiplier(amount);
 
             player.SteamPlayer.player.interact.sendSalvageTimeOverride(amount);
-=======
-            player.Movement.sendPluginSpeedMultiplier(amount);
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
 
             EssLang.Send(src, "SALVAGE_TIME_CHANGED", amount);
             return CommandResult.Success();

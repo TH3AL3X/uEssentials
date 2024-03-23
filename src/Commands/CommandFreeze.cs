@@ -51,11 +51,6 @@ namespace Essentials.Commands {
                         EssLang.Send(player, "FROZEN_PLAYER", src.DisplayName);
                         // Better
                         player.Movement.sendPluginSpeedMultiplier(0);
-<<<<<<< HEAD
-                        player.Movement.sendPluginJumpMultiplier(0);
-                        player.Movement.sendPluginGravityMultiplier(0);
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
                     });
 
                 EssLang.Send(src, "FROZEN_ALL");
@@ -73,11 +68,6 @@ namespace Essentials.Commands {
                     EssLang.Send(player, "FROZEN_PLAYER", src.DisplayName);
                     // Better
                     player.Movement.sendPluginSpeedMultiplier(0);
-<<<<<<< HEAD
-                    player.Movement.sendPluginJumpMultiplier(0);
-                    player.Movement.sendPluginGravityMultiplier(0);
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
                 }
             }
 

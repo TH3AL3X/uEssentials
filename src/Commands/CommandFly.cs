@@ -23,9 +23,5 @@
 
 namespace Essentials.Commands
 {
-<<<<<<< HEAD
     /* I'm lazy right now */
-=======
-
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
 }

@@ -257,11 +257,7 @@ namespace Essentials.I18n {
                 }
                 else
                 {
-<<<<<<< HEAD
                     ChatManager.serverSendMessage(message.ToString(), color, null, target.ToPlayer().SteamPlayer, EChatMode.SAY);
-=======
-                    ChatManager.serverSendMessage(message.ToString(), color, null, target.ToPlayer().SteamPlayer);
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
                     Rocket.Core.Logging.Logger.Log(message.ToString());
                 }
                 

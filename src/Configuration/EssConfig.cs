@@ -59,10 +59,7 @@ namespace Essentials.Configuration {
         public int BackDelay;
 
         public ushort ItemSpawnLimit;
-<<<<<<< HEAD
         public int AmmoCommandSpawnLimit;
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
 
         public AntiSpamSettings AntiSpam;
         public HomeCommandSettings Home;
@@ -174,10 +171,7 @@ namespace Essentials.Configuration {
             };
 
             ItemSpawnLimit = 10;
-<<<<<<< HEAD
             AmmoCommandSpawnLimit = 10;
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
         }
 
         public override void Load(string filePath) {

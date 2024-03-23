@@ -34,10 +34,6 @@ using Essentials.Core;
 using Essentials.Event.Handling;
 using Essentials.I18n;
 using Rocket.Unturned.Player;
-<<<<<<< HEAD
-using Essentials.Components.Player;
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
 using SDG.Unturned;
 using UnityEngine;
 using EventType = Essentials.Api.Event.EventType;
@@ -49,27 +45,21 @@ namespace Essentials.Commands {
 
     [CommandInfo(
         Name = "tpa",
-<<<<<<< HEAD
         Usage = "[player/accept/deny/cancel/autoaccept add:remove]",
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = /*3*/0
-=======
-        Usage = "[player/accept/deny/cancel]",
-        AllowedSource = AllowedSource.PLAYER,
-        MinArgs = 1
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
     )]
     public class CommandTpa : EssCommand {
 
         private static Dictionary<ulong, ulong> _requests = new Dictionary<ulong, ulong>();
         private static Dictionary<ulong, Task> _waitingToTeleport = new Dictionary<ulong, Task>();
 
-<<<<<<< HEAD
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {         
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var player = src.ToPlayer();
             var senderId = player.CSteamId.m_SteamID;
 
-            switch (args[0].ToLowerString) 
+            switch (args[0].ToLowerString)
             {
 
                 /*case "autoaccept":
@@ -109,247 +99,213 @@ namespace Essentials.Commands {
                     }
                     break;
                 */
-=======
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            bool lol;
-            
-            var player = src.ToPlayer();
-            var senderId = player.CSteamId.m_SteamID;
-
-            switch (args[0].ToLowerString) {
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
                 case "accept":
-                case "a": {
-                    if (!player.HasPermission($"{Permission}.accept")) {
-                        return CommandResult.NoPermission($"{Permission}.accept");
-                    }
+                case "a":
+                    {
+                        if (!player.HasPermission($"{Permission}.accept"))
+                        {
+                            return CommandResult.NoPermission($"{Permission}.accept");
+                        }
 
-                    if (!_requests.ContainsValue(senderId)) {
-                        return CommandResult.LangError("TPA_NONE");
-                    }
+                        if (!_requests.ContainsValue(senderId))
+                        {
+                            return CommandResult.LangError("TPA_NONE");
+                        }
 
-                    var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
-                    var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
+                        var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
+                        var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
 
-                    if (whoSent == null) {
-                        return CommandResult.LangError("TPA_NONE");
-                    }
+                        if (whoSent == null)
+                        {
+                            return CommandResult.LangError("TPA_NONE");
+                        }
 
-                    // Little fix, kick player if he wanted to teleport inside of a vehicle
-                    if (whoSent.Stance == EPlayerStance.DRIVING || whoSent.Stance == EPlayerStance.SITTING) {
-                        whoSent.CurrentVehicle.findPlayerSeat(whoSent.CSteamId, out byte seat);
-                        whoSent.CurrentVehicle.forceRemovePlayer(out seat, whoSent.CSteamId, out Vector3 point, out byte angle);
+                        // Little fix, kick player if he wanted to teleport inside of a vehicle
+                        if (whoSent.Stance == EPlayerStance.DRIVING || whoSent.Stance == EPlayerStance.SITTING)
+                        {
+                            whoSent.CurrentVehicle.findPlayerSeat(whoSent.CSteamId, out byte seat);
+                            whoSent.CurrentVehicle.forceRemovePlayer(out seat, whoSent.CSteamId, out Vector3 point, out byte angle);
 
-                    }
+                        }
 
-                    EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
-                    EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
-                    _requests.Remove(whoSentId);
+                        EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
+                        EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
+                        _requests.Remove(whoSentId);
 
-                    var tpaSettings = EssCore.Instance.Config.Tpa;
+                        var tpaSettings = EssCore.Instance.Config.Tpa;
 
-                    if (tpaSettings.TeleportDelay > 0) {
-                        var task = Task.Create()
-                            .Id("Tpa Teleport")
-<<<<<<< HEAD
-                            .Action(() => 
-                            {
-                                _waitingToTeleport.Remove(player.CSteamId.m_SteamID);
-                                if (whoSent.IsOnline && player.IsOnline) 
+                        if (tpaSettings.TeleportDelay > 0)
+                        {
+                            var task = Task.Create()
+                                .Id("Tpa Teleport")
+                                .Action(() =>
                                 {
-=======
-                            .Action(() => {
-                                _waitingToTeleport.Remove(player.CSteamId.m_SteamID);
-                                if (whoSent.IsOnline && player.IsOnline) {
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
-                                    whoSent.Teleport(player.Position + new Vector3(0f, 0.5f, 0f));
-                                }
-                            })
-                            .Delay(TimeSpan.FromSeconds(tpaSettings.TeleportDelay))
-                            .Submit();
-                        _waitingToTeleport[player.CSteamId.m_SteamID] = task;
-                    } else {
-                            if(player.Stance == EPlayerStance.DRIVING || player.Stance == EPlayerStance.SITTING)
+                                    _waitingToTeleport.Remove(player.CSteamId.m_SteamID);
+                                    if (whoSent.IsOnline && player.IsOnline)
+                                    {
+                                        whoSent.Teleport(player.Position + new Vector3(0f, 0.5f, 0f));
+                                    }
+                                })
+                                .Delay(TimeSpan.FromSeconds(tpaSettings.TeleportDelay))
+                                .Submit();
+                            _waitingToTeleport[player.CSteamId.m_SteamID] = task;
+                        }
+                        else
+                        {
+                            if (player.Stance == EPlayerStance.DRIVING || player.Stance == EPlayerStance.SITTING)
                                 whoSent.UnturnedPlayer.teleportToLocationUnsafe(player.Position + new Vector3(0f, 0.5f, 0f), 0);
                             else
                                 whoSent.Teleport(player.Position + new Vector3(0f, 0.5f, 0f));
                         }
-                    break;
-                }
+                        break;
+                    }
 
                 case "deny":
-                case "d": {
-                    if (!player.HasPermission($"{Permission}.deny")) {
-                        return CommandResult.NoPermission($"{Permission}.deny");
+                case "d":
+                    {
+                        if (!player.HasPermission($"{Permission}.deny"))
+                        {
+                            return CommandResult.NoPermission($"{Permission}.deny");
+                        }
+
+                        if (!_requests.ContainsValue(senderId))
+                        {
+                            return CommandResult.LangError("TPA_NONE");
+                        }
+
+                        var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
+                        var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
+
+                        if (whoSent != null)
+                        {
+                            EssLang.Send(whoSent, "TPA_DENIED", src.DisplayName);
+                        }
+
+                        EssLang.Send(src, "TPA_DENIED_SENDER", whoSent == null ? "Unknown" : whoSent.DisplayName);
+                        _requests.Remove(whoSentId);
+                        break;
                     }
-
-                    if (!_requests.ContainsValue(senderId)) {
-                        return CommandResult.LangError("TPA_NONE");
-                    }
-
-                    var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
-                    var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
-
-                    if (whoSent != null) {
-                        EssLang.Send(whoSent, "TPA_DENIED", src.DisplayName);
-                    }
-
-                    EssLang.Send(src, "TPA_DENIED_SENDER", whoSent == null ? "Unknown" : whoSent.DisplayName);
-                    _requests.Remove(whoSentId);
-                    break;
-                }
 
                 case "cancel":
-                case "c": {
-                    if (!player.HasPermission($"{Permission}.cancel")) {
-                        return CommandResult.NoPermission($"{Permission}.cancel");
-                    }
+                case "c":
+                    {
+                        if (!player.HasPermission($"{Permission}.cancel"))
+                        {
+                            return CommandResult.NoPermission($"{Permission}.cancel");
+                        }
 
-                    if (!_requests.ContainsKey(senderId)) {
-                        return CommandResult.LangError("TPA_NONE");
-                    }
+                        if (!_requests.ContainsKey(senderId))
+                        {
+                            return CommandResult.LangError("TPA_NONE");
+                        }
 
-                    _requests.Remove(senderId);
-                    EssLang.Send(src, "TPA_CANCELLED");
-                    break;
-                }
+                        _requests.Remove(senderId);
+                        EssLang.Send(src, "TPA_CANCELLED");
+                        break;
+                    }
 
                 // Send TPA to someone
-                default: {
-                    if (!player.HasPermission($"{Permission}.send")) {
-                        return CommandResult.NoPermission($"{Permission}.send");
-                    }
-
-                    if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
-                    }
-
-<<<<<<< HEAD
-                    var tpaSettings = EssCore.Instance.Config.Tpa;
-                    var target = args[0].ToPlayer;
-                    /* Just doing TPA whitelist autoaccept, but i'm too lazy
-                    if(target.GetComponent<TpaPlayer>().whitelist.Contains(player))
+                default:
                     {
-                            if (!player.HasPermission($"{Permission}.accept"))
-                            {
-                                return CommandResult.NoPermission($"{Permission}.accept");
-                            }
-
-                            if (!_requests.ContainsValue(senderId))
-                            {
-                                return CommandResult.LangError("TPA_NONE");
-                            }
-
-                            var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
-                            var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
-
-                            // Little fix, kick player if he wanted to teleport inside of a vehicle
-                            if (whoSent.Stance == EPlayerStance.DRIVING || whoSent.Stance == EPlayerStance.SITTING)
-                            {
-                                whoSent.CurrentVehicle.findPlayerSeat(whoSent.CSteamId, out byte seat);
-                                whoSent.CurrentVehicle.forceRemovePlayer(out seat, whoSent.CSteamId, out Vector3 point, out byte angle);
-
-                            }
-
-                            EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
-                            EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
-                            _requests.Remove(whoSentId);
-
-                            if (tpaSettings.TeleportDelay > 0)
-                            {
-                                var task = Task.Create()
-                                    .Id("Tpa Teleport")
-                                    .Action(() =>
-                                    {
-                                        _waitingToTeleport.Remove(player.CSteamId.m_SteamID);
-                                        if (whoSent.IsOnline && target.IsOnline)
-                                        {
-                                            whoSent.Teleport(target.Position + new Vector3(0f, 0.5f, 0f));
-                                        }
-                                    })
-                                    .Delay(TimeSpan.FromSeconds(tpaSettings.TeleportDelay))
-                                    .Submit();
-                                _waitingToTeleport[player.CSteamId.m_SteamID] = task;
-                            }
-                            else
-                            {
-                                if (player.Stance == EPlayerStance.DRIVING || player.Stance == EPlayerStance.SITTING)
-                                    whoSent.UnturnedPlayer.teleportToLocationUnsafe(player.Position + new Vector3(0f, 0.5f, 0f), 0);
-                                else
-                                    whoSent.Teleport(target.Position + new Vector3(0f, 0.5f, 0f));
-                            }
+                        if (!player.HasPermission($"{Permission}.send"))
+                        {
+                            return CommandResult.NoPermission($"{Permission}.send");
                         }
-                    else
-                    {*/
-                            // Cancel the previous request if the player send a new request.
-                            // We currently does not support multiple requests.
-                            if (_requests.TryGetValue(senderId, out var value))
-                            {
-                                // Avoid 'flooding' requests to the same player
-                                if (value == target.CSteamId.m_SteamID)
+
+                        if (!args[0].IsValidPlayerIdentifier)
+                        {
+                            return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                        }
+
+                        var tpaSettings = EssCore.Instance.Config.Tpa;
+                        var target = args[0].ToPlayer;
+                        /* Just doing TPA whitelist autoaccept, but i'm too lazy
+                        if(target.GetComponent<TpaPlayer>().whitelist.Contains(player))
+                        {
+                                if (!player.HasPermission($"{Permission}.accept"))
                                 {
-                                    return CommandResult.LangError("TPA_ALREADY_SENT", target.DisplayName);
+                                    return CommandResult.NoPermission($"{Permission}.accept");
                                 }
-                                _requests.Remove(senderId);
+
+                                if (!_requests.ContainsValue(senderId))
+                                {
+                                    return CommandResult.LangError("TPA_NONE");
+                                }
+
+                                var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
+                                var whoSent = UPlayer.From(new Steamworks.CSteamID(whoSentId));
+
+                                // Little fix, kick player if he wanted to teleport inside of a vehicle
+                                if (whoSent.Stance == EPlayerStance.DRIVING || whoSent.Stance == EPlayerStance.SITTING)
+                                {
+                                    whoSent.CurrentVehicle.findPlayerSeat(whoSent.CSteamId, out byte seat);
+                                    whoSent.CurrentVehicle.forceRemovePlayer(out seat, whoSent.CSteamId, out Vector3 point, out byte angle);
+
+                                }
+
+                                EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
+                                EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
+                                _requests.Remove(whoSentId);
+
+                                if (tpaSettings.TeleportDelay > 0)
+                                {
+                                    var task = Task.Create()
+                                        .Id("Tpa Teleport")
+                                        .Action(() =>
+                                        {
+                                            _waitingToTeleport.Remove(player.CSteamId.m_SteamID);
+                                            if (whoSent.IsOnline && target.IsOnline)
+                                            {
+                                                whoSent.Teleport(target.Position + new Vector3(0f, 0.5f, 0f));
+                                            }
+                                        })
+                                        .Delay(TimeSpan.FromSeconds(tpaSettings.TeleportDelay))
+                                        .Submit();
+                                    _waitingToTeleport[player.CSteamId.m_SteamID] = task;
+                                }
+                                else
+                                {
+                                    if (player.Stance == EPlayerStance.DRIVING || player.Stance == EPlayerStance.SITTING)
+                                        whoSent.UnturnedPlayer.teleportToLocationUnsafe(player.Position + new Vector3(0f, 0.5f, 0f), 0);
+                                    else
+                                        whoSent.Teleport(target.Position + new Vector3(0f, 0.5f, 0f));
+                                }
                             }
+                        else
+                        {*/
+                        // Cancel the previous request if the player send a new request.
+                        // We currently does not support multiple requests.
+                        if (_requests.TryGetValue(senderId, out var value))
+                        {
+                            // Avoid 'flooding' requests to the same player
+                            if (value == target.CSteamId.m_SteamID)
+                            {
+                                return CommandResult.LangError("TPA_ALREADY_SENT", target.DisplayName);
+                            }
+                            _requests.Remove(senderId);
+                        }
 
 #if !DEV
-                            if (target == player)
-                            {
-                                return CommandResult.LangError("TPA_YOURSELF");
-                            }
+                        if (target == player)
+                        {
+                            return CommandResult.LangError("TPA_YOURSELF");
+                        }
 #endif
 
-                            _requests.Add(senderId, target.CSteamId.m_SteamID);
-                            EssLang.Send(src, "TPA_SENT_SENDER", target.DisplayName);
-                            EssLang.Send(target, "TPA_SENT", src.DisplayName);
+                        _requests.Add(senderId, target.CSteamId.m_SteamID);
+                        EssLang.Send(src, "TPA_SENT_SENDER", target.DisplayName);
+                        EssLang.Send(target, "TPA_SENT", src.DisplayName);
 
-                            if (tpaSettings.ExpireDelay > 0)
-                            {
-                                Task.Create()
-                                    .Id("Tpa Expire")
-                                    .Action(() => _requests.Remove(senderId))
-                                    .Delay(TimeSpan.FromSeconds(tpaSettings.ExpireDelay))
-                                    .Submit();
-                            }
+                        if (tpaSettings.ExpireDelay > 0)
+                        {
+                            Task.Create()
+                                .Id("Tpa Expire")
+                                .Action(() => _requests.Remove(senderId))
+                                .Delay(TimeSpan.FromSeconds(tpaSettings.ExpireDelay))
+                                .Submit();
                         }
-                    break;
-               //s }
-=======
-                    var target = args[0].ToPlayer;
-
-                    // Cancel the previous request if the player send a new request.
-                    // We currently does not support multiple requests.
-                    if (_requests.TryGetValue(senderId, out var value)) {
-                        // Avoid 'flooding' requests to the same player
-                        if (value == target.CSteamId.m_SteamID) {
-                            return CommandResult.LangError("TPA_ALREADY_SENT", target.DisplayName);
-                        }
-                        _requests.Remove(senderId);
-                    }
-
-#if !DEV
-                    if (target == player) {
-                        return CommandResult.LangError("TPA_YOURSELF");
-                    }
-#endif
-
-                    _requests.Add(senderId, target.CSteamId.m_SteamID);
-                    EssLang.Send(src, "TPA_SENT_SENDER", target.DisplayName);
-                    EssLang.Send(target, "TPA_SENT", src.DisplayName);
-
-                    var tpaSettings = EssCore.Instance.Config.Tpa;
-
-                    if (tpaSettings.ExpireDelay > 0) {
-                        Task.Create()
-                            .Id("Tpa Expire")
-                            .Action(() => _requests.Remove(senderId))
-                            .Delay(TimeSpan.FromSeconds(tpaSettings.ExpireDelay))
-                            .Submit();
                     }
                     break;
-                }
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
             }
 
             return CommandResult.Success();

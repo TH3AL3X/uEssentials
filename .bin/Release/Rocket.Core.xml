@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rocket.Core</name>
+    </assembly>
+    <members>
+        <member name="M:Rocket.Core.Logging.Logger.ProcessLog(Rocket.Core.Logging.ELogType,System.String,System.Boolean)">
+            <summary>
+            LDM: this method writes a line to the Rocket log file.
+            </summary>
+        </member>
+        <member name="M:Rocket.Core.Logging.Logger.ExternalLog(System.Object,System.ConsoleColor)">
+            <summary>
+            LDM: Rocket.Unturned.U relays the CommandWindow.onCommandWindowOutputted output here.
+            </summary>
+        </member>
+        <member name="M:Rocket.Core.Permissions.RocketPermissionsHelper.HasPermission(Rocket.API.IRocketPlayer,System.Collections.Generic.List{System.String})">
+            <summary>
+            UnturnedPlayer requires Player, so this version of the method does check if you are admined.
+            </summary>
+            <param name="player"></param>
+            <param name="requestedPermissions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Rocket.Core.Permissions.RocketPermissionsHelper.HasPermission(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Separates from the usage of IRocketPlayer because it was causing obvious issues due to UnturnedPlayer reliance on Player. Does not check if you are admined.
+            </summary>
+            <param name="playerId"></param>
+            <param name="requestedPermissions"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Rocket.Core.Plugins.RocketPluginManager.libraries">
+            <summary>
+            Maps assembly name to .dll file path.
+            </summary>
+        </member>
+        <member name="M:Rocket.Core.Plugins.RocketPluginManager.FindAssembliesInDirectory(System.String)">
+            <summary>
+            Replacement for GetAssembliesFromDirectory using AssemblyName as key rather than string.
+            </summary>
+        </member>
+    </members>
+</doc>

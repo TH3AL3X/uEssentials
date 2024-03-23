@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rocket.Unturned</name>
+    </assembly>
+    <members>
+        <member name="M:Rocket.Unturned.Player.UnturnedPlayer.GetComponent``1">
+            <summary>
+            Very slow, not recommended.
+            </summary>
+            <typeparam name="T">Component type.</typeparam>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

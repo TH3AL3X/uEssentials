@@ -259,13 +259,10 @@
   "TPA_DENIED": "'{0}' has denied your tpa request.",
   "TPA_DENIED_SENDER": "You denied {0}'s tpa request.",
   "TPA_NONE": "You don't have any tpa request.",
-<<<<<<< HEAD
   "TPA_WHITELIST_NONE": "The player is not on the whitelist.",
   "TPA_WHITELIST_ADDED": "The player has been added to the whitelist.",
   "TPA_WHITELIST_REMOVED": "The player has been removed from the whitelist.",
   "TPA_WHITELIST_ALREADY": "The player is already on your whitelist.",
-=======
->>>>>>> 265a67c35bab80a95b90e21dede132a5581f289a
   "TPA_SENT": "{0} has sent you a tpa request, use '/tpa accept/deny'.",
   "TPA_SENT_SENDER": "You sent a tpa request to {0}, use '/tpa cancel' to cancel.",
   "TPA_YOURSELF": "You cannot send a tpa request to yourself.",
