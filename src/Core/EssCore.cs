@@ -138,7 +138,9 @@ ERIMENTAL
                 Logger = new ConsoleLogger("[uEssentials] ");
 
                 _consoleTraceListener = new EssentialsConsoleTraceListener();
-                System.Diagnostics.Debug.Listeners.Add(_consoleTraceListener);
+
+                // Agrega el EssentialsConsoleTraceListener al Trace
+                Trace.Listeners.Add(_consoleTraceListener);
 
                 Provider.onServerDisconnected += PlayerDisconnectCallback;
                 Provider.onServerConnected += PlayerConnectCallback;
@@ -295,7 +297,8 @@ ERIMENTAL
 
             TaskExecutor.Stop();
 
-            System.Diagnostics.Debug.Listeners.Remove(_consoleTraceListener);
+
+            Trace.Listeners.Remove(_consoleTraceListener);
 
             // Restore overridden commands
             var rocketCommands = GetRocketCommands();
@@ -515,7 +518,12 @@ ERIMENTAL
 
     }
 
-    internal class EssentialsConsoleTraceListener : ConsoleTraceListener {
+    internal class EssentialsConsoleTraceListener : TraceListener {
+
+        public override void Write(string message)
+        {
+            UEssentials.Logger.LogDebug(message);
+        }
 
         public override void WriteLine(string message, string category) {
 #if !EVENT_MANAGER_DEBUG
