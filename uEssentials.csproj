@@ -38,55 +38,9 @@
     <DebugType>pdbonly</DebugType>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-  <Target Name="BeforeBuildMigrated" BeforeTargets="PreBuildEvent">
-    <ReplaceDevPluginVersion Phase="before" />
-  </Target>
-  <Target Name="AfterBuildMigrated">
-    <ReplaceDevPluginVersion Phase="after" />
-  </Target>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\Assembly-CSharp.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="com.rlabrecque.steamworks.net, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\com.rlabrecque.steamworks.net.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>Rocket\Newtonsoft.Json.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Rocket.API, Version=4.9.3.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\Rocket.API.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Rocket.Core, Version=4.9.3.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\Rocket.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Rocket.Unturned, Version=4.9.3.14, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Legally-Distinct-Missile-master\Rocket.Unturned\bin\Release\Rocket.Unturned.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="SDG.NetTransport, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\SDG.NetTransport.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="System.Data.DataSetExtensions">
       <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\UnityEngine.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\UnityEngine.CoreModule.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>Rocket\UnityEngine.PhysicsModule.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -108,5 +62,13 @@
     <Compile Remove="src\Updater\GithubUpdater.cs" />
     <Compile Remove="src\Updater\IUpdater.cs" />
     <Compile Remove="src\Updater\UpdateResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="RocketModFix.Rocket.API" Version="4.17.0" />
+    <PackageReference Include="RocketModFix.Rocket.Core" Version="4.17.0" />
+    <PackageReference Include="RocketModFix.Rocket.Unturned" Version="4.17.0" />
+    <PackageReference Include="RocketModFix.UnityEngine.Redist" Version="2021.3.29.1" />
+    <PackageReference Include="RocketModFix.Unturned.Redist" Version="3.24.1" />
   </ItemGroup>
 </Project>
