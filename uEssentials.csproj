@@ -18,6 +18,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+    <BaseOutputPath>C:\Users\funes\Desktop\uEssentials-master\publish</BaseOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
