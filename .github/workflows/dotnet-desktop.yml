@@ -41,14 +41,16 @@ jobs:
         release_name: Release ${{ steps.version.outputs.tag }}
         draft: false
         prerelease: false
-
-    - name: Upload Release Asset
-      id: upload-release-asset
+        
+    - name: Zip files
+      run: zip -r uEssentials.zip ./publish/release
+      
+    - name: Upload to releases
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish/  # Ruta de los artefactos compilados
-        asset_name: CompiledArtifacts.zip  # Nombre del archivo de artefactos
+        asset_path: ./uEssentials.zip
+        asset_name: uEssentials.zip
         asset_content_type: application/zip
