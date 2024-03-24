@@ -23,7 +23,7 @@
 ---
 
 **Resources:**
-- Wiki: [https://github.com/uEssentials/uEssentials/wiki](https://goo.gl/MPe1AW)
+- Wiki: [https://github.com/TH3AL3X/uEssentials/wiki](https://goo.gl/MPe1AW)
 - Releases: [https://github.com/TH3AL3X/uEssentials/releases/](https://github.com/TH3AL3X/uEssentials/releases/)
 
 ---
@@ -31,5 +31,5 @@
 If you have any questions or suggestions, feel free to send them to us [here](https://github.com/TH3AL3X/uEssentials/issues).
 
 ## License
-Copyright (C) 2015-2024 leonardosnt <leonrdsnt@gmail.com> and contributors.
+Copyright (C) 2015-2024 terror and contributors.
 Licensed under the GPL v2 License. See LICENSE file in the project root for full license information.
