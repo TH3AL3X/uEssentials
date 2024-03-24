@@ -71,7 +71,7 @@ namespace Essentials.Core {
         internal const string PLUGIN_VERSION = "999.0.0.0";
 #else
         // Real plugin version -- manually updated.
-        internal const string PLUGIN_VERSION = "1.X.X.X";
+        internal const string PLUGIN_VERSION = "1.0.2";
 #endif
 
 #if E
