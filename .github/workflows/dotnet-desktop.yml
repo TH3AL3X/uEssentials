@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-	with:
-    	  fetch-depth: 0
+        with:
+          fetch-depth: 0  # Traer todas las etiquetas durante la clonación del repositorio
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
