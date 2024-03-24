@@ -10,53 +10,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0.x'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build project
-      run: dotnet build --configuration Release
+      - name: Build project
+        run: dotnet build --configuration Release
 
-    - name: Package artifacts
-      run: dotnet publish -c Release --no-build --output ./publish
+      - name: Package artifacts
+        run: dotnet publish -c Release --no-build --output ./publish
 
-    - name: Determine next release version
-      id: next_version
-      run: |
-        LAST_VERSION=$(git describe --tags --abbrev=0)
-        LAST_VERSION=${LAST_VERSION#"v"}
-        IFS='.' read -r -a PARTS <<< "$LAST_VERSION"
-        PARTS[2]=$((PARTS[2]+1))
-        NEXT_VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
-        echo "::set-output name=next_version::$NEXT_VERSION"
+      - name: Determine next release version
+        id: next_version
+        run: |
+          LAST_VERSION=$(git describe --tags --abbrev=0)
+          LAST_VERSION=${LAST_VERSION#"v"}
+          IFS='.' read -r -a PARTS <<< "$LAST_VERSION"
+          PARTS[2]=$((PARTS[2]+1))
+          NEXT_VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
+          echo "::set-output name=next_version::$NEXT_VERSION"
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      with:
-        tag_name: ${{ steps.next_version.outputs.next_version }}
-        release_name: Release ${{ steps.next_version.outputs.next_version }}
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.next_version.outputs.next_version }}
+          release_name: Release ${{ steps.next_version.outputs.next_version }}
+          draft: false
+          prerelease: false
 
-    - name: ZIP File
-      run: zip -r uEssentials.zip ./publish
-    
-    - name: Upload
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./uEssentials.zip
-        asset_name: uEssentials.zip
-        asset_content_type: application/zip
+      - name: ZIP File
+        run: zip -r uEssentials.zip ./publish
+
+      - name: Upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uEssentials.zip
+          asset_name: uEssentials.zip
+          asset_content_type: application/zip
