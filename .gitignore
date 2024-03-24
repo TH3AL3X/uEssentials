@@ -1,5 +1,6 @@
 obj/
 bin/
+publish/Release/
 .vs/
 .vscode/
 
