@@ -27,7 +27,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Package artifacts
-        run: dotnet publish -c Release --no-build --output ./publish
+        run: |
+          dotnet publish -c Release --no-build --output ./publish
+          mkdir ./publish/uEssentials
+          mkdir ./publish/uEssentials/Libraries
+          mv ./publish/uEssentials.dll ./publish/uEssentials/uEssentials.dll
+          mv ./Libraries/netstandard.dll ./publish/uEssentials/Libraries/netstandard.dll
+
 
       - name: Git Semantic Version
         id: version
@@ -54,7 +60,7 @@ jobs:
           prerelease: false
 
       - name: ZIP File
-        run: zip -r uEssentials.zip ./publish
+        run: zip -r uEssentials.zip ./publish/uEssentials/
 
       - name: Upload
         uses: actions/upload-release-asset@v1
