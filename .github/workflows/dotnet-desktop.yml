@@ -11,6 +11,9 @@ jobs:
     if: "contains(github.event.head_commit.message, 'release')"
 
     steps:
+      - name: Install semver
+        run: npm install -g semver
+
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -34,11 +37,13 @@ jobs:
         id: next_version
         run: |
           LAST_VERSION=$(git describe --tags --abbrev=0)
-          LAST_VERSION=${LAST_VERSION#"v"}
-          IFS='.' read -r -a PARTS <<< "$LAST_VERSION"
-          PARTS[2]=$((PARTS[2]+1))
-          NEXT_VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
+          NEXT_VERSION=$(semver bump patch $LAST_VERSION)
           echo "::set-output name=next_version::$NEXT_VERSION"
+
+      - name: Create and push new tag
+        run: |
+          git tag v${{ steps.next_version.outputs.next_version }}
+          git push origin v${{ steps.next_version.outputs.next_version }}
 
       - name: Create Release
         id: create_release

@@ -1,5 +1,5 @@
 @echo off
 
-git tag v1.0.5
+git tag v1.0.7
 
 git push --tags
