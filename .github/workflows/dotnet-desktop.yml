@@ -51,8 +51,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
           NEW_VERSION: ${{ steps.version.outputs.version }}
         with:
-          tag_name: vNEW_VERSION
-          release_name: Release NEW_VERSION
+          tag_name: v$NEW_VERSION
+          release_name: Release $NEW_VERSION
           draft: false
           prerelease: false
 
