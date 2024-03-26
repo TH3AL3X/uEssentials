@@ -28,7 +28,7 @@ jobs:
 
       - name: Package artifacts
         run: dotnet publish -c Release --no-build --output ./publish
-
+        # Step for get version, fixing this part...
       - name: Git Semantic Version
         uses: PaulHatch/semantic-version@v4.0.3
         with:
