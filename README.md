@@ -3,7 +3,7 @@
 [![Join in our discord](https://discordapp.com/api/guilds/869187450159923221/widget.png)](https://discord.gg/wWtjUcvXQp)
 [![Download latest release here](https://img.shields.io/badge/download-latest_release-brightgreen.svg?maxAge=2592000)](https://github.com/TH3AL3X/uEssentials/releases/)
 
-## Don't forget to include "netstandard.dll" library
+## Don't forget to include "netstandard.dll" library ""/Publish/Libraries""
 
 ---
 **Latest builds:** https://github.com/TH3AL3X/uEssentials/releases/
