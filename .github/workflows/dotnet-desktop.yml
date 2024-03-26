@@ -28,31 +28,28 @@ jobs:
 
       - name: Package artifacts
         run: dotnet publish -c Release --no-build --output ./publish
-        # Step for get version, fixing this part...
+
       - name: Git Semantic Version
+        id: version
         uses: PaulHatch/semantic-version@v4.0.3
         with:
-          majer_patter: "major:"
-          minor_patter: "feat:"
-          format: "${major}.${minor}.${patch}-prerelease${increment}"
-        id: version
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          format: "${major}.${minor}.${patch}-${increment}"
 
       - name: Create and push new tag
-        env:
-          NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          git tag v$NEW_VERSION
-          git push origin v$NEW_VERSION
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-          NEW_VERSION: ${{ steps.version.outputs.version }}
         with:
-          tag_name: v$NEW_VERSION
-          release_name: Release $NEW_VERSION
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
 

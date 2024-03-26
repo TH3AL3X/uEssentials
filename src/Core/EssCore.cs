@@ -70,8 +70,8 @@ namespace Essentials.Core {
         // development that allows to reload plugins without restaring the server.
         internal const string PLUGIN_VERSION = "999.0.0.0";
 #else
-        // We need to change this, so annoying doing this manually lol.
-        internal const string PLUGIN_VERSION = "1.0.5";
+        // Deprecated
+        internal const string PLUGIN_VERSION = "Release";
 #endif
 
 #if E
