@@ -35,7 +35,7 @@ jobs:
         with:
           major_pattern: "major:"
           minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}-${increment}"
+          format: "${major}.${minor}.${patch}"
 
       - name: Create and push new tag
         run: |
