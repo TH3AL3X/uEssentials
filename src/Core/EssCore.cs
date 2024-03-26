@@ -71,7 +71,7 @@ namespace Essentials.Core {
         internal const string PLUGIN_VERSION = "999.0.0.0";
 #else
         // We need to change this, so annoying doing this manually lol.
-        internal const string PLUGIN_VERSION = "1.0.2";
+        internal const string PLUGIN_VERSION = "1.0.5";
 #endif
 
 #if E
