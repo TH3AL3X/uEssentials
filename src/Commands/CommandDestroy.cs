@@ -47,7 +47,7 @@ namespace Essentials.Commands
             var look = player.Look;
 
             if (PhysicsUtility.raycast(new Ray(look.aim.position, look.aim.forward), out RaycastHit hit, Mathf.Infinity,
-                RayMasks.BARRICADE | RayMasks.STRUCTURE))
+                RayMasks.BARRICADE | RayMasks.STRUCTURE | RayMasks.VEHICLE))
             {
                 var hinge = hit.transform.GetComponent<InteractableDoorHinge>();
                 var barri = hit.transform.GetComponent<Interactable2SalvageBarricade>();

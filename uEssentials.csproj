@@ -54,9 +54,6 @@
     <EmbeddedResource Include="default\lang_ru.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="default\docs\pt-BR\Docs for config.json" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,8 @@
         Colors:
             Use: <colorName OR hex value>
             HEX:
-                <hex_value>, Example: <#FFFFFF>
+                OLD FORMAT: <hex_value>, Example: <#FFFFFF>
+                NEW FORMAT: <color=hex_value> Example: </color>
 
             Names:
                 <black>
@@ -304,5 +305,10 @@
   "ITEMINFO_NAME": "Name: {0}",
   "ITEMINFO_DESCRIPTION": "Description: {0}",
   "ITEMINFO_ID": "Id: {0}",
-  "ITEMINFO_TYPE": "Type: {0}"
+  "ITEMINFO_TYPE": "Type: {0}",
+
+  "GOTOBED": "You has been teleported to player bed",
+  "GOTOBED_NOT_FOUND": "Player bed not found",
+  "CHECKOWNER": "Owner of this SteamID64: {0}",
+  "CHECKOWNER_LOOKING_NONE": "You're not looking to anything"
 }

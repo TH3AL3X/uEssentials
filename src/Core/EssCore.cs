@@ -148,12 +148,11 @@ ERIMENTAL
                 Logger.LogInfo("Enabling uEssentials...");
 
                 new [] {
-                    "This is a new version of uEssentials, maintained by Terror",
                     "Plugin version: ~white~" + PLUGIN_VERSION + BUILD_INFO,
-                    "Recommended Rocket version: ~white~" + ROCKET_VERSION,
+                    "Recommended Rocket/OpenMod version: ~white~" + ROCKET_VERSION,
                     "Recommended Unturned version: ~white~" + UNTURNED_VERSION,
-                    "Author: ~white~leonardosnt",
-                    "Wiki: ~white~uessentials.github.io",
+                    "Author: ~white~Terror",
+                    "Wiki: ~white~github.com/TH3AL3X/uEssentials/wiki",
                 }.ForEach(text => Logger.LogInfo(text, true));
 
                 if (Provider.clients.Count > 0) {

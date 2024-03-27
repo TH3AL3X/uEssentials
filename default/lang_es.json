@@ -1,11 +1,12 @@
 {
   /*
         Colors:
-            Use: <Usa el nombre del color o su valor hexadecimal>
+            Use: <colorName OR hex value>
             HEX:
-                <hex_value>, Ejemplo: <#FFFFFF>
+                OLD FORMAT: <hex_value>, Example: <#FFFFFF>
+                NEW FORMAT: <color=hex_value> Example: </color>
 
-            Colores:
+            Names:
                 <black>
                 
                 <clear>
@@ -18,17 +19,16 @@
                 <white>
                 
 
-        En el chat Unturned solo soporta un color, pero puedes poner el color
-        en cualquier parte del mensaje.
+        The unturned chat only suports ONE color.
+        The algorithm will check if text contains a determined color,
+        and will use it, doesn't matter the position in the message.
 
-        Por ejemplo:
+        For example:
             "player joined the game"
             "player joined the game"
             "player joined the game"
 
-        Todos estos valores va a resultar en el mismo mensaje.
-
-        El color por defecto es verde.
+        The default color is Green.
     */
 
   "ALL_REPAIRED": "Todos los items han sido reparados",
@@ -272,5 +272,10 @@
   "ITEMINFO_NAME": "Name: {0}",
   "ITEMINFO_DESCRIPTION": "Descripcion: {0}",
   "ITEMINFO_ID": "Id: {0}",
-  "ITEMINFO_TYPE": "Tipo: {0}"
+  "ITEMINFO_TYPE": "Tipo: {0}",
+
+  "GOTOBED": "You has been teleported to player bed",
+  "GOTOBED_NOT_FOUND": "Player bed not found",
+  "CHECKOWNER": "Owner of this: {0}",
+  "CHECKOWNER_LOOKING_NONE": "You're not looking to anything"
 }
