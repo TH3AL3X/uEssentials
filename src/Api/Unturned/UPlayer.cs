@@ -71,6 +71,7 @@ namespace Essentials.Api.Unturned {
         public EPlayerStance Stance => UnturnedPlayer.stance.stance;
         public bool IsOnline => RocketPlayer != null && UnturnedPlayer != null;
         public MetadataStore<object> Metadata { get; private set; }
+        public PlayerInput Input => UnturnedPlayer.input;
 
         private readonly FieldInfo _experienceField = ReflectUtil.GetField<PlayerSkills>("_experience");
 

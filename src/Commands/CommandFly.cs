@@ -21,7 +21,42 @@
 */
 #endregion
 
+using System;
+using System.Linq;
+using Essentials.Api;
+using Essentials.Api.Command;
+using Essentials.Api.Command.Source;
+using Essentials.Api.Unturned;
+using Essentials.Common;
+using Essentials.Compatibility;
+using Essentials.Components.Player;
+using Essentials.Event.Handling;
+using Essentials.I18n;
+using Rocket.Unturned.Chat;
+using Rocket.Unturned.Player;
+using SDG.Framework.Utilities;
+using SDG.Unturned;
+using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
+
 namespace Essentials.Commands
 {
-    /* I'm lazy right now */
+
+    [CommandInfo(
+        Name = "fly",
+        Description = "Fly like a bird",
+        AllowedSource = AllowedSource.PLAYER,
+        MinArgs = 0,
+        MaxArgs = 0
+    )]
+    public class CommandFly : EssCommand
+    {
+
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            var player = src.ToPlayer();
+            return CommandResult.Success();
+        }
+    }
+
 }
