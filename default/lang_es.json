@@ -278,5 +278,6 @@
   "GOTOBED_NOT_FOUND": "Player bed not found",
   "CHECKOWNER": "Owner of this: {0}",
   "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",
-  "IGNOREZOMBIES": "Now zombies are {0} you"
+  "IGNOREZOMBIES": "Now zombies are {0} you",
+  "IGNOREZOMBIES_TOPLAYER": "Now zombies are {0} player {1}"
 }

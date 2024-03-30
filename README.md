@@ -19,7 +19,7 @@
 **Features:**
 - Kits
 - Warps
-- [Over 60 commands](https://goo.gl/VpucUK)
+- [Over 60 commands](https://github.com/TH3AL3X/uEssentials/wiki/Command%E2%80%90Reference)
 - Intuitive and easy module system
 
 ---

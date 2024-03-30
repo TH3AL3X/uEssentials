@@ -43,29 +43,53 @@ namespace Essentials.Commands
 {
     [CommandInfo(
         Name = "zombieignore",
+        Usage = "[player] or empty (you)",
         Description = "Ignore zombies",
         Aliases = new[] { "zignore" },
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = 0,
-        MaxArgs = 0
+        MaxArgs = 1
     )]
     public class CommandIgnoreZombies : EssCommand
     {
         public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
         {
-            var player = src.ToPlayer();
-
-            var component = player.GetComponent<ZombieIgnore>() ?? player.AddComponent<ZombieIgnore>();
-
-            if(component.ignore_zombies)
+            if (args.Length == 0)
             {
-                component.ignore_zombies = false;
-                EssLang.Send(src, "IGNOREZOMBIES", "detecting");
+                var player = src.ToPlayer();
+
+                var component = player.GetComponent<ZombieIgnore>() ?? player.AddComponent<ZombieIgnore>();
+
+                if (component.ignore_zombies)
+                {
+                    component.ignore_zombies = false;
+                    EssLang.Send(src, "IGNOREZOMBIES", "detecting");
+                }
+                else
+                {
+                    component.ignore_zombies = true;
+                    EssLang.Send(src, "IGNOREZOMBIES", "ignoring");
+                }
             }
             else
             {
-                component.ignore_zombies = true;
-                EssLang.Send(src, "IGNOREZOMBIES", "ignoring");
+                if (!UPlayer.TryGet(args[0].ToString(), out var player))
+                {
+                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                }
+
+                var component = player.GetComponent<ZombieIgnore>() ?? player.AddComponent<ZombieIgnore>();
+
+                if (component.ignore_zombies)
+                {
+                    component.ignore_zombies = false;
+                    EssLang.Send(src, "IGNOREZOMBIES_TOPLAYER", "detecting", player.DisplayName);
+                }
+                else
+                {
+                    component.ignore_zombies = true;
+                    EssLang.Send(src, "IGNOREZOMBIES_TOPLAYER", "ignoring", player.DisplayName);
+                }
             }
 
             return CommandResult.Success();
