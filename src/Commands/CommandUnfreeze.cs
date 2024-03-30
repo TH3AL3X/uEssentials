@@ -27,6 +27,7 @@ using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Components.Player;
 using Essentials.I18n;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Essentials.Commands {
 
@@ -42,6 +43,7 @@ namespace Essentials.Commands {
         public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
             if (args[0].Equals("*")) {
                 foreach (var player in UServer.Players.Where(player => player.HasComponent<FrozenPlayer>())) {
+                    player.Movement.sendPluginSpeedMultiplier(1);
                     player.RemoveComponent<FrozenPlayer>();
                     EssLang.Send(player, "UNFROZEN_PLAYER", src.DisplayName);
                 }
