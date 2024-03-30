@@ -73,6 +73,11 @@
     <Compile Remove="src\Updater\IUpdater.cs" />
     <Compile Remove="src\Updater\UpdateResult.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>Libraries\0Harmony.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <UsingTask TaskName="ReplaceDevPluginVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <Phase ParameterType="System.String" Required="true" />

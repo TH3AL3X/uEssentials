@@ -279,5 +279,6 @@
   "GOTOBED": "You has been teleported to player bed",
   "GOTOBED_NOT_FOUND": "Player bed not found",
   "CHECKOWNER": "Owner of this: {0}",
-  "CHECKOWNER_LOOKING_NONE": "You're not looking to anything"
+  "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",
+  "IGNOREZOMBIES": "Now zombies are {0} you"
 }

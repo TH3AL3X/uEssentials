@@ -21,31 +21,15 @@
 */
 #endregion
 
-using Essentials.Api.Command.Source;
-using Essentials.Api.Unturned;
-using HarmonyLib;
+using Essentials.Api;
 using SDG.Unturned;
-using System;
-using UnityEngine;
 
-namespace Essentials.Components.Player {
-    public abstract class PlayerComponent : MonoBehaviour {
+namespace Essentials.Components.Player
+{
 
-        public UPlayer Player;
-        protected PlayerComponent() {
-            Player = UPlayer.From(GetComponent<SDG.Unturned.Player>());
-        }
-
-        protected virtual void FixedUpdate() {
-            try {
-                SafeFixedUpdate();
-            } catch (Exception) {
-                Player.RemoveComponent(GetType());
-                throw;
-            }
-        }
-
-        protected virtual void SafeFixedUpdate() {}
+    public class ZombieIgnore : PlayerComponent
+    {
+        public bool ignore_zombies { get; set; }
     }
 
 }

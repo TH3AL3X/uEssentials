@@ -55,6 +55,9 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using System.Globalization;
+using HarmonyLib;
+using Essentials.Api.Command.Source;
+using Essentials.Components.Player;
 
 namespace Essentials.Core {
 
@@ -115,14 +118,13 @@ ERIMENTAL
         internal string TranslationFolder => MkDirIfNotExists(_translationFolder);
         internal string DataFolder => MkDirIfNotExists(_dataFolder);
         internal string ModulesFolder => MkDirIfNotExists(_modulesFolder);
-
         internal bool IsAReload = false;
-
         internal Dictionary<ulong, UPlayer> ConnectedPlayers { get; } = new Dictionary<ulong, UPlayer>();
         internal InstancePool CommonInstancePool { get; } = new InstancePool();
-
         protected override void Load() 
         {
+            HarmonyInstance = new Harmony("zignore");
+            HarmonyInstance.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
             try 
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -307,6 +309,7 @@ ERIMENTAL
             }
         }
 
+        private Harmony HarmonyInstance;
 
         private void onStructureDeploy(Structure structure, ItemStructureAsset asset, ref Vector3 point, ref float angle_x, ref float angle_y, ref float angle_z, ref ulong owner, ref ulong group, ref bool shouldAllow)
         {
@@ -550,5 +553,4 @@ ERIMENTAL
         private static string ObjectToString(object obj) => obj == null ? "null" : obj.ToString();
 
     }
-
 }
