@@ -312,5 +312,10 @@
   "CHECKOWNER": "Owner of this SteamID64: {0}",
   "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",
   "IGNOREZOMBIES": "Now zombies are {0} you",
-  "IGNOREZOMBIES_TOPLAYER":  "Now zombies are {0} player {1}"
+  "IGNOREZOMBIES_TOPLAYER": "Now zombies are {0} player {1}",
+  "FLY": "Now you {0} fly",
+  "FLY_TOPLAYER": "Now you {0} fly to player {1}",
+  "FLY_SPEED_CHANGED": "Your speed has been changed to {0}",
+  "SET_ATTACHMENT": "You added an attachment to the weapon",
+  "SET_ATTACHMENT_FAIL": "Impossible to add this attachment to the weaoon"
 }

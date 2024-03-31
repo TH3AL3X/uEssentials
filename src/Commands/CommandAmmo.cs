@@ -1,6 +1,5 @@
 using Essentials.Api;
 using Essentials.Api.Command;
-﻿using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.I18n;

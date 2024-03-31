@@ -19,7 +19,14 @@ namespace Essentials.src.Patches
         {
             private static bool Prefix(Player newPlayer)
             {
-                return !newPlayer.GetComponent<ZombieIgnore>().ignore_zombies;
+                try
+                {
+                    return !newPlayer.GetComponent<ZombieIgnore>().ignore_zombies;
+                }
+                catch
+                {
+                    return true;
+                }
             }
         }
     }

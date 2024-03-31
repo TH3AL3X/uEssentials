@@ -3,7 +3,7 @@
  *  This file is part of uEssentials project.
  *      https://uessentials.github.io/
  *
- *  Copyright (C) 2015-2018  leonardosnt
+ *  Copyright (C) 2015-2024 Terror
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -73,6 +73,11 @@ namespace Essentials.Commands
             }
             else
             {
+                if (!src.HasPermission($"{Permission}.other"))
+                {
+                    return CommandResult.NoPermission($"{Permission}.other");
+                }
+
                 if (!UPlayer.TryGet(args[0].ToString(), out var player))
                 {
                     return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);

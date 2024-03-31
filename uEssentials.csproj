@@ -67,7 +67,6 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo - copia.cs" />
     <Compile Remove="src\Commands\CommandInventory.cs" />
-    <Compile Remove="src\Components\Player\FlyPlayer.cs" />
     <Compile Remove="src\Components\Player\TpaPlayer.cs" />
     <Compile Remove="src\Updater\GithubUpdater.cs" />
     <Compile Remove="src\Updater\IUpdater.cs" />
