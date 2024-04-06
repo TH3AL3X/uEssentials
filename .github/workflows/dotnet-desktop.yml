@@ -32,7 +32,7 @@ jobs:
           mkdir ./publish/uEssentials
           mkdir ./publish/uEssentials/Libraries
           mv ./publish/uEssentials.dll ./publish/uEssentials/uEssentials.dll
-          mv ./Libraries/netstandard.dll ./publish/uEssentials/Libraries/netstandard.dll
+          mv ./Libraries/* ./publish/uEssentials/Libraries/
 
 
       - name: Git Semantic Version

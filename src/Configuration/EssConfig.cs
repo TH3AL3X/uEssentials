@@ -52,7 +52,6 @@ namespace Essentials.Configuration {
         public bool Allow_Structures_Buildings;
         public bool Allow_Barricades_Buildings;
 
-
         public bool EnablePollRunningMessage;
         public int PollRunningMessageCooldown;
         public int ServerFrameRate;
@@ -61,6 +60,7 @@ namespace Essentials.Configuration {
         public ushort ItemSpawnLimit;
         public int AmmoCommandSpawnLimit;
 
+        public AutoCloseDoor CloseDoor;
         public AntiSpamSettings AntiSpam;
         public HomeCommandSettings Home;
         public WarpCommandSettings Warp;
@@ -102,6 +102,11 @@ namespace Essentials.Configuration {
             Allow_Structures_Buildings = true;
             Allow_Barricades_Buildings = true;
 
+            CloseDoor = new AutoCloseDoor
+            {
+                Enabled = false,
+                Seconds = 5
+            };
 
             AutoAnnouncer = new AutoAnnouncer();
             AutoAnnouncer.LoadDefaults();
@@ -248,6 +253,13 @@ namespace Essentials.Configuration {
             public bool Enabled;
             public int Interval;
         }
+
+        public struct AutoCloseDoor
+        {
+            public bool Enabled;
+            public int Seconds;
+        }
+
 
         public struct HomeCommandSettings {
             public int TeleportDelay;
