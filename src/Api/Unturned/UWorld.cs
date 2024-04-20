@@ -42,7 +42,6 @@ namespace Essentials.Api.Unturned {
             Object.FindObjectsOfType<Animal>()?.ToList() ?? new List<Animal>(0);
 
         public static List<InteractableVehicle> Vehicles => VehicleManager.vehicles;
-
     }
 
 }

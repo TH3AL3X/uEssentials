@@ -163,6 +163,7 @@ namespace Essentials.Commands {
 
                 distance = args[1].ToInt;
             }
+            var numRemoved = 0;
 
             switch (args[0].ToLowerString)
             {
@@ -172,10 +173,6 @@ namespace Essentials.Commands {
                     {
                         return CommandResult.LangError("COMMAND_NO_PERMISSION");
                     }
-
-                    src.SendMessage("This command is unstable and can cause bugs.", Color.yellow);
-
-                    var numRemoved = 0;
                     UWorld.Vehicles
                     .Where(v => v.passengers.All(p => p?.player == null)) // Check if it's has no passengers
                     .Where(v =>
@@ -192,10 +189,7 @@ namespace Essentials.Commands {
                         numRemoved++;
                     });
 
-
-
                     EssLang.Send(src, "CLEAR_EMPTY_VEHICLES", numRemoved);
-
                     break;
 
                 case "i":
@@ -205,11 +199,36 @@ namespace Essentials.Commands {
                         return CommandResult.LangError("COMMAND_NO_PERMISSION");
                     }
 
-                    ItemManager.askClearAllItems();
+                    if (args.Length > 1)
+                    {
+                        ItemManager.ServerClearItemsInSphere(src.ToPlayer().Position, distance);
+                    }
+                    else
+                    {
+                        ItemManager.askClearAllItems();
+                    }
+
                     EssLang.Send(src, "CLEAR_ITEMS");
                     break;
+                case "z":
+                case "zombies":
+                    UWorld.Zombies
+                    .Where(z =>
+                    {
+                        if (distance == -1) return true;
 
-                default:
+                        return Vector3.Distance(z.transform.position, src.ToPlayer().Position) <= distance;
+                    })
+                    .ForEach(z =>
+                    {
+                        z.tellDead(new Vector3(0, 0, 0), ERagdollEffect.NONE);
+                        z.updateStates();
+                        numRemoved++;
+                    });
+
+                    EssLang.Send(src, "CLEAR_ZOMBIES", numRemoved);
+                    break;
+                 default:
                     return CommandResult.ShowUsage();
             }
 

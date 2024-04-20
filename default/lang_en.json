@@ -52,6 +52,7 @@
   "CHAT_ANTI_SPAM": "Antispam is active; wait to chat again.",
   "CLEAR_EMPTY_VEHICLES": "Removed {0} vehicles.",
   "CLEAR_ITEMS": "All items were removed!",
+  "CLEAR_ZOMBIES": "Removed {0} zombies.",
   "CLEAR_VEHICLES": "All vehicles were removed!",
   "COMMAND_ERROR_OCURRED": "An error occurred while executing this command. Please contact an admin!",
   "COMMAND_ERROR_OCURRED_ADMIN": "An error occurred while executing this command. Check the console for more information.",
