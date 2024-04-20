@@ -309,6 +309,7 @@ namespace Essentials.Core {
             {
                 var needRepairPercentage = (vehicle.asset.health * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
                 VehicleManager.sendVehicleHealth(vehicle, (ushort)needRepairPercentage);
+                vehicle.updateVehicle();
             }
         }
 

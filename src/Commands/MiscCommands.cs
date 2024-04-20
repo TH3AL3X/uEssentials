@@ -121,7 +121,7 @@ namespace Essentials.Commands {
         [CommandInfo(
             Name = "clear",
             Description = "Clear things",
-            Usage = "[i = items, ev = empty vehicles] <distance>" //v = vehicles,
+            Usage = "[i = items, ev = empty vehicles, z = zombies] <distance>" //v = vehicles,
         )]
         private CommandResult ClearCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
         {
@@ -221,8 +221,8 @@ namespace Essentials.Commands {
                     })
                     .ForEach(z =>
                     {
+                        // Need some changes, cuz you can still see the zombie modal, and i dont know why
                         z.tellDead(new Vector3(0, 0, 0), ERagdollEffect.NONE);
-                        z.updateStates();
                         numRemoved++;
                     });
 
