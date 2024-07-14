@@ -60,6 +60,7 @@ using Rocket.API;
 using System.Reflection;
 using Essentials.Components.Player;
 using Rocket.Unturned.Extensions;
+using Essentials.NativeModules.Kit;
 namespace Essentials.Core {
 
     public sealed class EssCore : RocketPlugin {
@@ -90,6 +91,7 @@ namespace Essentials.Core {
         internal ConsoleLogger Logger { get; set; }
         internal ITaskExecutor TaskExecutor { get; set; }
         internal WebResources WebResources { get; set; }
+        public KitManager KitManager { get; internal set; }
 
         private string _folder;
         private string _translationFolder;
@@ -245,6 +247,10 @@ namespace Essentials.Core {
         }
 
         protected override void Unload() {
+
+            // Maybe this can fix the problem of kits resets randomly, we also have declared this in other part, but lets see
+            KitManager.Save();
+
             R.Plugins.OnPluginsLoaded -= OverrideCommands;
 
             // Fix for the rocket reload

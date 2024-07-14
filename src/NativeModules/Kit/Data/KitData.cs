@@ -58,14 +58,15 @@ namespace Essentials.NativeModules.Kit.Data {
 
         internal static string DataFilePath => Path.Combine(FixDeleteKits(), "kits.json");
 
-        public virtual void Save(Dictionary<string, Kit> warps) {
-            JsonUtil.Serialize(DataFilePath, warps.Values);
+        public virtual void Save(Dictionary<string, Kit> kits) {
+            JsonUtil.Serialize(DataFilePath, kits.Values);
         }
 
         public virtual Dictionary<string, Kit> Load() {
             var loadedKits = new Dictionary<string, Kit>();
 
-            if (!File.Exists(DataFilePath)) {
+            if (!File.Exists(DataFilePath)) 
+            {
                 File.Create(DataFilePath).Close();
                 LoadDefault();
             }

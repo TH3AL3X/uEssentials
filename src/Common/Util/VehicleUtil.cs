@@ -24,60 +24,39 @@
 using SDG.Unturned;
 using System.Globalization;
 using System.Linq;
+using Essentials.Api.Module;
+using static Essentials.Api.UEssentials;
+using SDG.Unturned;
+using Essentials.Api.Command;
+using Essentials.Api;
+using Essentials.I18n;
 
 namespace Essentials.Common.Util {
 
     public static class VehicleUtil {
 
-        private static IOrderedEnumerable<VehicleAsset> _cachedAssets;
-
-        public static Optional<VehicleAsset> GetVehicle(ushort id) {
-            return Optional<VehicleAsset>.OfNullable((VehicleAsset) Assets.find(EAssetType.VEHICLE, id));
-        }
-
-        public static Optional<VehicleAsset> GetVehicle(string name) {
-            if (name == null) {
-                return Optional<VehicleAsset>.Empty();
+        public static Asset GetVehicle(string name)
+        {
+            if (ushort.TryParse(name, out var id))
+            {
+                return Assets.find(EAssetType.VEHICLE, id);
             }
+            else
+            {
+                ushort? idToString = 0;
 
-            if (ushort.TryParse(name, out var id)) {
-                return GetVehicle(id);
-            }
-
-            if (_cachedAssets == null) {
-                _cachedAssets = Assets.find(EAssetType.VEHICLE)
-                    .Cast<VehicleAsset>()
-                    .Where(i => i.vehicleName != null)
-                    .OrderBy(i => i.id);
-            }
-
-            var lastAsset = null as VehicleAsset;
-            var lastPriority = 0;
-
-            foreach (var asset in _cachedAssets) {
-                var itemPriority = 0;
-                var vehName = asset.vehicleName;
-
-                if (vehName.EqualsIgnoreCase(name)) {
-                    lastAsset = asset;
-                    break;
+                Asset[] assets = Assets.find(EAssetType.VEHICLE);
+                foreach (Asset ia in assets)
+                {
+                    if (ia != null && ia.FriendlyName != null && ia.FriendlyName.ToLower().Contains(name.ToString()))
+                    {
+                        idToString = ia.id;
+                        break;
+                    }
                 }
 
-                if (vehName.StartsWith(name, true, CultureInfo.InvariantCulture)) {
-                    itemPriority = 3;
-                } else if (vehName.ContainsIgnoreCase(name)) {
-                    itemPriority = 2;
-                } else if (name.IndexOf(' ') > 0 && name.Split(' ').All(p => vehName.ContainsIgnoreCase(p))) {
-                    itemPriority = 1;
-                }
-
-                if (itemPriority > lastPriority) {
-                    lastAsset = asset;
-                    lastPriority = itemPriority;
-                }
+                return Assets.find(EAssetType.VEHICLE, idToString.Value);
             }
-
-            return Optional<VehicleAsset>.OfNullable(lastAsset);
         }
 
     }

@@ -621,20 +621,20 @@ namespace Essentials.Commands {
 
                     var optAsset = VehicleUtil.GetVehicle(args[0].ToString());
 
-                    if (optAsset.IsAbsent) {
+                    if (optAsset.id == null)
+                    {
                         return CommandResult.LangError("INVALID_VEHICLE_ID", args[0]);
                     }
 
-                    var id = optAsset.Value.id;
-
-                    if (UEssentials.Config.VehicleBlacklist.Contains(id) &&
-                        !src.HasPermission("essentials.bypass.blacklist.vehicle")) {
-                        return CommandResult.LangError("BLACKLISTED_VEHICLE", $"{optAsset.Value.vehicleName} ({id})");
+                    if (UEssentials.Config.VehicleBlacklist.Contains(optAsset.id) &&
+                        !src.HasPermission("essentials.bypass.blacklist.vehicle"))
+                    {
+                        return CommandResult.LangError("BLACKLISTED_VEHICLE", $"{optAsset.FriendlyName} ({optAsset.id})");
                     }
 
-                    VehicleTool.giveVehicle(src.ToPlayer().UnturnedPlayer, id);
+                    VehicleTool.giveVehicle(src.ToPlayer().UnturnedPlayer, optAsset.id);
 
-                    EssLang.Send(src, "RECEIVED_VEHICLE", optAsset.Value.vehicleName, id);
+                    EssLang.Send(src, "RECEIVED_VEHICLE", optAsset.FriendlyName, optAsset.id);
                     break;
 
                 case 2:
@@ -644,25 +644,23 @@ namespace Essentials.Commands {
 
                     optAsset = VehicleUtil.GetVehicle(args[1].ToString());
 
-                    if (optAsset.IsAbsent) {
+                    if(optAsset.id == null) {
                         return CommandResult.LangError("INVALID_VEHICLE_ID", args[1]);
                     }
 
-                    var vehAsset = optAsset.Value;
-
                     if (args[0].Equals("*")) {
                         UServer.Players.ForEach(p => {
-                            VehicleTool.giveVehicle(p.UnturnedPlayer, vehAsset.id);
+                            VehicleTool.giveVehicle(p.UnturnedPlayer, optAsset.id);
                         });
 
-                        EssLang.Send(src, "GIVEN_VEHICLE_ALL", vehAsset.vehicleName, vehAsset.id);
+                        EssLang.Send(src, "GIVEN_VEHICLE_ALL", optAsset.FriendlyName, optAsset.id);
                     } else if (!args[0].IsValidPlayerIdentifier) {
                         return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
                     } else {
                         var target = args[0].ToPlayer;
-                        VehicleTool.giveVehicle(target.UnturnedPlayer, vehAsset.id);
+                        VehicleTool.giveVehicle(target.UnturnedPlayer, optAsset.id);
 
-                        EssLang.Send(src, "GIVEN_VEHICLE", vehAsset.vehicleName, vehAsset.id, target.DisplayName);
+                        EssLang.Send(src, "GIVEN_VEHICLE", optAsset.FriendlyName, optAsset.id, target.DisplayName);
                     }
                     break;
 

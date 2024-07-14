@@ -39,7 +39,6 @@ namespace Essentials.NativeModules.Kit
         public override void OnLoad()
         {
             Instance = this;
-
             KitManager = new KitManager();
 
             Level.onPostLevelLoaded += Instance.OnPostLevelLoaded;
@@ -54,11 +53,12 @@ namespace Essentials.NativeModules.Kit
 
         public override void OnUnload()
         {
+            KitManager.Save();
+
             Level.onPostLevelLoaded -= OnPostLevelLoaded;
 
             CommandManager.UnregisterAll(CommandsNamespace);
             EventManager.UnregisterAll<KitEventHandler>();
-            KitManager.Save();
         }
 
         public void OnPostLevelLoaded(int level)
