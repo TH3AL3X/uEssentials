@@ -621,7 +621,7 @@ namespace Essentials.Commands {
 
                     var optAsset = VehicleUtil.GetVehicle(args[0].ToString());
 
-                    if (optAsset.id == null)
+                    if (optAsset == null)
                     {
                         return CommandResult.LangError("INVALID_VEHICLE_ID", args[0]);
                     }
@@ -644,7 +644,7 @@ namespace Essentials.Commands {
 
                     optAsset = VehicleUtil.GetVehicle(args[1].ToString());
 
-                    if(optAsset.id == null) {
+                    if(optAsset == null) {
                         return CommandResult.LangError("INVALID_VEHICLE_ID", args[1]);
                     }
 
