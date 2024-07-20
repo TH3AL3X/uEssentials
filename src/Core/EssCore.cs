@@ -313,9 +313,8 @@ namespace Essentials.Core {
 
             if (component.AutoRepair)
             {
-                var needRepairPercentage = (vehicle.asset.health * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
-                VehicleManager.sendVehicleHealth(vehicle, (ushort)needRepairPercentage);
-                vehicle.updateVehicle();
+                var needRepairPercentage = (vehicle.asset.healthMax * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
+                vehicle.askRepair((ushort)needRepairPercentage);
             }
         }
 
