@@ -32,11 +32,15 @@ namespace Essentials.Components.Player {
         public bool AutoRepair { get; set; }
 
         protected override void SafeFixedUpdate() {
-            var currentVeh = Player.CurrentVehicle;
 
-            if (currentVeh == null) {
+            if (!Player.IsInVehicle)
+            {
+                Player.RemoveComponent<VehicleFeatures>();
                 return;
             }
+
+            var currentVeh = Player.CurrentVehicle;
+
 
             var needRepairPercentage = (currentVeh.asset.health * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
             var needRefuelPercentage = (currentVeh.asset.fuel * UEssentials.Config.VehicleFeatures.RefuelPercentage) / 100;
