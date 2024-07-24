@@ -33,7 +33,7 @@ namespace Essentials.Components.Player {
 
         protected override void SafeFixedUpdate() {
 
-            if (!Player.IsInVehicle)
+            if (!Player.IsOnline || !Player.IsInVehicle)
             {
                 Player.RemoveComponent<VehicleFeatures>();
                 return;
