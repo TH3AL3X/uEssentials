@@ -133,7 +133,6 @@ namespace Essentials.Core {
 
                 Provider.onServerDisconnected += PlayerDisconnectCallback;
                 Provider.onServerConnected += PlayerConnectCallback;
-                VehicleManager.OnVehicleExploded += OnVehicleExploded;
 
                 Logger.LogInfo("Enabling uEssentials...");
 
@@ -265,7 +264,6 @@ namespace Essentials.Core {
             BarricadeManager.onDeployBarricadeRequested -= onBarricadeDeploy;
             StructureManager.onDeployStructureRequested -= onStructureDeploy;
             InteractableDoor.OnDoorChanged_Global -= OnDoorChanged;
-            VehicleManager.OnVehicleExploded -= OnVehicleExploded;
 
             var executingAssembly = GetType().Assembly;
 
@@ -303,19 +301,6 @@ namespace Essentials.Core {
         {
             yield return new WaitForSeconds(UEssentials.Config.CloseDoor.Seconds);
             BarricadeManager.ServerSetDoorOpen(door, false);
-        }
-
-        private void OnVehicleExploded(InteractableVehicle vehicle)
-        {
-            UPlayer player = new UPlayer(vehicle.passengers[0].player.ToUnturnedPlayer());
-
-            var component = player.GetComponent<VehicleFeatures>() ?? player.AddComponent<VehicleFeatures>();
-
-            if (component.AutoRepair)
-            {
-                var needRepairPercentage = (vehicle.asset.healthMax * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
-                vehicle.askRepair((ushort)needRepairPercentage);
-            }
         }
 
         private void onStructureDeploy(Structure structure, ItemStructureAsset asset, ref Vector3 point, ref float angle_x, ref float angle_y, ref float angle_z, ref ulong owner, ref ulong group, ref bool shouldAllow)

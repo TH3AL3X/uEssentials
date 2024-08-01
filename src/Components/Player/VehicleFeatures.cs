@@ -22,6 +22,7 @@
 #endregion
 
 using Essentials.Api;
+using Rocket.Unturned.Chat;
 using SDG.Unturned;
 
 namespace Essentials.Components.Player {
@@ -40,7 +41,6 @@ namespace Essentials.Components.Player {
             }
 
             var currentVeh = Player.CurrentVehicle;
-
 
             var needRepairPercentage = (currentVeh.asset.health * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
             var needRefuelPercentage = (currentVeh.asset.fuel * UEssentials.Config.VehicleFeatures.RefuelPercentage) / 100;

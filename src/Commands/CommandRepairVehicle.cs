@@ -27,6 +27,7 @@ using Essentials.I18n;
 using SDG.Unturned;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
+using Rocket.Unturned.Chat;
 
 namespace Essentials.Commands {
 
@@ -49,6 +50,12 @@ namespace Essentials.Commands {
                 if (currentVeh != null) {
                     VehicleManager.sendVehicleHealth(currentVeh, currentVeh.asset.health);
 
+                    // fix tires
+                    for (int i = 0; i <= 4; i++)
+                    {
+                        currentVeh.askRepairTire(i);
+                    }
+
                     EssLang.Send(src, "VEHICLE_REPAIRED");
                 } else {
                     return CommandResult.LangError("NOT_IN_VEHICLE");
@@ -64,6 +71,12 @@ namespace Essentials.Commands {
                         .ToList()
                         .ForEach(vehicle => {
                             VehicleManager.sendVehicleHealth(vehicle, vehicle.asset.health);
+
+                            // fix tires
+                            for (int i = 0; i <= 4; i++)
+                            {
+                                vehicle.askRepairTire(i);
+                            }
                         });
 
                     EssLang.Send(src, "VEHICLE_REPAIRED_ALL");
