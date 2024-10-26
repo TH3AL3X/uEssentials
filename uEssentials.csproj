@@ -58,9 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="RocketModFix.Rocket.API" Version="4.19.2" />
-    <PackageReference Include="RocketModFix.Rocket.Core" Version="4.19.2" />
-    <PackageReference Include="RocketModFix.Rocket.Unturned" Version="4.19.2" />
+    <PackageReference Include="RocketModFix.Rocket.API" Version="4.21.4" />
+    <PackageReference Include="RocketModFix.Rocket.Core" Version="4.21.4" />
+    <PackageReference Include="RocketModFix.Rocket.Unturned" Version="4.21.4" />
     <PackageReference Include="RocketModFix.UnityEngine.Redist" Version="2021.3.29.1" />
     <PackageReference Include="RocketModFix.Unturned.Redist" Version="3.24.2" />
   </ItemGroup>

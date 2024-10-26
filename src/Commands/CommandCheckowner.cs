@@ -56,24 +56,24 @@ namespace Essentials.Commands
             var look = player.Look;
             ulong owner = 0;
 
-            if (PhysicsUtility.raycast(new Ray(look.aim.position, look.aim.forward), out RaycastHit hit, Mathf.Infinity,
-                RayMasks.BARRICADE | RayMasks.STRUCTURE | RayMasks.VEHICLE))
+            if (Physics.Raycast(look.aim.position, look.aim.forward, out var hit, Mathf.Infinity, RayMasks.BARRICADE | RayMasks.STRUCTURE | RayMasks.VEHICLE))
             {
-                var barricade = hit.transform.GetComponent<Interactable2SalvageBarricade>();
-                var structure = hit.transform.GetComponent<Interactable2SalvageStructure>();
-                var vehicle = hit.transform.GetComponent<InteractableVehicle>();
+                switch (hit.transform.tag)
+                {
+                    case "Barricade":
+                        var barricade = hit.transform.GetComponent<Interactable2SalvageBarricade>();
+                        owner = barricade.owner;
+                        break;
 
-                if (structure != null)
-                {
-                    owner = structure.owner;
-                }
-                else if(barricade != null)
-                {
-                    owner = barricade.owner;
-                }
-                else if (vehicle != null)
-                {
-                    owner = vehicle.lockedOwner.m_SteamID;
+                    case "Structure":
+                        var structure = hit.transform.GetComponent<Interactable2SalvageStructure>();
+                        owner = structure.owner;
+                        break;
+
+                    case "Vehicle":
+                        var vehicle = hit.transform.GetComponent<InteractableVehicle>();
+                        owner = vehicle.lockedOwner.m_SteamID;
+                        break;
                 }
 
                 EssLang.Send(src, "CHECKOWNER", owner);
