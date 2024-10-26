@@ -26,7 +26,6 @@
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
-using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using UnityEngine;
 

@@ -456,17 +456,36 @@ namespace Essentials.Commands {
                     if (!src.HasPermission($"{cmd.Permission}.all")) {
                         return CommandResult.NoPermission($"{cmd.Permission}.all");
                     }
-                    if (toggleVal.Value) {
-                        component.AutoRepair = true;
-                        component.AutoRefuel = true;
-                        EssLang.Send(src, "AUTO_REPAIR_ENABLED");
-                        EssLang.Send(src, "AUTO_REFUEL_ENABLED");
-                    } else {
-                        component.AutoRepair = false;
-                        component.AutoRefuel = false;
-                        EssLang.Send(src, "AUTO_REPAIR_DISABLED");
-                        EssLang.Send(src, "AUTO_REFUEL_DISABLED");
+
+                    var players = new List<UPlayer>(UServer.Players);
+
+                    if (players.Count == 0)
+                    {
+                        return CommandResult.LangError("NO_PLAYERS_FOR_KICK");
                     }
+
+                    var reason = args.IsEmpty
+                        ? EssLang.Translate("KICK_NO_SPECIFIED_REASON")
+                        : args.Join(0);
+
+                    players.ForEach(player => {
+                        var component_all = player.GetComponent<VehicleFeatures>() ?? player.AddComponent<VehicleFeatures>();
+
+                        if (toggleVal.Value)
+                        {
+                            component_all.AutoRepair = true;
+                            component_all.AutoRefuel = true;
+                            EssLang.Send(src, "AUTO_REPAIR_ENABLED");
+                            EssLang.Send(src, "AUTO_REFUEL_ENABLED");
+                        }
+                        else
+                        {
+                            component_all.AutoRepair = false;
+                            component_all.AutoRefuel = false;
+                            EssLang.Send(src, "AUTO_REPAIR_DISABLED");
+                            EssLang.Send(src, "AUTO_REFUEL_DISABLED");
+                        }
+                    });
                     break;
 
                 default:
