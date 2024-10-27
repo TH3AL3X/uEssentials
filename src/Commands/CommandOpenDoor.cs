@@ -47,15 +47,14 @@ namespace Essentials.Commands
             var player = src.ToPlayer();
             var look = player.Look;
 
-            if (PhysicsUtility.raycast(new Ray(look.aim.position, look.aim.forward), out RaycastHit hit, Mathf.Infinity, RayMasks.BARRICADE))
+            if (Physics.Raycast(look.aim.position, look.aim.forward, out var hit, Mathf.Infinity, RayMasks.BARRICADE | RayMasks.STRUCTURE | RayMasks.VEHICLE))
             {
-                InteractableDoorHinge hinge = hit.transform.GetComponent<InteractableDoorHinge>();
+                // Intentamos obtener el componente InteractableDoor directamente
+                InteractableDoor door = hit.transform.GetComponentInParent<InteractableDoor>();
 
-                if (hinge != null)
+                if (door != null)
                 {
-                    InteractableDoor door = hinge.door;
                     bool open = !door.isOpen;
-
                     BarricadeManager.ServerSetDoorOpen(door, open);
 
                     EssLang.Send(src, "DOOR_TOGGLED", open ? "opened" : "closed");
