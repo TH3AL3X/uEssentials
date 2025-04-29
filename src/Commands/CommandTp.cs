@@ -127,35 +127,45 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        private static void FindPlaceOrPlayer(string arg, out bool found,
-                                              out Vector3 position, out string placeOrPlayer) {
+        private static void FindPlaceOrPlayer(string arg, out bool found, out Vector3 position, out string placeOrPlayer)
+        {
             position = Vector3.zero;
             placeOrPlayer = string.Empty;
 
             var player = UPlayer.From(arg);
-            if (player != null) {
+            if (player != null)
+            {
                 found = true;
                 position = player.Position;
                 placeOrPlayer = player.DisplayName;
-            } else {
-                found = TryFindPlace(arg, out var node);
+            }
 
-                if (found) {
-                    placeOrPlayer = node.name;
-                    position = node.point + new Vector3(0, 1, 0);
+            else
+            {
+                found = TryFindPlace(arg, out LocationDevkitNode node);
+
+                if (found)
+                {
+                    placeOrPlayer = node.locationName;
+                    position = node.transform.position + new Vector3(0, 1, 0);
                 }
             }
         }
 
-        private static bool TryFindPlace(string name, out LocationNode outNode) {
-            outNode = (
-                from node in LevelNodes.nodes
-                where node.type == ENodeType.LOCATION
-                let locNode = node as LocationNode
-                where locNode.name.ToLower().Contains(name.ToLower())
-                select locNode
-            ).FirstOrDefault();
-            return outNode != null;
+        private static bool TryFindPlace(string name, out LocationDevkitNode outNode)
+        {
+            outNode = null;
+
+            foreach (LocationDevkitNode node in LocationDevkitNodeSystem.Get().GetAllNodes())
+            {
+                if (NameTool.checkNames(name, node.locationName))
+                {
+                    outNode = node;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     }
