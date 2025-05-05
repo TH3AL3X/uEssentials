@@ -309,6 +309,7 @@
   "ITEMINFO_TYPE": "Type: {0}",
 
   "GOTOBED": "You has been teleported to player bed",
+  "GOTOBED_MULTIPLE": "This player has multiple beds ({0}), use /gotobed {1} number",
   "GOTOBED_NOT_FOUND": "Player bed not found",
   "CHECKOWNER": "Owner of this SteamID64: {0}",
   "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",

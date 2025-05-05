@@ -275,6 +275,7 @@
   "ITEMINFO_TYPE": "Tipo: {0}",
 
   "GOTOBED": "You has been teleported to player bed",
+  "GOTOBED_MULTIPLE": "Este jugador tiene multiples camas ({0}), usa /gotobed {1} número",
   "GOTOBED_NOT_FOUND": "Player bed not found",
   "CHECKOWNER": "Owner of this: {0}",
   "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",
