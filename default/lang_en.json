@@ -318,5 +318,6 @@
   "FLY_TOPLAYER": "Now you {0} fly to player {1}",
   "FLY_SPEED_CHANGED": "Your speed has been changed to {0}",
   "SET_ATTACHMENT": "You added an attachment to the weapon",
-  "SET_ATTACHMENT_FAIL": "Impossible to add this attachment to the weaoon"
+  "SET_ATTACHMENT_FAIL": "Impossible to add this attachment to the weaoon",
+  "GOTOBED_MULTIPLE": "This player has multiple beds ({0}), use /gotobed {1} number"
 }
