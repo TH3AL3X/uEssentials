@@ -23,17 +23,21 @@
 
 using System;
 
-namespace Essentials.Common.Util {
+namespace Essentials.Common.Util
+{
 
-    public class LazyInitVar<TValue> : LazyInitValue<TValue> {
+    public class LazyInitVar<TValue> : LazyInitValue<TValue>
+    {
 
         private readonly Func<TValue> _initializer;
 
-        public static LazyInitVar<TValue> Of(Func<TValue> initializer) {
+        public static LazyInitVar<TValue> Of(Func<TValue> initializer)
+        {
             return new LazyInitVar<TValue>(initializer);
         }
 
-        private LazyInitVar(Func<TValue> initializer) {
+        private LazyInitVar(Func<TValue> initializer)
+        {
             _initializer = initializer;
         }
 

@@ -27,7 +27,8 @@ using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using static Essentials.Commands.CommandTell;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "reply",
@@ -37,19 +38,23 @@ namespace Essentials.Commands {
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = 1
     )]
-    public class CommandReply : EssCommand {
+    public class CommandReply : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var playerId = src.ToPlayer().CSteamId.m_SteamID;
 
-            if (!ReplyTo.TryGetValue(playerId, out var targetId)) {
-                return CommandResult.LangError("NOBODY_TO_REPLY");
+            if (!ReplyTo.TryGetValue(playerId, out var targetId))
+            {
+                return CommandResult.LangError("icon_error_general", "NOBODY_TO_REPLY");
             }
 
             var target = UPlayer.From(targetId);
 
-            if (target == null) {
-                return CommandResult.LangError("NO_LONGER_ONLINE");
+            if (target == null)
+            {
+                return CommandResult.LangError("icon_error_general", "NO_LONGER_ONLINE");
             }
 
             src.DispatchCommand($"tell \"{target.DisplayName}\" \"{args.Join(0)}\"");

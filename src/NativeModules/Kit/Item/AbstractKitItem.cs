@@ -23,9 +23,11 @@
 
 using Essentials.Api.Unturned;
 
-namespace Essentials.NativeModules.Kit.Item {
+namespace Essentials.NativeModules.Kit.Item
+{
 
-    public abstract class AbstractKitItem {
+    public abstract class AbstractKitItem
+    {
 
         public abstract bool GiveTo(UPlayer player, bool dropIfInventoryFull = true);
 

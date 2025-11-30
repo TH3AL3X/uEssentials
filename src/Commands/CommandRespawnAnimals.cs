@@ -22,31 +22,35 @@
 #endregion
 
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
-using SDG.Unturned;
 using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "respawnanimals",
         Description = "Respawn all animals"
     )]
-    public class CommandRespawnAnimal : EssCommand {
+    public class CommandRespawnAnimal : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var respawnedCount = 0;
 
-            UWorld.Animals.Where(z => z.isDead).ForEach(animal => {
+            UWorld.Animals.Where(z => z.isDead).ForEach(animal =>
+            {
                 AnimalManager.sendAnimalAlive(animal, animal.transform.position, 0);
                 respawnedCount++;
             });
 
-            EssLang.Send(src, "RESPAWNED_ANIMALS", respawnedCount);
+            EssLang.Send("generalicon", src, "RESPAWNED_ANIMALS", respawnedCount);
 
             return CommandResult.Success();
         }

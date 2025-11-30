@@ -21,9 +21,6 @@
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
@@ -35,10 +32,14 @@ using Essentials.Event.Handling;
 using Essentials.I18n;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using EventType = Essentials.Api.Event.EventType;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     // TODO: Improve
     // Multiple requests
@@ -49,7 +50,8 @@ namespace Essentials.Commands {
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = /*3*/0
     )]
-    public class CommandTpa : EssCommand {
+    public class CommandTpa : EssCommand
+    {
 
         private static Dictionary<ulong, ulong> _requests = new Dictionary<ulong, ulong>();
         private static Dictionary<ulong, Task> _waitingToTeleport = new Dictionary<ulong, Task>();
@@ -65,7 +67,7 @@ namespace Essentials.Commands {
                 /*case "autoaccept":
                     if (!args[2].IsValidPlayerIdentifier)
                     {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[2]);
+                        return CommandResult.LangError("icon_error_general","PLAYER_NOT_FOUND", args[2]);
                     }
 
                     var whitelist_target = args[2].ToPlayer;
@@ -76,22 +78,22 @@ namespace Essentials.Commands {
                             if (!player.GetComponent<TpaPlayer>().whitelist.Contains(whitelist_target))
                             {
                                 player.GetComponent<TpaPlayer>().whitelist.Add(whitelist_target);
-                                EssLang.Send(src, "TPA_WHITELIST_ADDED");
+                                EssLang.Send("generalicon",src, "TPA_WHITELIST_ADDED");
                             }
                             else
                             {
-                                EssLang.Send(src, "TPA_WHITELIST_ALREADY");
+                                EssLang.Send("generalicon",src, "TPA_WHITELIST_ALREADY");
                             }
                             break;
                         case "remove":
                             if (player.GetComponent<TpaPlayer>().whitelist.Contains(whitelist_target))
                             {
                                 player.GetComponent<TpaPlayer>().whitelist.Remove(whitelist_target);
-                                EssLang.Send(src, "TPA_WHITELIST_REMOVED");
+                                EssLang.Send("generalicon",src, "TPA_WHITELIST_REMOVED");
                             }
                             else
                             {
-                                return CommandResult.LangError("TPA_WHITELIST_NONE");
+                                return CommandResult.LangError("icon_error_general","TPA_WHITELIST_NONE");
                             }
                             break;
                         default:
@@ -109,7 +111,7 @@ namespace Essentials.Commands {
 
                         if (!_requests.ContainsValue(senderId))
                         {
-                            return CommandResult.LangError("TPA_NONE");
+                            return CommandResult.LangError("icon_error_general", "TPA_NONE");
                         }
 
                         var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
@@ -117,7 +119,7 @@ namespace Essentials.Commands {
 
                         if (whoSent == null)
                         {
-                            return CommandResult.LangError("TPA_NONE");
+                            return CommandResult.LangError("icon_error_general", "TPA_NONE");
                         }
 
                         // Little fix, kick player if he wanted to teleport inside of a vehicle
@@ -128,8 +130,8 @@ namespace Essentials.Commands {
 
                         }
 
-                        EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
-                        EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
+                        EssLang.Send("generalicon", src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
+                        EssLang.Send("generalicon", whoSent, "TPA_ACCEPTED", src.DisplayName);
                         _requests.Remove(whoSentId);
 
                         var tpaSettings = EssCore.Instance.Config.Tpa;
@@ -170,7 +172,7 @@ namespace Essentials.Commands {
 
                         if (!_requests.ContainsValue(senderId))
                         {
-                            return CommandResult.LangError("TPA_NONE");
+                            return CommandResult.LangError("icon_error_general", "TPA_NONE");
                         }
 
                         var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
@@ -178,10 +180,10 @@ namespace Essentials.Commands {
 
                         if (whoSent != null)
                         {
-                            EssLang.Send(whoSent, "TPA_DENIED", src.DisplayName);
+                            EssLang.Send("generalicon", whoSent, "TPA_DENIED", src.DisplayName);
                         }
 
-                        EssLang.Send(src, "TPA_DENIED_SENDER", whoSent == null ? "Unknown" : whoSent.DisplayName);
+                        EssLang.Send("generalicon", src, "TPA_DENIED_SENDER", whoSent == null ? "Unknown" : whoSent.DisplayName);
                         _requests.Remove(whoSentId);
                         break;
                     }
@@ -196,11 +198,11 @@ namespace Essentials.Commands {
 
                         if (!_requests.ContainsKey(senderId))
                         {
-                            return CommandResult.LangError("TPA_NONE");
+                            return CommandResult.LangError("icon_error_general", "TPA_NONE");
                         }
 
                         _requests.Remove(senderId);
-                        EssLang.Send(src, "TPA_CANCELLED");
+                        EssLang.Send("generalicon", src, "TPA_CANCELLED");
                         break;
                     }
 
@@ -214,7 +216,7 @@ namespace Essentials.Commands {
 
                         if (!args[0].IsValidPlayerIdentifier)
                         {
-                            return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                            return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                         }
 
                         var tpaSettings = EssCore.Instance.Config.Tpa;
@@ -229,7 +231,7 @@ namespace Essentials.Commands {
 
                                 if (!_requests.ContainsValue(senderId))
                                 {
-                                    return CommandResult.LangError("TPA_NONE");
+                                    return CommandResult.LangError("icon_error_general","TPA_NONE");
                                 }
 
                                 var whoSentId = _requests.Keys.FirstOrDefault(k => _requests[k] == senderId);
@@ -243,8 +245,8 @@ namespace Essentials.Commands {
 
                                 }
 
-                                EssLang.Send(src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
-                                EssLang.Send(whoSent, "TPA_ACCEPTED", src.DisplayName);
+                                EssLang.Send("generalicon",src, "TPA_ACCEPTED_SENDER", whoSent.DisplayName);
+                                EssLang.Send("generalicon",whoSent, "TPA_ACCEPTED", src.DisplayName);
                                 _requests.Remove(whoSentId);
 
                                 if (tpaSettings.TeleportDelay > 0)
@@ -280,7 +282,7 @@ namespace Essentials.Commands {
                             // Avoid 'flooding' requests to the same player
                             if (value == target.CSteamId.m_SteamID)
                             {
-                                return CommandResult.LangError("TPA_ALREADY_SENT", target.DisplayName);
+                                return CommandResult.LangError("icon_error_general", "TPA_ALREADY_SENT", target.DisplayName);
                             }
                             _requests.Remove(senderId);
                         }
@@ -288,13 +290,13 @@ namespace Essentials.Commands {
 #if !DEV
                         if (target == player)
                         {
-                            return CommandResult.LangError("TPA_YOURSELF");
+                            return CommandResult.LangError("icon_error_general","TPA_YOURSELF");
                         }
 #endif
 
                         _requests.Add(senderId, target.CSteamId.m_SteamID);
-                        EssLang.Send(src, "TPA_SENT_SENDER", target.DisplayName);
-                        EssLang.Send(target, "TPA_SENT", src.DisplayName);
+                        EssLang.Send("generalicon", src, "TPA_SENT_SENDER", target.DisplayName);
+                        EssLang.Send("generalicon", target, "TPA_SENT", src.DisplayName);
 
                         if (tpaSettings.ExpireDelay > 0)
                         {
@@ -311,36 +313,44 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        protected override void OnUnregistered() {
+        protected override void OnUnregistered()
+        {
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("TpaPlayerDisconnect");
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("TpaPlayerMove");
         }
 
         [SubscribeEvent(EventType.PLAYER_DISCONNECTED)]
-        private void TpaPlayerDisconnect(UnturnedPlayer player) {
+        private void TpaPlayerDisconnect(UnturnedPlayer player)
+        {
             var playerId = player.CSteamID.m_SteamID;
 
-            if (_requests.ContainsKey(playerId)) {
+            if (_requests.ContainsKey(playerId))
+            {
                 _requests.Remove(playerId);
-            } else if (_requests.ContainsValue(playerId)) {
+            }
+            else if (_requests.ContainsValue(playerId))
+            {
                 var val = _requests.Keys.FirstOrDefault(k => _requests[k] == playerId);
 
-                if (val != default(ulong)) {
+                if (val != default(ulong))
+                {
                     _requests.Remove(val);
                 }
             }
         }
 
         [SubscribeEvent(EventType.PLAYER_UPDATE_POSITION)]
-        private void TpaPlayerMove(UnturnedPlayer player, Vector3 newPosition) {
+        private void TpaPlayerMove(UnturnedPlayer player, Vector3 newPosition)
+        {
             if (
                 UEssentials.Config.Tpa.TeleportDelay > 0 &&
                 UEssentials.Config.Tpa.CancelTeleportWhenMove &&
                 _waitingToTeleport.TryGetValue(player.CSteamID.m_SteamID, out var task)
-            ) {
+            )
+            {
                 task.Cancel();
                 _waitingToTeleport.Remove(player.CSteamID.m_SteamID);
-                UPlayer.TryGet(player, p => EssLang.Send(p, "TELEPORT_CANCELLED_MOVED"));
+                UPlayer.TryGet(player, p => EssLang.Send("teleport_cancelled_moved", p, "TELEPORT_CANCELLED_MOVED"));
             }
         }
     }

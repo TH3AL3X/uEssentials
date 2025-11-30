@@ -22,17 +22,19 @@
 #endregion
 
 using Essentials.Api;
-using Rocket.Unturned.Chat;
 using SDG.Unturned;
 
-namespace Essentials.Components.Player {
+namespace Essentials.Components.Player
+{
 
-    public class VehicleFeatures : PlayerComponent {
+    public class VehicleFeatures : PlayerComponent
+    {
 
         public bool AutoRefuel { get; set; }
         public bool AutoRepair { get; set; }
 
-        protected override void SafeFixedUpdate() {
+        protected override void SafeFixedUpdate()
+        {
 
             if (!Player.IsOnline || !Player.IsInVehicle)
             {
@@ -45,12 +47,14 @@ namespace Essentials.Components.Player {
             var needRepairPercentage = (currentVeh.asset.health * UEssentials.Config.VehicleFeatures.RepairPercentage) / 100;
             var needRefuelPercentage = (currentVeh.asset.fuel * UEssentials.Config.VehicleFeatures.RefuelPercentage) / 100;
 
-            if (AutoRefuel && currentVeh.fuel <= needRefuelPercentage) {
+            if (AutoRefuel && currentVeh.fuel <= needRefuelPercentage)
+            {
                 VehicleManager.sendVehicleFuel(currentVeh, currentVeh.asset.fuel);
                 currentVeh.fuel = currentVeh.asset.fuel;
             }
 
-            if (AutoRepair && currentVeh.health <= needRepairPercentage) {
+            if (AutoRepair && currentVeh.health <= needRepairPercentage)
+            {
                 VehicleManager.sendVehicleHealth(currentVeh, currentVeh.asset.health);
                 currentVeh.health = currentVeh.asset.health;
             }

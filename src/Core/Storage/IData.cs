@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Core.Storage {
+namespace Essentials.Core.Storage
+{
 
-    public interface IData<T> {
+    public interface IData<T>
+    {
 
         /// <summary>
         /// Save given data

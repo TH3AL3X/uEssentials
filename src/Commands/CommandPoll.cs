@@ -21,24 +21,26 @@
 */
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using Essentials.I18n;
-using System;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Task;
 using Essentials.Common;
+using Essentials.I18n;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "poll",
         Description = "Start/Stop a poll",
         Usage = "[start | stop | list | info]"
     )]
-    public class CommandPoll : EssCommand {
+    public class CommandPoll : EssCommand
+    {
 
         /// <summary>
         /// List of current polls
@@ -48,10 +50,12 @@ namespace Essentials.Commands {
         /// <summary>
         /// Check a poll with passed name exists, if not, will send POLL_NOT_EXIST message.
         /// </summary>
-        internal static readonly Func<string, ICommandSource, bool> PollExists = (pollName, source) => {
-            lock (Polls) {
+        internal static readonly Func<string, ICommandSource, bool> PollExists = (pollName, source) =>
+        {
+            lock (Polls)
+            {
                 if (Polls.ContainsKey(pollName)) return true;
-                EssLang.Send(source, "POLL_NOT_EXIST");
+                EssLang.Send("generalicon", source, "POLL_NOT_EXIST");
                 return false;
             }
         };
@@ -82,7 +86,7 @@ namespace Essentials.Commands {
                         {
                             if (Polls.ContainsKey(pollName))
                             {
-                                return CommandResult.LangError("POLL_NAME_IN_USE");
+                                return CommandResult.LangError("icon_error_general", "POLL_NAME_IN_USE");
                             }
                         }
 
@@ -92,14 +96,14 @@ namespace Essentials.Commands {
                         {
                             var poll = new Poll(pollName, pollDescription, args[2].ToInt);
 
-                            EssLang.Send(src, "POLL_STARTED", pollDescription, pollName);
+                            EssLang.Send("generalicon", src, "POLL_STARTED", pollDescription, pollName);
 
                             poll.Start();
 
                         }
                         else
                         {
-                            return CommandResult.LangError("INVALID_NUMBER", args[2]);
+                            return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[2]);
                         }
                         break;
                     }
@@ -131,14 +135,14 @@ namespace Essentials.Commands {
                         {
                             if (!Polls.Any())
                             {
-                                return CommandResult.LangError("POLL_NONE");
+                                return CommandResult.LangError("icon_error_general", "POLL_NONE");
                             }
 
-                            EssLang.Send(src, "POLL_LIST");
+                            EssLang.Send("generalicon", src, "POLL_LIST");
 
                             foreach (var poll in Polls.Values)
                             {
-                                EssLang.Send(src,
+                                EssLang.Send("generalicon", src,
                                     "POLL_LIST_ENTRY",
                                     poll.Name,
                                     poll.Description,
@@ -156,7 +160,7 @@ namespace Essentials.Commands {
                         {
                             if (!Polls.Any())
                             {
-                                return CommandResult.LangError("POLL_NONE");
+                                return CommandResult.LangError("icon_error_general", "POLL_NONE");
                             }
 
                             if (args.Length < 2)
@@ -173,9 +177,9 @@ namespace Essentials.Commands {
 
                             var poll = Polls[pollName];
 
-                            EssLang.Send(src, "POLL_INFO", pollName);
+                            EssLang.Send("generalicon", src, "POLL_INFO", pollName);
 
-                            EssLang.Send(
+                            EssLang.Send("generalicon",
                                 src,
                                 "POLL_LIST_ENTRY",
                                 pollName,
@@ -191,7 +195,8 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        public class Poll {
+        public class Poll
+        {
 
             /// <summary>
             /// List of player who voted
@@ -224,7 +229,8 @@ namespace Essentials.Commands {
             /// </summary>
             public int Duration { get; set; }
 
-            public Poll(string name, string description, int duration) {
+            public Poll(string name, string description, int duration)
+            {
                 Voted = new List<string>();
                 Name = name;
                 Description = description;
@@ -235,17 +241,20 @@ namespace Essentials.Commands {
             /// <summary>
             /// Start the poll
             /// </summary>
-            public void Start() 
+            public void Start()
             {
                 var thiz = this;
                 lock (Polls) Polls.Add(Name, thiz);
-                
-                if (Duration > 0) {
+
+                if (Duration > 0)
+                {
                     Task.Create()
                         .Id("Poll Stop")
                         .Delay(TimeSpan.FromSeconds(Duration))
-                        .Action(() => {
-                            lock (Polls) {
+                        .Action(() =>
+                        {
+                            lock (Polls)
+                            {
 
                                 Rocket.Core.Logging.Logger.Log("Success7");
                                 if (!Polls.ContainsKey(thiz.Name)) return;
@@ -257,15 +266,18 @@ namespace Essentials.Commands {
 
                 if (!UEssentials.Config.EnablePollRunningMessage) return;
 
-                var interval = UEssentials.Config.PollRunningMessageCooldown*1000;
+                var interval = UEssentials.Config.PollRunningMessageCooldown * 1000;
 
                 Task.Create()
                     .Id("Poll Running Message")
                     .Interval(interval)
                     .UseIntervalAsDelay()
-                    .Action(task => {
-                        lock (Polls) {
-                            if (!Polls.ContainsKey(thiz.Name)) {
+                    .Action(task =>
+                    {
+                        lock (Polls)
+                        {
+                            if (!Polls.ContainsKey(thiz.Name))
+                            {
                                 task.Cancel();
                                 return;
                             }
@@ -279,7 +291,8 @@ namespace Essentials.Commands {
             /// <summary>
             /// Stop the poll
             /// </summary>
-            public void Stop() {
+            public void Stop()
+            {
                 EssLang.SendGlobal("POLL_STOPPED", Name, Description, YesVotes, NoVotes);
 
                 lock (Polls) Polls.Remove(Name);

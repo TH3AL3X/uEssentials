@@ -35,21 +35,26 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Essentials.I18n {
-    
-    public static class EssLang {
+namespace Essentials.I18n
+{
+
+    public static class EssLang
+    {
 
         internal const string KEY_NOT_FOUND_MESSAGE = "Lang: Key not found '{0}', report to an adminstrator.";
-        private static readonly string[] LANGS = { "en", "pt-br", "es", "ru" };
+        private static readonly string[] LANGS = { "es", "pt-br", "en", "ru" };
         private static readonly Dictionary<string, object> _translations = new Dictionary<string, object>();
 
-        private static void LoadDefault(string locale) {
+        private static void LoadDefault(string locale)
+        {
             LoadDefault(locale, Path.Combine(UEssentials.TranslationFolder, $"lang_{locale}.json"));
         }
 
-        public static void LoadDefault(string locale, string destPath) {
+        public static void LoadDefault(string locale, string destPath)
+        {
             if (File.Exists(destPath))
                 File.WriteAllText(destPath, string.Empty);
             else
@@ -58,8 +63,10 @@ namespace Essentials.I18n {
             var sw = new StreamWriter(destPath);
             var defaultLangStream = GetDefaultStream(locale);
 
-            using (var sr = new StreamReader(defaultLangStream, Encoding.UTF8, true)) {
-                for (string line; (line = sr.ReadLine()) != null;) {
+            using (var sr = new StreamReader(defaultLangStream, Encoding.UTF8, true))
+            {
+                for (string line; (line = sr.ReadLine()) != null;)
+                {
                     sw.WriteLine(line);
                 }
             }
@@ -67,9 +74,11 @@ namespace Essentials.I18n {
             sw.Close();
         }
 
-        public static void Load() {
+        public static void Load()
+        {
             // Load defaults
-            LANGS.ForEach(l => {
+            LANGS.ForEach(l =>
+            {
                 var lpath = $"{UEssentials.TranslationFolder}lang_{l}.json";
                 if (!File.Exists(lpath)) LoadDefault(l);
             });
@@ -77,10 +86,14 @@ namespace Essentials.I18n {
             var locale = UEssentials.Config.Locale.ToLowerInvariant();
             var translationPath = $"{UEssentials.TranslationFolder}lang_{locale}.json";
 
-            if (!File.Exists(translationPath)) {
-                if (LANGS.Contains(locale)) {
+            if (!File.Exists(translationPath))
+            {
+                if (LANGS.Contains(locale))
+                {
                     LoadDefault(locale);
-                } else {
+                }
+                else
+                {
                     UEssentials.Logger.LogError($"Invalid locale '{locale}', " +
                                                 $"File not found '{translationPath}'");
                     UEssentials.Logger.LogError("Switching to default locale (en)...");
@@ -91,7 +104,8 @@ namespace Essentials.I18n {
 
             JObject json;
 
-            try {
+            try
+            {
                 json = JObject.Parse(File.ReadAllText(translationPath));
 
                 /*
@@ -100,9 +114,12 @@ namespace Essentials.I18n {
                 var defaultJson = JObject.Load(new JsonTextReader(new StreamReader(
                     GetDefaultStream(locale), Encoding.UTF8, true)));
 
-                if (defaultJson.Count != json.Count) {
-                    foreach (var key in  defaultJson) {
-                        if (json.TryGetValue(key.Key, out var outVal)) {
+                if (defaultJson.Count != json.Count)
+                {
+                    foreach (var key in defaultJson)
+                    {
+                        if (json.TryGetValue(key.Key, out var outVal))
+                        {
                             defaultJson[key.Key] = outVal;
                         }
                     }
@@ -111,7 +128,9 @@ namespace Essentials.I18n {
                     JsonUtil.Serialize(translationPath, defaultJson);
                     json = defaultJson;
                 }
-            } catch (JsonReaderException ex) {
+            }
+            catch (JsonReaderException ex)
+            {
                 UEssentials.Logger.LogError($"Invalid translation ({translationPath})");
                 UEssentials.Logger.LogException(ex);
 
@@ -121,34 +140,42 @@ namespace Essentials.I18n {
             }
 
             _translations.Clear();
-            foreach (var entry in json) {
+            foreach (var entry in json)
+            {
                 _translations.Add(entry.Key, entry.Value.Value<string>());
             }
         }
 
-        public static string Translate(string key) {
+        public static string Translate(string key)
+        {
             return GetEntry(key) as string;
         }
 
-        public static string Translate(string key, params object[] args) {
+        public static string Translate(string key, params object[] args)
+        {
             if (!(GetEntry(key) is string raw))
             {
                 return null;
             }
-            try {
+            try
+            {
                 return string.Format(raw, args);
-            } catch (FormatException) {
+            }
+            catch (FormatException)
+            {
                 UEssentials.Logger.LogError($"An error ocurred while translating the entry " +
                                             $"'{key}'. Arguments: {MiscUtil.ValuesToString(args)}");
                 throw;
             }
         }
 
-        public static bool HasEntry(string key) {
+        public static bool HasEntry(string key)
+        {
             return _translations.ContainsKey(key);
         }
 
-        public static object GetEntry(string key) {
+        public static object GetEntry(string key)
+        {
             return _translations.TryGetValue(key, out var val) ? val : null;
         }
         #region call me idiot
@@ -170,13 +197,15 @@ namespace Essentials.I18n {
             {
                 return;  // Will not send if message is empty.
             }
-            
+
             target.SendMessage(message, color);
         }
         public static void SendGlobal(string key, params object[] args)
         {
             var message = Translate(key, args);
             Color color;
+            var consoleMessage = message;
+            if (UEssentials.Config.Consolefiltrer) consoleMessage = Regex.Replace(consoleMessage, @"<color=#[0-9a-fA-F]{6}>|</color>", "");
 
             if (UEssentials.Config.OldFormatMessages)
             {
@@ -211,12 +240,19 @@ namespace Essentials.I18n {
                     return;
                 }
                 ChatManager.serverSendMessage(message.ToString(), color, null, null, EChatMode.GLOBAL, "", true);
-                Rocket.Core.Logging.Logger.Log(message.ToString());
+                if (UEssentials.Config.EnableallConsolelogs)
+                    Rocket.Core.Logging.Logger.Log(consoleMessage.ToString());
             }
         }
-        public static void Send(ICommandSource target, string key, params object[] args) {
+        //(discord: ellocoed)
+        public static void Send(string iconkey, ICommandSource target, string key, params object[] args)
+        {
+            var icon = Translate(iconkey);
             var message = Translate(key, args);
             Color color;
+            //ellocoed filtrer
+            var consoleMessage = message;
+            if (UEssentials.Config.Consolefiltrer) consoleMessage = Regex.Replace(consoleMessage, @"<color=#[0-9a-fA-F]{6}>|</color>", "");
 
             if (UEssentials.Config.OldFormatMessages)
             {
@@ -250,25 +286,29 @@ namespace Essentials.I18n {
                 {
                     return;
                 }
+                if (UEssentials.Config.EnableallConsolelogs && !target.IsConsole)
+                    Rocket.Core.Logging.Logger.Log(consoleMessage);
                 if (target.IsConsole)
                 {
-                    //fixerini
-                    target.SendMessage(message, color);
+                    //fixerini 
+
+                    target.SendMessage(consoleMessage, color);
                 }
                 else
                 {
-                    ChatManager.serverSendMessage(message.ToString(), color, null, target.ToPlayer().SteamPlayer, EChatMode.SAY);
-                    Rocket.Core.Logging.Logger.Log(message.ToString());
+                    ChatManager.serverSendMessage(message.ToString(), color, null, target.ToPlayer().SteamPlayer, EChatMode.SAY, icon, true);
                 }
-                
+
             }
 
         }
-        
+
         public static void BetterBroadcast(string keyicon, string key, params object[] args)
         {
             var message = Translate(key, args);
             var icon = Translate(keyicon);
+            var consoleMessage = message;
+            if (UEssentials.Config.Consolefiltrer) consoleMessage = Regex.Replace(consoleMessage, @"<color=#[0-9a-fA-F]{6}>|</color>", "");
             Color color;
             if (message == null)
             {
@@ -286,8 +326,9 @@ namespace Essentials.I18n {
             else
             {
                 ChatManager.serverSendMessage(message.ToString(), color, null, null, EChatMode.GLOBAL, icon, true);
-                Rocket.Core.Logging.Logger.Log(message.ToString());
             }
+            if (UEssentials.Config.EnableallConsolelogs)
+                Rocket.Core.Logging.Logger.Log(consoleMessage.ToString());
         }
         /*public static void BroadcastOld(object message, Color color)
         {
@@ -305,7 +346,8 @@ namespace Essentials.I18n {
                 ChatManager.serverSendMessage(message?.ToString() ?? "null", color, null, null, EChatMode.GLOBAL, icon.ToString() ?? "", true);
             }
         }*/
-        public static void Broadcast(string key, params object[] args) {
+        public static void Broadcast(string key, params object[] args)
+        {
             var message = Translate(key, args);
             Color color;
             if (UEssentials.Config.OldFormatMessages)
@@ -337,7 +379,8 @@ namespace Essentials.I18n {
             }
         }
         #endregion
-        private static Stream GetDefaultStream(string locale) {
+        private static Stream GetDefaultStream(string locale)
+        {
             var path = $"Essentials.default.lang_{locale}.json";
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
         }

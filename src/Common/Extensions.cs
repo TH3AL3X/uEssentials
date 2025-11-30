@@ -26,43 +26,54 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Essentials.Common {
+namespace Essentials.Common
+{
 
-    public static class StringExtensions {
+    public static class StringExtensions
+    {
 
-        public static bool EqualsIgnoreCase(this string str1, string str2) {
+        public static bool EqualsIgnoreCase(this string str1, string str2)
+        {
             return string.Compare(str1, str2, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public static bool ContainsIgnoreCase(this string str, string part) {
+        public static bool ContainsIgnoreCase(this string str, string part)
+        {
             return CultureInfo.InvariantCulture.CompareInfo.IndexOf(str, part, CompareOptions.IgnoreCase) >= 0;
         }
 
-        public static bool IsNullOrEmpty(this string str) {
+        public static bool IsNullOrEmpty(this string str)
+        {
             return string.IsNullOrEmpty(str);
         }
 
-        public static string Capitalize(this string str) {
+        public static string Capitalize(this string str)
+        {
             return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(str.ToLowerInvariant());
         }
 
     }
 
-    public static class EnumerableExtensions {
+    public static class EnumerableExtensions
+    {
 
-        public static void ForEach<T>(this IEnumerable<T> src, Action<T> action) {
-            foreach (var obj in src.ToList()) 
+        public static void ForEach<T>(this IEnumerable<T> src, Action<T> action)
+        {
+            foreach (var obj in src.ToList())
             {
                 action(obj);
             }
         }
 
-        public static bool None<T>(this IEnumerable<T> src, Func<T, bool> predicate) {
+        public static bool None<T>(this IEnumerable<T> src, Func<T, bool> predicate)
+        {
             return !src.Any(predicate);
         }
 
-        public static bool DeepEquals<T>(this List<T> src, List<T> dest) {
-            if (src.Count != dest.Count) {
+        public static bool DeepEquals<T>(this List<T> src, List<T> dest)
+        {
+            if (src.Count != dest.Count)
+            {
                 return false;
             }
             return !src.Where((t, i) => !t.Equals(dest[i])).Any();

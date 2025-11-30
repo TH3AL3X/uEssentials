@@ -47,7 +47,7 @@ namespace Essentials.Commands
                 player.Look.sendFreecamAllowed(true);
                 player.Look.sendSpecStatsAllowed(true);
 
-                EssLang.Send(src, "FREECAM_ON");
+                EssLang.Send("generalicon", src, "FREECAM_ON");
                 return CommandResult.Success();
             }
             else if (args[0].ToString() == "off")
@@ -55,7 +55,7 @@ namespace Essentials.Commands
                 player.Look.sendFreecamAllowed(false);
                 player.Look.sendSpecStatsAllowed(false);
 
-                EssLang.Send(src, "FREECAM_OFF");
+                EssLang.Send("generalicon", src, "FREECAM_OFF");
                 return CommandResult.Success();
             }
             else

@@ -21,104 +21,122 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.I18n;
 using SDG.Unturned;
+using System.Linq;
 using UnityEngine;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "tp",
         Usage = "[player|place|x y z] or [player] [player|place|x y z]",
         Description = "Teleport to a player or place."
     )]
-    public class CommandTp : EssCommand {
+    public class CommandTp : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (src.IsConsole && (args.Length == 1 || args.Length == 3)) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (src.IsConsole && (args.Length == 1 || args.Length == 3))
+            {
                 return CommandResult.ShowUsage();
             }
 
-            switch (args.Length) {
+            switch (args.Length)
+            {
                 /*
                     /tp player  -> teleport sender to player
                     /tp place   -> teleport sender to place
                 */
-                case 1: {
-                    FindPlaceOrPlayer(args[0].ToString(), out var dataFound, out var dataPosition, out var dataName);
+                case 1:
+                    {
+                        FindPlaceOrPlayer(args[0].ToString(), out var dataFound, out var dataPosition, out var dataName);
 
-                    if (!dataFound) {
-                        return CommandResult.LangError("FAILED_FIND_PLACE_OR_PLAYER", args[0]);
+                        if (!dataFound)
+                        {
+                            return CommandResult.LangError("icon_error_general", "FAILED_FIND_PLACE_OR_PLAYER", args[0]);
+                        }
+
+                        src.ToPlayer().UnturnedPlayer.teleportToLocationUnsafe(dataPosition, 0);
+                        EssLang.Send("generalicon", src, "TELEPORTED", dataName);
+                        break;
                     }
-
-                    src.ToPlayer().UnturnedPlayer.teleportToLocationUnsafe(dataPosition, 0);
-                    EssLang.Send(src, "TELEPORTED", dataName);
-                    break;
-                }
 
                 /*
                     /tp player other player   -> teleport player to other player
                     /tp player place          -> teleport player to place
                 */
-                case 2: {
-                    if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                case 2:
+                    {
+                        if (!args[0].IsValidPlayerIdentifier)
+                        {
+                            return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
+                        }
+
+                        var target = args[0].ToPlayer;
+
+                        FindPlaceOrPlayer(args[1].ToString(), out var dataFound, out var dataPosition, out var dataName);
+
+                        if (!dataFound)
+                        {
+                            return CommandResult.LangError("icon_error_general", "FAILED_FIND_PLACE_OR_PLAYER", args[1]);
+                        }
+
+                        target.UnturnedPlayer.teleportToLocationUnsafe(dataPosition, 0);
+                        EssLang.Send("generalicon", target, "TELEPORTED", dataName);
+                        EssLang.Send("generalicon", src, "TELEPORTED_SENDER", target, dataName);
+                        break;
                     }
-
-                    var target = args[0].ToPlayer;
-
-                    FindPlaceOrPlayer(args[1].ToString(), out var dataFound, out var dataPosition, out var dataName);
-
-                    if (!dataFound) {
-                        return CommandResult.LangError("FAILED_FIND_PLACE_OR_PLAYER", args[1]);
-                    }
-
-                    target.UnturnedPlayer.teleportToLocationUnsafe(dataPosition, 0);
-                    EssLang.Send(target, "TELEPORTED", dataName);
-                    EssLang.Send(src, "TELEPORTED_SENDER", target, dataName);
-                    break;
-                }
 
                 /*
                     /tp x y z          -> sender to x,y,z
                 */
-                case 3: {
-                    var location = args.GetVector3(0);
-
-                    if (location.HasValue)
+                case 3:
                     {
-                        src.ToPlayer().UnturnedPlayer.teleportToLocationUnsafe(location.Value + new Vector3(0f, 0.5f, 0f), 0);
-                        EssLang.Send(src, "TELEPORTED", location);
-                    } else {
-                        return CommandResult.LangError("INVALID_COORDS", args[0], args[1], args[2]);
+                        var location = args.GetVector3(0);
+
+                        if (location.HasValue)
+                        {
+                            src.ToPlayer().UnturnedPlayer.teleportToLocationUnsafe(location.Value + new Vector3(0f, 0.5f, 0f), 0);
+                            EssLang.Send("generalicon", src, "TELEPORTED", location);
+                        }
+                        else
+                        {
+                            return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[0], args[1], args[2]);
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 /*
                     /tp player x y z   -> player to x, y, z
                 */
-                case 4: {
-                    if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
-                    }
+                case 4:
+                    {
+                        if (!args[0].IsValidPlayerIdentifier)
+                        {
+                            return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
+                        }
 
-                    var target = args[0].ToPlayer;
-                    var location = args.GetVector3(1);
+                        var target = args[0].ToPlayer;
+                        var location = args.GetVector3(1);
 
-                    if (location.HasValue) {
-                        target.UnturnedPlayer.teleportToLocationUnsafe(location.Value + new Vector3(0f, 0.5f, 0f), 0);
-                        EssLang.Send(target, "TELEPORTED", location);
-                        EssLang.Send(src, "TELEPORTED_SENDER", target, location);
-                    } else {
-                        return CommandResult.LangError("INVALID_COORDS", args[1], args[2], args[3]);
+                        if (location.HasValue)
+                        {
+                            target.UnturnedPlayer.teleportToLocationUnsafe(location.Value + new Vector3(0f, 0.5f, 0f), 0);
+                            EssLang.Send("generalicon", target, "TELEPORTED", location);
+                            EssLang.Send("generalicon", src, "TELEPORTED_SENDER", target, location);
+                        }
+                        else
+                        {
+                            return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[1], args[2], args[3]);
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 default:
                     return CommandResult.ShowUsage();
@@ -127,7 +145,8 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        private static void FindPlaceOrPlayer(string arg, out bool found, out Vector3 position, out string placeOrPlayer)
+        private static void FindPlaceOrPlayer(string arg, out bool found,
+                                              out Vector3 position, out string placeOrPlayer)
         {
             position = Vector3.zero;
             placeOrPlayer = string.Empty;
@@ -139,33 +158,28 @@ namespace Essentials.Commands {
                 position = player.Position;
                 placeOrPlayer = player.DisplayName;
             }
-
             else
             {
-                found = TryFindPlace(arg, out LocationDevkitNode node);
+                found = TryFindPlace(arg, out var node);
 
                 if (found)
                 {
-                    placeOrPlayer = node.locationName;
-                    position = node.transform.position + new Vector3(0, 1, 0);
+                    placeOrPlayer = node.name;
+                    position = node.point + new Vector3(0, 1, 0);
                 }
             }
         }
 
-        private static bool TryFindPlace(string name, out LocationDevkitNode outNode)
+        private static bool TryFindPlace(string name, out LocationNode outNode)
         {
-            outNode = null;
-
-            foreach (LocationDevkitNode node in LocationDevkitNodeSystem.Get().GetAllNodes())
-            {
-                if (NameTool.checkNames(name, node.locationName))
-                {
-                    outNode = node;
-                    return true;
-                }
-            }
-
-            return false;
+            outNode = (
+                from node in LevelNodes.nodes
+                where node.type == ENodeType.LOCATION
+                let locNode = node as LocationNode
+                where locNode.name.ToLower().Contains(name.ToLower())
+                select locNode
+            ).FirstOrDefault();
+            return outNode != null;
         }
 
     }

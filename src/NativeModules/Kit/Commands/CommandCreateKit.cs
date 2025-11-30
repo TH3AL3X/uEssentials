@@ -24,12 +24,13 @@
 
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
-using static Essentials.Common.Util.ItemUtil;
 using Essentials.NativeModules.Kit.Item;
 using SDG.Unturned;
 using System.Collections.Generic;
+using static Essentials.Common.Util.ItemUtil;
 
-namespace Essentials.NativeModules.Kit.Commands {
+namespace Essentials.NativeModules.Kit.Commands
+{
 
     [CommandInfo(
         Name = "createkit",
@@ -38,10 +39,13 @@ namespace Essentials.NativeModules.Kit.Commands {
         Usage = "[name] <cooldown> <resetCooldownWhenDie> <cost>",
         AllowedSource = AllowedSource.BOTH
     )]
-    public class CommandCreateKit : EssCommand {
+    public class CommandVault : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.Length < 1) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.Length < 1)
+            {
                 return CommandResult.ShowUsage();
             }
 
@@ -50,37 +54,46 @@ namespace Essentials.NativeModules.Kit.Commands {
             var resetCooldownWhenDie = false;
             var cost = 0d;
 
-            if (KitModule.Instance.KitManager.Contains(name)) {
-                return CommandResult.LangError("KIT_ALREADY_EXIST", name);
+            if (KItModule.Instance.KitManager.Contains(name))
+            {
+                return CommandResult.LangError("icon_error_general", "KIT_ALREADY_EXIST", name);
             }
 
-            if (args.Length > 1) {
-                if (!args[1].IsInt) {
-                    return CommandResult.LangError("INVALID_NUMBER", args[1]);
+            if (args.Length > 1)
+            {
+                if (!args[1].IsInt)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[1]);
                 }
 
-                if (args[1].ToInt < 0) {
-                    return CommandResult.LangError("MUST_POSITIVE");
+                if (args[1].ToInt < 0)
+                {
+                    return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                 }
 
                 cooldown = args[1].ToUInt;
             }
 
-            if (args.Length > 2) {
-                if (!args[2].IsBool) {
-                    return CommandResult.LangError("INVALID_BOOLEAN", args[2]);
+            if (args.Length > 2)
+            {
+                if (!args[2].IsBool)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_BOOLEAN", args[2]);
                 }
 
                 resetCooldownWhenDie = args[2].ToBool;
             }
 
-            if (args.Length > 3) {
-                if (!args[3].IsDouble) {
-                    return CommandResult.LangError("INVALID_NUMBER", args[3]);
+            if (args.Length > 3)
+            {
+                if (!args[3].IsDouble)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                 }
 
-                if (args[3].ToDouble < 0) {
-                    return CommandResult.LangError("MUST_POSITIVE");
+                if (args[3].ToDouble < 0)
+                {
+                    return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                 }
 
                 cost = args[3].ToDouble;
@@ -89,30 +102,36 @@ namespace Essentials.NativeModules.Kit.Commands {
             var items = new List<AbstractKitItem>();
 
             // If the source is a player we copy the items from its inventory.
-            if (!src.IsConsole) {
+            if (!src.IsConsole)
+            {
                 var player = src.ToPlayer();
                 var inventory = player.Inventory;
                 var clothing = player.Clothing;
 
                 // Add items from an inventory page to the items list.
-                void addItemsFromPage(byte page) {
+                void addItemsFromPage(byte page)
+                {
                     var count = inventory.getItemCount(page);
 
-                    for (byte index = 0; index < count; index++) {
+                    for (byte index = 0; index < count; index++)
+                    {
                         var item = inventory.getItem(page, index).item;
 
-                        if (item == null) {
+                        if (item == null)
+                        {
                             continue;
                         }
 
                         var asset = GetItem(item.id).Value;
                         KitItem kitItem;
 
-                        if (asset is ItemWeaponAsset) {
+                        if (asset is ItemWeaponAsset)
+                        {
                             var ammo = GetWeaponAmmo(item);
                             var firemode = GetWeaponFiremode(item).OrElse(EFiremode.SAFETY);
 
-                            var kItem = new KitItemWeapon(item.id, item.durability, 1, ammo.OrElse(0), firemode) {
+                            var kItem = new KitItemWeapon(item.id, item.durability, 1, ammo.OrElse(0), firemode)
+                            {
                                 Magazine = GetWeaponAttachment(item, AttachmentType.MAGAZINE).OrElse(null),
                                 Barrel = GetWeaponAttachment(item, AttachmentType.BARREL).OrElse(null),
                                 Sight = GetWeaponAttachment(item, AttachmentType.SIGHT).OrElse(null),
@@ -121,9 +140,13 @@ namespace Essentials.NativeModules.Kit.Commands {
                             };
 
                             kitItem = kItem;
-                        } else if (asset is ItemMagazineAsset || asset is ItemSupplyAsset) {
+                        }
+                        else if (asset is ItemMagazineAsset || asset is ItemSupplyAsset)
+                        {
                             kitItem = new KitItemMagazine(item.id, item.durability, 1, item.amount);
-                        } else {
+                        }
+                        else
+                        {
                             kitItem = new KitItem(item.id, item.durability, 1);
                         }
 
@@ -131,15 +154,18 @@ namespace Essentials.NativeModules.Kit.Commands {
 
                         items.Add(kitItem);
                     }
-                };
+                }
+                ;
 
                 addItemsFromPage(0); // Primary slot
                 addItemsFromPage(1); // Secondary slot
                 addItemsFromPage(2); // Hands
 
                 // Backpack
-                if (clothing.backpack != 0) {
-                    items.Add(new KitItem(clothing.backpack, clothing.backpackQuality, 1) {
+                if (clothing.backpack != 0)
+                {
+                    items.Add(new KitItem(clothing.backpack, clothing.backpackQuality, 1)
+                    {
                         Metadata = clothing.backpackState
                     });
                 }
@@ -148,54 +174,67 @@ namespace Essentials.NativeModules.Kit.Commands {
 
                 // Shirt
 
-                if (clothing.shirt != 0) {
-                    items.Add(new KitItem(clothing.shirt, clothing.shirtQuality, 1) {
+                if (clothing.shirt != 0)
+                {
+                    items.Add(new KitItem(clothing.shirt, clothing.shirtQuality, 1)
+                    {
                         Metadata = clothing.shirtState
                     });
                 }
                 addItemsFromPage(5);
 
                 // Vest
-                if (clothing.vest != 0) {
-                    items.Add(new KitItem(clothing.vest, clothing.vestQuality, 1) {
+                if (clothing.vest != 0)
+                {
+                    items.Add(new KitItem(clothing.vest, clothing.vestQuality, 1)
+                    {
                         Metadata = clothing.vestState
                     });
                 }
                 addItemsFromPage(4);
 
                 // Pants
-                if (clothing.pants != 0) {
-                    items.Add(new KitItem(clothing.pants, clothing.pantsQuality, 1) {
+                if (clothing.pants != 0)
+                {
+                    items.Add(new KitItem(clothing.pants, clothing.pantsQuality, 1)
+                    {
                         Metadata = clothing.pantsState
                     });
                 }
                 addItemsFromPage(6);
 
                 // Mask, Glasses & Hat
-                if (clothing.mask != 0) {
-                    items.Add(new KitItem(clothing.mask, clothing.maskQuality, 1) {
+                if (clothing.mask != 0)
+                {
+                    items.Add(new KitItem(clothing.mask, clothing.maskQuality, 1)
+                    {
                         Metadata = clothing.maskState
                     });
                 }
 
-                if (clothing.hat != 0) {
-                    items.Add(new KitItem(clothing.hat, clothing.hatQuality, 1) {
+                if (clothing.hat != 0)
+                {
+                    items.Add(new KitItem(clothing.hat, clothing.hatQuality, 1)
+                    {
                         Metadata = clothing.hatState
                     });
                 }
 
-                if (clothing.glasses != 0) {
-                    items.Add(new KitItem(clothing.glasses, clothing.glassesQuality, 1) {
+                if (clothing.glasses != 0)
+                {
+                    items.Add(new KitItem(clothing.glasses, clothing.glassesQuality, 1)
+                    {
                         Metadata = clothing.glassesState
                     });
                 }
             }
-
-            var kit = new Kit(name, cooldown, (decimal) cost, resetCooldownWhenDie) {
+            var addon = "<color=#ffffff>";
+            var kit = new Kit(name, addon, cooldown, (decimal)cost, resetCooldownWhenDie, 0 )
+            {
                 Items = items
             };
 
-            KitModule.Instance.KitManager.Add(kit);
+            KItModule.Instance.KitManager.Add(kit);
 
             return CommandResult.LangSuccess("CREATED_KIT", name);
         }

@@ -24,14 +24,16 @@
 using Essentials.CodeAnalysis;
 using System;
 
-namespace Essentials.Common {
+namespace Essentials.Common
+{
 
     /// <summary>
     ///  A container object which may or may not contain a non-null value.
     ///  If a value is present, <see cref="IsPresent"/> will return <code>true</code> and
     /// <see cref="Value"/> will return the value.
     /// </summary>
-    public class Optional<T> {
+    public class Optional<T>
+    {
 
         private static readonly Optional<T> EMPTY = new Optional<T>(default);
         private readonly T _value;
@@ -40,9 +42,12 @@ namespace Essentials.Common {
 
         public bool IsAbsent => _value == null;
 
-        public T Value {
-            get {
-                if (_value == null) {
+        public T Value
+        {
+            get
+            {
+                if (_value == null)
+                {
                     throw new InvalidOperationException("No value present.");
                 }
 
@@ -50,43 +55,54 @@ namespace Essentials.Common {
             }
         }
 
-        private Optional(T value) {
+        private Optional(T value)
+        {
             _value = value;
         }
 
-        public void IfPresent([NotNull] Action<T> consumer) {
-            if (IsPresent) {
+        public void IfPresent([NotNull] Action<T> consumer)
+        {
+            if (IsPresent)
+            {
                 consumer(Value);
             }
         }
 
-        public void IfAbsent([NotNull] Action<T> consumer) {
-            if (IsAbsent) {
+        public void IfAbsent([NotNull] Action<T> consumer)
+        {
+            if (IsAbsent)
+            {
                 consumer(Value);
             }
         }
 
-        public T OrElse(T value) {
+        public T OrElse(T value)
+        {
             return IsPresent ? Value : value;
         }
 
-        public static Optional<T> Of(T value) {
-            if (value == null) {
+        public static Optional<T> Of(T value)
+        {
+            if (value == null)
+            {
                 throw new ArgumentNullException(nameof(value), "value cannot be null");
             }
 
             return new Optional<T>(value);
         }
 
-        public static Optional<T> OfNullable(T value) {
+        public static Optional<T> OfNullable(T value)
+        {
             return new Optional<T>(value);
         }
 
-        public static Optional<T> Empty() {
+        public static Optional<T> Empty()
+        {
             return EMPTY;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return IsPresent ? $"Optional[{Value}]" : "Optional.Empty";
         }
 

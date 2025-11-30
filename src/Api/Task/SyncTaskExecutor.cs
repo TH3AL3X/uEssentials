@@ -23,13 +23,16 @@
 
 using UnityEngine;
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
-    internal class SyncTaskExecutor : AbstractTaskExecutor {
+    internal class SyncTaskExecutor : AbstractTaskExecutor
+    {
 
         // That is weird '-'
         // Java... SyncTaskExecutor.this.Update() ;-;
-        internal class ExecutorComponent : MonoBehaviour {
+        internal class ExecutorComponent : MonoBehaviour
+        {
 
             internal readonly SyncTaskExecutor SyncExecutor = new SyncTaskExecutor();
 

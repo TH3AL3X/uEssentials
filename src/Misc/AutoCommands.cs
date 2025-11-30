@@ -27,7 +27,8 @@ using Essentials.Common;
 using System;
 using System.Collections.Generic;
 
-namespace Essentials.Misc {
+namespace Essentials.Misc
+{
 
     public class AutoCommands
     {
@@ -36,7 +37,8 @@ namespace Essentials.Misc {
 
         public bool Enabled { get; set; }
 
-        public void LoadDefaults() {
+        public void LoadDefaults()
+        {
             Enabled = false;
 
             Commands = new List<AutoCommand> {
@@ -51,8 +53,10 @@ namespace Essentials.Misc {
             };
         }
 
-        public void Start() {
-            Commands.ForEach(cmd => {
+        public void Start()
+        {
+            Commands.ForEach(cmd =>
+            {
                 CurrentTasks.Add(Task.Create()
                     .Id("AutoCommand Executor")
                     .Delay(TimeSpan.FromSeconds(cmd.Timer))
@@ -68,7 +72,8 @@ namespace Essentials.Misc {
                 currentTask.Cancel();
         }
 
-        public struct AutoCommand {
+        public struct AutoCommand
+        {
 
             public bool RunOnce;
             public int Timer;

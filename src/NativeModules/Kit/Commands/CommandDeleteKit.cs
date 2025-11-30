@@ -25,7 +25,8 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
 
-namespace Essentials.NativeModules.Kit.Commands {
+namespace Essentials.NativeModules.Kit.Commands
+{
 
     [CommandInfo(
         Name = "deletekit",
@@ -33,21 +34,25 @@ namespace Essentials.NativeModules.Kit.Commands {
         Description = "Delete a kit.",
         Usage = "[name]"
     )]
-    public class CommandDeleteKit : EssCommand {
+    public class CommandDeleteKit : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            var km = KitModule.Instance.KitManager;
+            var km = KItModule.Instance.KitManager;
 
-            if (!km.Contains(args[0].ToString())) {
-                return CommandResult.LangError("KIT_NOT_EXIST", args[0]);
+            if (!km.Contains(args[0].ToString()))
+            {
+                return CommandResult.LangError("icon_error_general", "KIT_NOT_EXIST", args[0]);
             }
 
             km.Remove(km.GetByName(args[0].ToString()));
-            EssLang.Send(src, "DELETED_KIT", args[0]);
+            EssLang.Send("generalicon", src, "DELETED_KIT", args[0]);
 
             return CommandResult.Success();
         }

@@ -21,37 +21,42 @@
 */
 #endregion
 
-using System.Collections.Generic;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.I18n;
+using System.Collections.Generic;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "kickall",
         Description = "Kick all players",
         Usage = "<reason>"
     )]
-    public class CommandKickAll : EssCommand {
+    public class CommandKickAll : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var players = new List<UPlayer>(UServer.Players);
 
-            if (players.Count == 0) {
-                return CommandResult.LangError("NO_PLAYERS_FOR_KICK");
+            if (players.Count == 0)
+            {
+                return CommandResult.LangError("icon_error_general", "NO_PLAYERS_FOR_KICK");
             }
 
             var reason = args.IsEmpty
                 ? EssLang.Translate("KICK_NO_SPECIFIED_REASON")
                 : args.Join(0);
 
-            players.ForEach(player => {
+            players.ForEach(player =>
+            {
                 player.Kick(reason);
             });
 
-            EssLang.Send(src, "KICKED_ALL", players.Count);
+            EssLang.Send("generalicon", src, "KICKED_ALL", players.Count);
 
             return CommandResult.Success();
         }

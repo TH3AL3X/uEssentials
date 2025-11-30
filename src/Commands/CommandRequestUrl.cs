@@ -27,7 +27,8 @@ using Essentials.Api.Unturned;
 using Essentials.Common;
 using Essentials.I18n;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "requesturl",
@@ -37,23 +38,31 @@ namespace Essentials.Commands {
         MinArgs = 3,
         MaxArgs = 3
     )]
-    public class CommandRequestUrl : EssCommand {
+    public class CommandRequestUrl : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var message = args[1].ToString();
             var url = args[2].ToString();
 
-            if (args[0].Equals("*")) {
-                UServer.Players.ForEach(p => {
+            if (args[0].Equals("*"))
+            {
+                UServer.Players.ForEach(p =>
+                {
                     p.UnturnedPlayer.sendBrowserRequest(message, url);
                 });
-                EssLang.Send(src, "REQUEST_URL_SUCCESS", EssLang.Translate("EVERYONE"), url);
-            } else if (args[0].IsValidPlayerIdentifier) {
+                EssLang.Send("generalicon", src, "REQUEST_URL_SUCCESS", EssLang.Translate("EVERYONE"), url);
+            }
+            else if (args[0].IsValidPlayerIdentifier)
+            {
                 var target = args[0].ToPlayer;
                 target.UnturnedPlayer.sendBrowserRequest(message, url);
-                EssLang.Send(src, "REQUEST_URL_SUCCESS", target.DisplayName, url);
-            } else {
-                return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                EssLang.Send("generalicon", src, "REQUEST_URL_SUCCESS", target.DisplayName, url);
+            }
+            else
+            {
+                return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
             }
 
             return CommandResult.Success();

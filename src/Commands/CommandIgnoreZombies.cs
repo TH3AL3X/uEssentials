@@ -21,23 +21,11 @@
 */
 #endregion
 
-using System;
-using System.Linq;
-using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using Essentials.Common;
-using Essentials.Compatibility;
 using Essentials.Components.Player;
-using Essentials.Event.Handling;
 using Essentials.I18n;
-using HarmonyLib;
-using Rocket.Unturned.Chat;
-using Rocket.Unturned.Player;
-using SDG.Framework.Utilities;
-using SDG.Unturned;
-using UnityEngine;
 
 namespace Essentials.Commands
 {
@@ -63,12 +51,12 @@ namespace Essentials.Commands
                 if (component.ignore_zombies)
                 {
                     component.ignore_zombies = false;
-                    EssLang.Send(src, "IGNOREZOMBIES", "detecting");
+                    EssLang.Send("generalicon", src, "IGNOREZOMBIES", "detecting");
                 }
                 else
                 {
                     component.ignore_zombies = true;
-                    EssLang.Send(src, "IGNOREZOMBIES", "ignoring");
+                    EssLang.Send("generalicon", src, "IGNOREZOMBIES", "ignoring");
                 }
             }
             else
@@ -80,7 +68,7 @@ namespace Essentials.Commands
 
                 if (!UPlayer.TryGet(args[0].ToString(), out var player))
                 {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 var component = player.GetComponent<ZombieIgnore>() ?? player.AddComponent<ZombieIgnore>();
@@ -88,12 +76,12 @@ namespace Essentials.Commands
                 if (component.ignore_zombies)
                 {
                     component.ignore_zombies = false;
-                    EssLang.Send(src, "IGNOREZOMBIES_TOPLAYER", "detecting", player.DisplayName);
+                    EssLang.Send("generalicon", src, "IGNOREZOMBIES_TOPLAYER", "detecting", player.DisplayName);
                 }
                 else
                 {
                     component.ignore_zombies = true;
-                    EssLang.Send(src, "IGNOREZOMBIES_TOPLAYER", "ignoring", player.DisplayName);
+                    EssLang.Send("generalicon", src, "IGNOREZOMBIES_TOPLAYER", "ignoring", player.DisplayName);
                 }
             }
 

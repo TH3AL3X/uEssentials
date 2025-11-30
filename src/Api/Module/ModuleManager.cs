@@ -30,12 +30,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Essentials.Api.Module {
+namespace Essentials.Api.Module
+{
 
     /// <summary>
     /// Author: leonardosnt
     /// </summary>
-    public sealed class ModuleManager {
+    public sealed class ModuleManager
+    {
 
         /// <summary>
         /// List of running modules
@@ -45,7 +47,8 @@ namespace Essentials.Api.Module {
         /// <summary>
         /// Internal constructor
         /// </summary>
-        internal ModuleManager() {
+        internal ModuleManager()
+        {
             RunningModules = new List<EssModule>();
         }
 
@@ -53,18 +56,21 @@ namespace Essentials.Api.Module {
         /// Load module from an assembly
         /// </summary>
         /// <param name="moduleAssembly">Assembly that contains module that you want to load</param>
-        public EssModule LoadModule([NotNull] Assembly moduleAssembly) {
+        public EssModule LoadModule([NotNull] Assembly moduleAssembly)
+        {
             // Prevents to load uEssentials dll accidently
             if (moduleAssembly.Equals(typeof(EssCore).Assembly))
                 return null;
 
             EssModule moduleInstance = null;
 
-            foreach (var type in moduleAssembly.GetTypes().Where(type => type.IsSubclassOf(typeof(EssModule)))) {
-                moduleInstance = (EssModule) Activator.CreateInstance(type);
+            foreach (var type in moduleAssembly.GetTypes().Where(type => type.IsSubclassOf(typeof(EssModule))))
+            {
+                moduleInstance = (EssModule)Activator.CreateInstance(type);
                 moduleInstance.Assembly = moduleAssembly;
 
-                if (moduleInstance.Info.Version.EqualsIgnoreCase("$ASM_VERSION")) {
+                if (moduleInstance.Info.Version.EqualsIgnoreCase("$ASM_VERSION"))
+                {
                     moduleInstance.Info.Version = moduleAssembly.GetCustomAttributes(false)
                         .Cast<AssemblyFileVersionAttribute>()
                         .Select(c => c.Version)
@@ -85,7 +91,8 @@ namespace Essentials.Api.Module {
         /// Load a module
         /// </summary>
         /// <param name="module">Module that you want to load</param>
-        public void LoadModule([NotNull] EssModule module) {
+        public void LoadModule([NotNull] EssModule module)
+        {
             Preconditions.IsTrue(RunningModules.Contains(module), "This module already loaded");
 
             module.Load();
@@ -96,7 +103,8 @@ namespace Essentials.Api.Module {
         /// Unload ab module
         /// </summary>
         /// <param name="module">Module that you want to unload</param>
-        public void UnloadModule([NotNull] EssModule module) {
+        public void UnloadModule([NotNull] EssModule module)
+        {
             Preconditions.IsFalse(RunningModules.Contains(module), "This module isn't running");
 
             module.Unload();
@@ -107,14 +115,16 @@ namespace Essentials.Api.Module {
         /// Load all modules from a folder
         ///</summary>
         /// <param name="directory"> Directory that you want to load modules</param>>
-        public void LoadAll(string directory) {
+        public void LoadAll(string directory)
+        {
             if (!Directory.Exists(directory)) return;
 
             var moduleFiles = Directory.GetFiles(directory, "*.dll", SearchOption.TopDirectoryOnly);
 
             if (moduleFiles.Length == 0) return;
 
-            foreach (var file in moduleFiles) {
+            foreach (var file in moduleFiles)
+            {
                 Load(file);
             }
         }
@@ -123,45 +133,55 @@ namespace Essentials.Api.Module {
         /// Load modules from given assemblyPath
         ///</summary>
         /// <param name="assemblyPath">Assembly file path</param>>
-        public void Load(string assemblyPath) {
-            if (!File.Exists(assemblyPath)) {
+        public void Load(string assemblyPath)
+        {
+            if (!File.Exists(assemblyPath))
+            {
                 throw new FileNotFoundException($"File not found '{assemblyPath}'");
             }
 
             var fileExtension = Path.GetExtension(assemblyPath);
 
-            if ("dll".Equals(fileExtension)) {
+            if ("dll".Equals(fileExtension))
+            {
                 throw new ArgumentException($"Invalid file '{assemblyPath}', file must be '.dll'");
             }
 
             var rawAssembly = File.ReadAllBytes(assemblyPath);
             var moduleAssembly = Assembly.Load(rawAssembly);
 
-            if (moduleAssembly == null) {
+            if (moduleAssembly == null)
+            {
                 throw new Exception($"Could not read data from assembly '{assemblyPath}'");
             }
 
-            try {
+            try
+            {
                 LoadModule(moduleAssembly);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var fileName = (assemblyPath.Substring(assemblyPath.LastIndexOf("/", StringComparison.Ordinal) + 1));
                 UEssentials.Logger.LogError($"An error occurred attempting to load {fileName}, ignoring...");
                 UEssentials.Logger.LogException(ex);
             }
         }
 
-        public Optional<T> GetModule<T>() where T : EssModule {
+        public Optional<T> GetModule<T>() where T : EssModule
+        {
             return Optional<T>.OfNullable(RunningModules.FirstOrDefault(m => m.GetType() == typeof(T)) as T);
         }
 
-        public Optional<EssModule> GetModule(Type type) {
+        public Optional<EssModule> GetModule(Type type)
+        {
             return Optional<EssModule>.OfNullable(RunningModules.FirstOrDefault(m => m.GetType() == type));
         }
 
         ///<summary>
         /// Unload all modules
         ///</summary>
-        public void UnloadAll() {
+        public void UnloadAll()
+        {
             RunningModules.ForEach(module => module.Unload());
             RunningModules.Clear();
         }

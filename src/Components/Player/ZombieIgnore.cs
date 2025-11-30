@@ -21,9 +21,6 @@
 */
 #endregion
 
-using Essentials.Api;
-using SDG.Unturned;
-
 namespace Essentials.Components.Player
 {
 

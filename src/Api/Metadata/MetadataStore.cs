@@ -23,41 +23,51 @@
 
 using System.Collections.Generic;
 
-namespace Essentials.Api.Metadata {
+namespace Essentials.Api.Metadata
+{
 
-    public class MetadataStore<TValue> {
+    public class MetadataStore<TValue>
+    {
 
         private readonly IDictionary<string, TValue> _metadata = new Dictionary<string, TValue>();
 
-        public TValue this[string key] {
+        public TValue this[string key]
+        {
             get { return _metadata[key]; }
             set { _metadata[key] = value; }
         }
 
-        public bool Has(string key) {
+        public bool Has(string key)
+        {
             return _metadata.ContainsKey(key);
         }
 
-        public void Set(string key, TValue value) {
+        public void Set(string key, TValue value)
+        {
             this[key] = value;
         }
 
-        public TValue Get(string key) {
+        public TValue Get(string key)
+        {
             return this[key];
         }
 
-        public T GetOrDefault<T>(string key, T defaultValue) where T : TValue {
-            if (_metadata.TryGetValue(key, out var val)) {
-                return (T) val;
+        public T GetOrDefault<T>(string key, T defaultValue) where T : TValue
+        {
+            if (_metadata.TryGetValue(key, out var val))
+            {
+                return (T)val;
             }
             return defaultValue;
         }
 
-        public T Get<T>(string key) where T : TValue {
-            return (T) Get(key);
+        public T Get<T>(string key) where T : TValue
+        {
+            return (T)Get(key);
         }
 
-        public bool Remove(string key) {
+        public bool Remove(string key)
+        {
             return _metadata.Remove(key);
         }
 

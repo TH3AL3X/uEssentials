@@ -25,22 +25,26 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Common;
 
-namespace Essentials.Api.Events {
+namespace Essentials.Api.Events
+{
 
-    public class CommandPosExecuteEvent : CommandEvent {
+    public class CommandPosExecuteEvent : CommandEvent
+    {
 
         /// <summary>
         /// Result of execution.
         ///
         /// Can be null.
         /// </summary>
-        public CommandResult Result {
+        public CommandResult Result
+        {
             get { return _result; }
-            set { _result = Preconditions.NotNull(value, "result cannot be null");  }
+            set { _result = Preconditions.NotNull(value, "result cannot be null"); }
         }
 
         public CommandPosExecuteEvent(ICommand command, ICommandArgs args, ICommandSource src,
-                                      CommandResult result) : base(command, args, src) {
+                                      CommandResult result) : base(command, args, src)
+        {
             Preconditions.NotNull(result, "result cannot be null");
             Result = result;
         }

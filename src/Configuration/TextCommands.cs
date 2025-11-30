@@ -29,52 +29,66 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Essentials.Configuration {
+namespace Essentials.Configuration
+{
 
-    public class TextCommands : JsonConfig {
+    public class TextCommands : JsonConfig
+    {
 
         public override string FileName => "text_commands.json";
 
         public List<TextCommandData> Commands { get; } = new List<TextCommandData>();
 
-        public override void LoadDefaults() {
-            Commands.Add(new TextCommandData {
+        public override void LoadDefaults()
+        {
+            Commands.Add(new TextCommandData
+            {
                 Name = "rules",
-                Text = new [] {
+                Text = new[] {
                     "Be Respectful.",
                     "Don't use cheats.",
                     "Have fun :D"
                 }
             });
-            Commands.Add(new TextCommandData {
+            Commands.Add(new TextCommandData
+            {
                 Name = "website",
-                Text = new [] {
+                Text = new[] {
                     "Our website: github.com/uEssentials"
                 }
             });
         }
 
-        public override void Save(string filePath) {
+        public override void Save(string filePath)
+        {
             JsonUtil.Serialize(filePath, Commands);
         }
 
-        public override void Load(string filePath) {
-            if (File.Exists(filePath)) {
-                try {
+        public override void Load(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                try
+                {
                     JsonConvert.PopulateObject(File.ReadAllText(filePath), Commands);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     UEssentials.Logger.LogError("Failed to load TextCommands.");
                     UEssentials.Logger.LogException(ex);
                     UEssentials.Logger.LogError("Using default...");
                     LoadDefaults();
                 }
-            } else {
+            }
+            else
+            {
                 LoadDefaults();
                 Save(filePath);
-           }
+            }
         }
 
-        public struct TextCommandData {
+        public struct TextCommandData
+        {
 
             public string Name;
             public string[] Text;

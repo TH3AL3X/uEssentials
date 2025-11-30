@@ -27,7 +27,8 @@ using Essentials.I18n;
 using SDG.Unturned;
 using UnityEngine;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "spawnvehicle",
@@ -35,51 +36,68 @@ namespace Essentials.Commands {
         Usage = "[id] [player] or [x] [y] [z]",
         Description = "Spawn a vehicle on player's/given position"
     )]
-    public class CommandSpawnVehicle : EssCommand {
+    public class CommandSpawnVehicle : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.Length == 2) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.Length == 2)
+            {
                 var vehId = args[0];
 
-                if (!args[1].IsValidPlayerIdentifier) {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[1]);
+                if (!args[1].IsValidPlayerIdentifier)
+                {
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[1]);
                 }
 
                 var target = args[1].ToPlayer;
 
-                if (!vehId.IsUShort || !IsValidVehicleId(vehId.ToUShort)) {
-                    EssLang.Send(src, "INVALID_VEHICLE_ID", vehId);
-                } else {
-                    VehicleTool.giveVehicle(target.UnturnedPlayer, vehId.ToUShort);
-                    EssLang.Send(src, "SPAWNED_VEHICLE_AT_PLAYER", args[1]);
+                if (!vehId.IsUShort || !IsValidVehicleId(vehId.ToUShort))
+                {
+                    EssLang.Send("generalicon", src, "INVALID_VEHICLE_ID", vehId);
                 }
-            } else if (args.Length == 4) {
+                else
+                {
+                    VehicleTool.giveVehicle(target.UnturnedPlayer, vehId.ToUShort);
+                    EssLang.Send("generalicon", src, "SPAWNED_VEHICLE_AT_PLAYER", args[1]);
+                }
+            }
+            else if (args.Length == 4)
+            {
                 var pos = args.GetVector3(1);
                 var vehId = args[0];
 
-                if (pos.HasValue) {
+                if (pos.HasValue)
+                {
                     var pVal = pos.Value;
 
-                    if (!vehId.IsUShort || !IsValidVehicleId(vehId.ToUShort)) {
-                        return CommandResult.LangError("INVALID_VEHICLE_ID", vehId);
+                    if (!vehId.IsUShort || !IsValidVehicleId(vehId.ToUShort))
+                    {
+                        return CommandResult.LangError("icon_error_general", "INVALID_VEHICLE_ID", vehId);
                     }
 
                     SpawnVehicle(pVal, vehId.ToUShort);
-                    EssLang.Send(src, "SPAWNED_VEHICLE_AT_POSITION", pVal.x, pVal.y, pVal.z);
-                } else {
-                    return CommandResult.LangError("INVALID_COORDS", args[1], args[2], args[3]);
+                    EssLang.Send("generalicon", src, "SPAWNED_VEHICLE_AT_POSITION", pVal.x, pVal.y, pVal.z);
                 }
-            } else {
+                else
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[1], args[2], args[3]);
+                }
+            }
+            else
+            {
                 return CommandResult.ShowUsage();
             }
 
             return CommandResult.Success();
         }
 
-        private static void SpawnVehicle(Vector3 pos, ushort id) {
-            Physics.Raycast(pos + Vector3.up*16f, Vector3.down, out var raycastHit, 32f, RayMasks.BLOCK_VEHICLE);
+        private static void SpawnVehicle(Vector3 pos, ushort id)
+        {
+            Physics.Raycast(pos + Vector3.up * 16f, Vector3.down, out var raycastHit, 32f, RayMasks.BLOCK_VEHICLE);
 
-            if (raycastHit.collider != null) {
+            if (raycastHit.collider != null)
+            {
                 pos.y = raycastHit.point.y + 16f;
             }
 

@@ -21,53 +21,63 @@
 */
 #endregion
 
-using System;
 using Essentials.Api.Command.Source;
 using Essentials.Common.Util;
 using Essentials.Core;
+using System;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
-    public abstract class EssCommand : ICommand {
+    public abstract class EssCommand : ICommand
+    {
 
         protected string UsageMessage => "Use /" + Name + " " + Usage;
 
         public CommandInfo Info { get; }
 
-        public string Name {
+        public string Name
+        {
             get { return Info.Name; }
             internal set { Info.Name = value; }
         }
 
-        public string Permission {
+        public string Permission
+        {
             get { return Info.Permission; }
             set { Info.Permission = value; }
         }
 
-        public string[] Aliases {
+        public string[] Aliases
+        {
             get { return Info.Aliases; }
             set { Info.Aliases = value; }
         }
 
-        public string Usage {
+        public string Usage
+        {
             get { return Info.Usage; }
             set { Info.Usage = value; }
         }
 
-        public AllowedSource AllowedSource {
+        public AllowedSource AllowedSource
+        {
             get { return Info.AllowedSource; }
             set { Info.AllowedSource = value; }
         }
 
-        public string Description {
+        public string Description
+        {
             get { return Info.Description; }
             set { Info.Description = value; }
         }
 
-        protected EssCommand() {
+        protected EssCommand()
+        {
             Info = ReflectUtil.GetAttributeFrom<CommandInfo>(this);
 
-            if (Info == null) {
+            if (Info == null)
+            {
                 throw new ArgumentException("EssCommand must have 'CommandInfo' attribute.");
             }
 
@@ -75,30 +85,34 @@ namespace Essentials.Api.Command {
                 ? $"essentials.command.{Name}"
                 : Info.Permission;
 
-            if (string.IsNullOrEmpty(Permission)) {
+            if (string.IsNullOrEmpty(Permission))
+            {
                 Permission = Name;
             }
         }
 
-        internal EssCommand(CommandInfo info) {
+        internal EssCommand(CommandInfo info)
+        {
             Info = info;
 
             Permission = GetType().Assembly.Equals(typeof(EssCore).Assembly)
                ? $"essentials.command.{Name}"
                : Info.Permission;
 
-            if (string.IsNullOrEmpty(Permission)) {
+            if (string.IsNullOrEmpty(Permission))
+            {
                 Permission = Name;
             }
         }
 
-        protected virtual void ShowUsage(ICommandSource source) {
+        protected virtual void ShowUsage(ICommandSource source)
+        {
             source.SendMessage(UsageMessage);
         }
 
-        protected virtual void OnUnregistered() {}
+        protected virtual void OnUnregistered() { }
 
-        protected virtual void OnRegistered() {}
+        protected virtual void OnRegistered() { }
 
         public abstract CommandResult OnExecute(ICommandSource src, ICommandArgs args);
 

@@ -24,9 +24,11 @@
 using System;
 using UnityEngine;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
-    public static class CommandExtensions {
+    public static class CommandExtensions
+    {
 
         /// <summary>
         /// Try to parse a Vector3 from 3 arguments, starting in <paramref name="initialIndex"/>
@@ -34,8 +36,10 @@ namespace Essentials.Api.Command {
         /// <param name="src">Source</param>
         /// <param name="initialIndex"> Initial index </param>
         /// <returns>New vector3 with given positions.</returns>
-        public static Vector3? GetVector3(this ICommandArgs src, int initialIndex) {
-            if (initialIndex + 3 > src.Length) {
+        public static Vector3? GetVector3(this ICommandArgs src, int initialIndex)
+        {
+            if (initialIndex + 3 > src.Length)
+            {
                 return null;
             }
 
@@ -43,7 +47,8 @@ namespace Essentials.Api.Command {
             var y = src.Arguments[initialIndex + 1];
             var z = src.Arguments[initialIndex + 2];
 
-            if (x.IsFloat && y.IsFloat && z.IsFloat) {
+            if (x.IsFloat && y.IsFloat && z.IsFloat)
+            {
                 return new Vector3(x.ToFloat, y.ToFloat, z.ToFloat);
             }
 
@@ -56,7 +61,8 @@ namespace Essentials.Api.Command {
         /// <param name="minInclusive">Maximum value</param>
         /// <param name="maxInclusive">Minimum value</param>
         /// <returns></returns>
-        public static bool IsInRange(this ICommandArgument src, int minInclusive, int maxInclusive) {
+        public static bool IsInRange(this ICommandArgument src, int minInclusive, int maxInclusive)
+        {
             var val = src.ToInt;
             return val >= minInclusive && val <= maxInclusive;
         }
@@ -70,23 +76,31 @@ namespace Essentials.Api.Command {
         //   CommandResult.LangError("INVALID_NUMBER", src.ToString()) if invalid.
         /// </param>
         /// <returns>true if sucessfull, otherwise false</returns>
-        public static bool TryConvertToByte(this ICommandArgument src, out byte value, out CommandResult error) {
+        public static bool TryConvertToByte(this ICommandArgument src, out byte value, out CommandResult error)
+        {
             value = 0;
             error = null;
-            try {
+            try
+            {
                 value = byte.Parse(src.ToString());
                 return true;
-            } catch (OverflowException) {
-                error = CommandResult.LangError("NUMBER_BETWEEN", byte.MinValue, byte.MaxValue);
-            } catch (FormatException) {
-                error = CommandResult.LangError("INVALID_NUMBER", src.ToString());
+            }
+            catch (OverflowException)
+            {
+                error = CommandResult.LangError("icon_error_general", "NUMBER_BETWEEN", byte.MinValue, byte.MaxValue);
+            }
+            catch (FormatException)
+            {
+                error = CommandResult.LangError("icon_error_general", "INVALID_NUMBER", src.ToString());
             }
             return false;
         }
 
-        public static bool TryConvertToByte(this ICommandArgument src, out byte? value, out CommandResult error) {
+        public static bool TryConvertToByte(this ICommandArgument src, out byte? value, out CommandResult error)
+        {
             byte result;
-            if (src.TryConvertToByte(out result, out error)) {
+            if (src.TryConvertToByte(out result, out error))
+            {
                 value = result;
                 return true;
             }

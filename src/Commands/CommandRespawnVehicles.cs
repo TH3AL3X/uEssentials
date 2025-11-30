@@ -22,13 +22,13 @@
 #endregion
 
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
-using SDG.Unturned;
 using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
 
 namespace Essentials.Commands
 {
@@ -43,12 +43,13 @@ namespace Essentials.Commands
         {
             var respawnedCount = 0;
 
-            UWorld.Vehicles.Where(z => z.isDead).ForEach(vehicle => {
+            UWorld.Vehicles.Where(z => z.isDead).ForEach(vehicle =>
+            {
                 VehicleManager.sendVehicleRecov(vehicle, vehicle.transform.position, 0);
                 respawnedCount++;
             });
 
-            EssLang.Send(src, "RESPAWNED_VEHICLES", respawnedCount);
+            EssLang.Send("generalicon", src, "RESPAWNED_VEHICLES", respawnedCount);
 
             return CommandResult.Success();
         }

@@ -21,15 +21,15 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
-using Essentials.I18n;
-using SDG.Unturned;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using Rocket.Unturned.Chat;
+using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "repairvehicle",
@@ -37,17 +37,22 @@ namespace Essentials.Commands {
         Description = "Repair current/all vehicle",
         Usage = "<all>"
     )]
-    public class CommandRepairVehicle : EssCommand {
+    public class CommandRepairVehicle : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty) {
-                if (src.IsConsole) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty)
+            {
+                if (src.IsConsole)
+                {
                     return CommandResult.ShowUsage();
                 }
 
                 var currentVeh = src.ToPlayer().CurrentVehicle;
 
-                if (currentVeh != null) {
+                if (currentVeh != null)
+                {
                     VehicleManager.sendVehicleHealth(currentVeh, currentVeh.asset.health);
 
                     // fix tires
@@ -56,20 +61,27 @@ namespace Essentials.Commands {
                         currentVeh.askRepairTire(i);
                     }
 
-                    EssLang.Send(src, "VEHICLE_REPAIRED");
-                } else {
-                    return CommandResult.LangError("NOT_IN_VEHICLE");
+                    EssLang.Send("generalicon", src, "VEHICLE_REPAIRED");
                 }
-            } else if (args[0].Equals("all")) {
-                if (!src.HasPermission($"{Permission}.all")) {
+                else
+                {
+                    return CommandResult.LangError("icon_error_general", "NOT_IN_VEHICLE");
+                }
+            }
+            else if (args[0].Equals("all"))
+            {
+                if (!src.HasPermission($"{Permission}.all"))
+                {
                     return CommandResult.NoPermission($"{Permission}.all");
                 }
 
-                lock (UWorld.Vehicles) {
+                lock (UWorld.Vehicles)
+                {
                     UWorld.Vehicles
                         .Where(veh => !veh.isExploded && !veh.isUnderwater)
                         .ToList()
-                        .ForEach(vehicle => {
+                        .ForEach(vehicle =>
+                        {
                             VehicleManager.sendVehicleHealth(vehicle, vehicle.asset.health);
 
                             // fix tires
@@ -79,7 +91,7 @@ namespace Essentials.Commands {
                             }
                         });
 
-                    EssLang.Send(src, "VEHICLE_REPAIRED_ALL");
+                    EssLang.Send("generalicon", src, "VEHICLE_REPAIRED_ALL");
                 }
             }
 

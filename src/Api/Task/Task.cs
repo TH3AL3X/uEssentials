@@ -23,13 +23,15 @@
 
 using System;
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
-    public sealed class Task {
+    public sealed class Task
+    {
 
         public string Id { get; internal set; }
 
-        public int Delay { get; internal set; } = - 1;
+        public int Delay { get; internal set; } = -1;
 
         public int Interval { get; internal set; } = -1;
 
@@ -41,19 +43,23 @@ namespace Essentials.Api.Task {
 
         public DateTime NextExecution { get; internal set; }
 
-        public static Builder Create() {
+        public static Builder Create()
+        {
             return new Builder();
         }
 
-        public void Cancel() {
+        public void Cancel()
+        {
             IsAlive = false;
         }
 
-        public void Run() {
+        public void Run()
+        {
             Action(this);
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"Id: \"{Id}\", " +
                    $"Delay: {Delay}, " +
                    $"Interval: {Interval}, " +
@@ -63,63 +69,76 @@ namespace Essentials.Api.Task {
                    $"NextExecution: {NextExecution}";
         }
 
-        public class Builder {
+        public class Builder
+        {
 
             readonly Task _task = new Task();
 
-            internal Builder() {}
+            internal Builder() { }
 
-            public Builder Id(string id) {
+            public Builder Id(string id)
+            {
                 _task.Id = id;
                 return this;
             }
 
-            public Builder Delay(int delayInMs) {
+            public Builder Delay(int delayInMs)
+            {
                 _task.Delay = delayInMs;
                 return this;
             }
 
-            public Builder Delay(TimeSpan delay) {
-                _task.Delay = (int) delay.TotalMilliseconds;
+            public Builder Delay(TimeSpan delay)
+            {
+                _task.Delay = (int)delay.TotalMilliseconds;
                 return this;
             }
 
-            public Builder Interval(int intervalInMs) {
+            public Builder Interval(int intervalInMs)
+            {
                 _task.Interval = intervalInMs;
                 return this;
             }
 
-            public Builder Interval(TimeSpan interval) {
-                _task.Interval = (int) interval.TotalMilliseconds;
+            public Builder Interval(TimeSpan interval)
+            {
+                _task.Interval = (int)interval.TotalMilliseconds;
                 return this;
             }
 
-            public Builder Action(Action action) {
+            public Builder Action(Action action)
+            {
                 _task.Action = (t => action());
                 return this;
             }
 
-            public Builder Action(Action<Task> action) {
+            public Builder Action(Action<Task> action)
+            {
                 _task.Action = action;
                 return this;
             }
 
-            public Builder Async() {
+            public Builder Async()
+            {
                 _task.IsAsync = true;
                 return this;
             }
 
-            public Builder UseIntervalAsDelay() {
+            public Builder UseIntervalAsDelay()
+            {
                 _task.Delay = _task.Interval;
                 return this;
             }
 
-            public Task Submit() {
+            public Task Submit()
+            {
                 return Submit(UEssentials.TaskExecutor);
             }
 
-            public Task Submit(ITaskExecutor executor) {
-                if (_task.Action == null) {
+            public Task Submit(ITaskExecutor executor)
+            {
+                if (_task.Action == null)
+                {
                     throw new InvalidOperationException("Cannot submit a task with null action.");
                 }
                 _task.NextExecution = DateTime.Now.AddMilliseconds(_task.Delay);

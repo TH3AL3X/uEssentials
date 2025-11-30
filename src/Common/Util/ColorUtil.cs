@@ -25,11 +25,14 @@ using System;
 using System.Globalization;
 using UnityEngine;
 
-namespace Essentials.Common.Util {
+namespace Essentials.Common.Util
+{
 
-    public static class ColorUtil {
+    public static class ColorUtil
+    {
 
-        public static ConsoleColor UnityColorToConsoleColor(Color color) {
+        public static ConsoleColor UnityColorToConsoleColor(Color color)
+        {
             if (color == Color.black) return ConsoleColor.Black;
             if (color == Color.green) return ConsoleColor.Green;
             if (color == Color.blue) return ConsoleColor.Blue;
@@ -41,32 +44,38 @@ namespace Essentials.Common.Util {
             return ConsoleColor.White;
         }
 
-        public static bool HasColor(string message) {
+        public static bool HasColor(string message)
+        {
             int l = message.IndexOf('<');
             int r = message.IndexOf('>');
-            if (l == -1 || r == -1 || l > r) {
+            if (l == -1 || r == -1 || l > r)
+            {
                 return false;
             }
             return message.Substring(++l, r - l).Length > 0;
         }
 
-        public static Color GetColorFromString(ref string message) {
+        public static Color GetColorFromString(ref string message)
+        {
             Color? color;
             int l = message.IndexOf('<');
             int r = message.IndexOf('>');
 
-            if (l == -1 || r == -1 || l > r) {
+            if (l == -1 || r == -1 || l > r)
+            {
                 return Color.green;
             }
 
             var rawColor = message.Substring(++l, r - l);
 
-            if (string.IsNullOrEmpty(rawColor)) {
+            if (string.IsNullOrEmpty(rawColor))
+            {
                 return Color.green;
             }
 
             // Try get color from name
-            switch (rawColor.Trim().ToLower()) {
+            switch (rawColor.Trim().ToLower())
+            {
                 case "black": color = Color.black; break;
                 case "blue": color = Color.blue; break;
                 case "clear": color = Color.clear; break;
@@ -82,26 +91,31 @@ namespace Essentials.Common.Util {
             }
 
             // Remove <color>
-            if (color.HasValue) {
+            if (color.HasValue)
+            {
                 message = message.Replace($"<{rawColor}>", string.Empty);
             }
 
             return color ?? Color.green;
         }
 
-        private static Color? ColorFromHex(string rawColor) {
+        private static Color? ColorFromHex(string rawColor)
+        {
             var len = rawColor.Length;
 
-            if (len == 0) {
+            if (len == 0)
+            {
                 return null;
             }
 
-            if (rawColor[0] == '#') {
+            if (rawColor[0] == '#')
+            {
                 rawColor = rawColor.Substring(1);
             }
 
             // <RGB> to <RRGGBB>
-            if (len == 3) {
+            if (len == 3)
+            {
                 var chars = new char[6];
                 chars[0] = rawColor[0];
                 chars[1] = rawColor[0];
@@ -112,7 +126,8 @@ namespace Essentials.Common.Util {
                 rawColor = new string(chars);
             }
 
-            if (!int.TryParse(rawColor, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var hex)) {
+            if (!int.TryParse(rawColor, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var hex))
+            {
                 System.Diagnostics.Debug.Print("Failed to parse hex color '{0}'.", rawColor);
                 return null;
             }

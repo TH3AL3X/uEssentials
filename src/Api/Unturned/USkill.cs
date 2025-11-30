@@ -25,9 +25,11 @@ using Essentials.Common;
 using System;
 using System.Linq;
 
-namespace Essentials.Api.Unturned {
+namespace Essentials.Api.Unturned
+{
 
-    public class USkill {
+    public class USkill
+    {
 
         public static readonly USkill OVERKILL = new USkill(0, 0, "OVERKILL", 7);
         public static readonly USkill SHARPSHOOTER = new USkill(0, 1, "SHARPSHOOTER", 7);
@@ -100,13 +102,15 @@ namespace Essentials.Api.Unturned {
         ///   otherwise return a <see cref="Optional{USkill}"/> containing the skill.
         /// </returns>
         [Obsolete("Use FromName(string name, out USkill skill) instead.")]
-        public static Optional<USkill> FromName(string name) {
+        public static Optional<USkill> FromName(string name)
+        {
             var skill = Skills.FirstOrDefault(sk => sk.Name.EqualsIgnoreCase(name)) ??
                         Skills.FirstOrDefault(sk => sk.Name.ContainsIgnoreCase(name));
             return Optional<USkill>.OfNullable(skill);
         }
 
-        public static bool FromName(string name, out USkill skill) {
+        public static bool FromName(string name, out USkill skill)
+        {
             skill = Skills.FirstOrDefault(sk => sk.Name.EqualsIgnoreCase(name)) ??
                     Skills.FirstOrDefault(sk => sk.Name.ContainsIgnoreCase(name));
             return skill != null;

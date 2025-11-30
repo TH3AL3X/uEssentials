@@ -23,29 +23,36 @@
 
 using System.Threading;
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
     // Single Threaded task executor
-    internal class AsyncTaskExecutor : AbstractTaskExecutor {
+    internal class AsyncTaskExecutor : AbstractTaskExecutor
+    {
 
         private volatile bool _running;
 
-        public AsyncTaskExecutor() {
+        public AsyncTaskExecutor()
+        {
             _running = true;
-            ThreadStart start = () => {
-                while (_running) {
+            ThreadStart start = () =>
+            {
+                while (_running)
+                {
                     Thread.Sleep(1);
                     Update();
                 }
             };
-            var executorThread = new Thread(start) {
+            var executorThread = new Thread(start)
+            {
                 IsBackground = true,
                 Name = "AsyncTaskExecutorThread"
             };
             executorThread.Start();
         }
 
-        public override void Stop() {
+        public override void Stop()
+        {
             _running = false;
             base.Stop();
         }

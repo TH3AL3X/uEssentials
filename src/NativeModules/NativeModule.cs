@@ -21,18 +21,20 @@
 */
 #endregion
 
-using System.IO;
 using Essentials.Api;
 using Essentials.Api.Module;
+using System.IO;
 
-namespace Essentials.NativeModules {
+namespace Essentials.NativeModules
+{
 
-    public abstract class NativeModule : EssModule {
+    public abstract class NativeModule : EssModule
+    {
 
-        protected NativeModule() {
+        protected NativeModule()
+        {
             Assembly = GetType().Assembly;
             Logger = UEssentials.Logger;
-
             Directory.Delete(Folder, true);
         }
 

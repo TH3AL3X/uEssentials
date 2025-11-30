@@ -24,9 +24,11 @@
 using Essentials.Common.Util;
 using Essentials.I18n;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
-    public class CommandResult {
+    public class CommandResult
+    {
 
         private static readonly CommandResult SUCCESS = new CommandResult(null, ResultType.SUCCESS);
         private static readonly CommandResult SHOW_USAGE = new CommandResult(null, ResultType.SHOW_USAGE);
@@ -44,47 +46,57 @@ namespace Essentials.Api.Command {
 
         public static CommandResult InvalidArgs() => INVALID_ARGS;
 
-        public static CommandResult InvalidArgs(string message, params object[] args) {
+        public static CommandResult InvalidArgs(string message, params object[] args)
+        {
             return new CommandResult(string.Format(message, args), ResultType.INVALID_ARGS);
         }
-
-        public static CommandResult Error(string message, params object[] args) {
-            if (!ColorUtil.HasColor(message)) {
+        // añadir imagenes para los mensages mas adelante (discord ellocoed)
+        public static CommandResult Error(string message, params object[] args)
+        {
+            if (!ColorUtil.HasColor(message))
+            {
                 message = $"{message}";
             }
             return new CommandResult(string.Format(message, args), ResultType.ERROR);
         }
 
-        public static CommandResult LangError(string key, params object[] args) {
+        public static CommandResult LangError(string icon_error, string key, params object[] args)
+        {
             return new CommandResult(FailSafeTranslate(key, args), ResultType.ERROR);
         }
 
-        public static CommandResult LangSuccess(string key, params object[] args) {
+        public static CommandResult LangSuccess(string key, params object[] args)
+        {
             return new CommandResult(FailSafeTranslate(key, args), ResultType.SUCCESS);
         }
 
-        public static CommandResult Generic(string message, params object[] args) {
+        public static CommandResult Generic(string message, params object[] args)
+        {
             return new CommandResult(string.Format(message, args), ResultType.GENERIC);
         }
 
         /* COMMON RESULTS */
 
-        public static CommandResult NoPermission(string permission) {
+        public static CommandResult NoPermission(string permission)
+        {
             return UEssentials.Config.ShowPermissionOnErrorMessage
                 ? LangError("COMMAND_NO_PERMISSION_WITH_PERM", permission)
-                : LangError("COMMAND_NO_PERMISSION");
+                : LangError(null, "COMMAND_NO_PERMISSION");
         }
 
-        public CommandResult(string message, ResultType type) {
+        public CommandResult(string message, ResultType type)
+        {
             Message = message;
             Type = type;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"{Type}{(Message == null ? "" : $" [{Message}]")}";
         }
 
-        public enum ResultType {
+        public enum ResultType
+        {
             SUCCESS,
             ERROR,
             SHOW_USAGE,

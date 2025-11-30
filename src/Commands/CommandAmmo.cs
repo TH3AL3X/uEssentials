@@ -22,10 +22,10 @@ namespace Essentials.Commands
             var player = src.ToPlayer();
             var itemAsset = player.Equipment.asset;
             if (!(itemAsset is ItemGunAsset gunAsset))
-                return CommandResult.LangError("AMMO_NOT_GUN");
+                return CommandResult.LangError("icon_error_general", "AMMO_NOT_GUN");
 
             if (!(UnturnedItems.GetItemAssetById(gunAsset.getMagazineID()) is ItemMagazineAsset magAsset))
-                return CommandResult.LangError("AMMO_FAILED");
+                return CommandResult.LangError("icon_error_general", "AMMO_FAILED");
 
             switch (args.Length)
             {
@@ -38,8 +38,8 @@ namespace Essentials.Commands
 
         private CommandResult SpawnMag(UPlayer player, ItemAsset magAsset, int amount = 1)
         {
-            player.GiveItem(new Item(magAsset.id, true), (ushort)(amount / UEssentials.Config.AmmoCommandSpawnLimit), true);
-            EssLang.Send(player, "AMMO_SUCCESS", new object[] { (ushort)(amount / UEssentials.Config.AmmoCommandSpawnLimit), magAsset.itemName, magAsset.id });
+            player.GiveItem(new Item(magAsset.id, true), (ushort)(amount * 10 / UEssentials.Config.AmmoCommandSpawnLimit), true);
+            EssLang.Send("icon_ammo_success", player, "AMMO_SUCCESS", new object[] { (ushort)(amount * 10 / UEssentials.Config.AmmoCommandSpawnLimit), magAsset.itemName, magAsset.id });
             return CommandResult.Success();
         }
     }

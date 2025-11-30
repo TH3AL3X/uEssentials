@@ -23,16 +23,17 @@
 
 using System;
 
-namespace Essentials.CodeAnalysis {
+namespace Essentials.CodeAnalysis
+{
 
     [AttributeUsage(
-        AttributeTargets.Method      |
-        AttributeTargets.Parameter   |
+        AttributeTargets.Method |
+        AttributeTargets.Parameter |
         AttributeTargets.ReturnValue |
-        AttributeTargets.Field       |
-        AttributeTargets.Property    |
+        AttributeTargets.Field |
+        AttributeTargets.Property |
         AttributeTargets.Delegate
     )]
-    public class NotNullAttribute : Attribute {}
+    public class NotNullAttribute : Attribute { }
 
 }

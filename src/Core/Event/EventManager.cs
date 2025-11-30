@@ -30,45 +30,54 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace Essentials.Core.Event {
+namespace Essentials.Core.Event
+{
 
-    public class EventManager : IEventManager {
+    public class EventManager : IEventManager
+    {
 
         private readonly Dictionary<EventHolder, List<Delegate>> _handlerMap =
             new Dictionary<EventHolder, List<Delegate>>();
 
-        public void RegisterAll(object instance) {
+        public void RegisterAll(object instance)
+        {
             var type = instance.GetType();
 
-            foreach (var listenerMethod in type.GetMethods(ReflectUtil.STATIC_INSTANCE_FLAGS)) {
+            foreach (var listenerMethod in type.GetMethods(ReflectUtil.STATIC_INSTANCE_FLAGS))
+            {
                 var eventHandlerAttrs = listenerMethod.GetCustomAttributes(typeof(SubscribeEvent), false);
                 if (eventHandlerAttrs.Length == 0)
                     continue;
 
-                var eventHandlerAttr = (SubscribeEvent) eventHandlerAttrs[0];
+                var eventHandlerAttr = (SubscribeEvent)eventHandlerAttrs[0];
                 var eventTarget = eventHandlerAttr.DelegateOwner;
                 var targetFieldName = eventHandlerAttr.DelegateName;
 
-                lock (_handlerMap) {
+                lock (_handlerMap)
+                {
                     var holder = GetHolder(eventTarget, targetFieldName);
 
                     EventInfo eventInfo;
                     List<Delegate> methodDelegates;
 
-                    if (holder == null) {
-                        var eventTargetType = (Type) (eventTarget is Type
+                    if (holder == null)
+                    {
+                        var eventTargetType = (Type)(eventTarget is Type
                             ? eventTarget
                             : eventTarget.GetType());
 
                         eventInfo = eventTargetType.GetEvent(targetFieldName);
 
-                        holder = new EventHolder {
+                        holder = new EventHolder
+                        {
                             EventInfo = eventInfo,
                             Target = eventTarget
                         };
 
                         methodDelegates = new List<Delegate>();
-                    } else {
+                    }
+                    else
+                    {
                         eventTarget = holder.Target;
                         eventInfo = holder.EventInfo;
 
@@ -91,42 +100,52 @@ namespace Essentials.Core.Event {
             }
         }
 
-        public void RegisterAll(Type type) {
+        public void RegisterAll(Type type)
+        {
             if (type.GetMethods(ReflectUtil.STATIC_INSTANCE_FLAGS)
-                .Any(md => md.GetCustomAttributes(typeof(SubscribeEvent), false).Length > 0)) {
+                .Any(md => md.GetCustomAttributes(typeof(SubscribeEvent), false).Length > 0))
+            {
                 RegisterAll(EssCore.Instance.CommonInstancePool.GetOrCreate(type));
             }
         }
 
-        public void RegisterAll<TEventType>() {
+        public void RegisterAll<TEventType>()
+        {
             RegisterAll(typeof(TEventType));
         }
 
-        public void RegisterAll(Assembly asm) {
+        public void RegisterAll(Assembly asm)
+        {
             asm.GetTypes().Where(CanHoldEvents).ForEach(RegisterAll);
         }
 
-        public void RegisterAll(string targetNamespace) {
+        public void RegisterAll(string targetNamespace)
+        {
             GetType().Assembly.GetTypes()
                 .Where(CanHoldEvents)
                 .Where(t => t.Namespace.EqualsIgnoreCase(targetNamespace))
                 .ForEach(RegisterAll);
         }
 
-        public void UnregisterAll<TEventType>() {
+        public void UnregisterAll<TEventType>()
+        {
             UnregisterAll(typeof(TEventType));
         }
 
-        public void UnregisterAll(Type type) {
-            lock (_handlerMap) {
+        public void UnregisterAll(Type type)
+        {
+            lock (_handlerMap)
+            {
                 var unregisteredDelegates = new List<Delegate>();
                 var unregisteredHolders = new List<EventHolder>();
                 var handlerMapAsList = _handlerMap.ToList();
 
-                for (var j = 0; j < handlerMapAsList.Count; j++) {
+                for (var j = 0; j < handlerMapAsList.Count; j++)
+                {
                     var handler = handlerMapAsList[j];
 
-                    foreach (var delegateMethod in handler.Value) {
+                    foreach (var delegateMethod in handler.Value)
+                    {
                         if (delegateMethod.Method.ReflectedType != type) continue;
 
                         handler.Key.EventInfo.RemoveEventHandler(handler.Key.Target, delegateMethod);
@@ -138,26 +157,32 @@ namespace Essentials.Core.Event {
                     if (handler.Value.Count == 0) unregisteredHolders.Add(handler.Key);
                 }
 
-                foreach (var holder in unregisteredHolders) {
+                foreach (var holder in unregisteredHolders)
+                {
                     _handlerMap.Remove(holder);
                 }
             }
         }
 
-        public void Unregister<T>(string methodName) {
+        public void Unregister<T>(string methodName)
+        {
             Unregister(typeof(T), methodName);
         }
 
-        public void Unregister(Type type, string methodName) {
-            lock (_handlerMap) {
+        public void Unregister(Type type, string methodName)
+        {
+            lock (_handlerMap)
+            {
                 var unregisteredDelegates = new List<Delegate>();
                 var unregisteredHolders = new List<EventHolder>();
                 var handlerMapAsList = _handlerMap.ToList();
 
-                for (var j = 0; j < handlerMapAsList.Count; j++) {
+                for (var j = 0; j < handlerMapAsList.Count; j++)
+                {
                     var handler = handlerMapAsList[j];
 
-                    foreach (var delegateMethod in handler.Value) {
+                    foreach (var delegateMethod in handler.Value)
+                    {
                         if (delegateMethod.Method.ReflectedType != type ||
                             !delegateMethod.Method.Name.EqualsIgnoreCase(methodName)) continue;
 
@@ -170,35 +195,42 @@ namespace Essentials.Core.Event {
                     if (handler.Value.Count == 0) unregisteredHolders.Add(handler.Key);
                 }
 
-                foreach (var holder in unregisteredHolders) {
+                foreach (var holder in unregisteredHolders)
+                {
                     _handlerMap.Remove(holder);
                 }
             }
         }
 
-        public void UnregisterAll(Assembly asm) {
+        public void UnregisterAll(Assembly asm)
+        {
             asm.GetTypes().ForEach(UnregisterAll);
         }
 
-        public void UnregisterAll(string targetNamespace) {
+        public void UnregisterAll(string targetNamespace)
+        {
             GetType().Assembly.GetTypes()
                 .Where(CanHoldEvents)
                 .Where(t => t.Namespace.EqualsIgnoreCase(targetNamespace))
                 .ForEach(RegisterAll);
         }
 
-        private EventHolder GetHolder(object target, string fieldName) {
-            lock (_handlerMap) {
+        private EventHolder GetHolder(object target, string fieldName)
+        {
+            lock (_handlerMap)
+            {
                 return _handlerMap.Keys.FirstOrDefault(holder => holder.Target.Equals(target) &&
                                                                  holder.EventInfo.Name.Equals(fieldName));
             }
         }
 
-        private static bool CanHoldEvents(Type type) {
+        private static bool CanHoldEvents(Type type)
+        {
             return !type.IsAbstract && !type.ContainsGenericParameters;
         }
 
-        public sealed class EventHolder {
+        public sealed class EventHolder
+        {
             public object Target;
             public EventInfo EventInfo;
         }

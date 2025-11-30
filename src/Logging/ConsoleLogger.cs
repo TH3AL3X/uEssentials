@@ -25,91 +25,114 @@ using Rocket.Core;
 using Rocket.Core.RCON;
 using System;
 
-namespace Essentials.Logging {
+namespace Essentials.Logging
+{
 
-    public class ConsoleLogger {
+    public class ConsoleLogger
+    {
 
         private string Prefix { get; }
 
-        public ConsoleLogger(string prefix) {
+        public ConsoleLogger(string prefix)
+        {
             Prefix = prefix;
         }
-        
-        public void LogException(Exception exception, bool parseColors = false, bool fullException = false) {
+
+        public void LogException(Exception exception, bool parseColors = false, bool fullException = false)
+        {
 #if DEV
-          fullException = true; // Always print full exception in dev mode
+            fullException = true; // Always print full exception in dev mode
 #endif
-          LogError(fullException ? exception.ToString() : exception.Message);
+            LogError(fullException ? exception.ToString() : exception.Message);
         }
 
-        public void LogError(string message, bool parseColors = false) {
+        public void LogError(string message, bool parseColors = false)
+        {
             Log(message, ConsoleColor.Red, Prefix + "[ERROR] ", parseColors: parseColors);
         }
 
-        public void LogWarning(string message, bool parseColors = false) {
+        public void LogWarning(string message, bool parseColors = false)
+        {
             Log(message, ConsoleColor.Yellow, Prefix + "[WARN] ", parseColors: parseColors);
         }
 
-        public void LogInfo(string message, bool parseColors = false) {
+        public void LogInfo(string message, bool parseColors = false)
+        {
             Log(message, ConsoleColor.Green, Prefix + "[INFO] ", parseColors: parseColors);
         }
 
-        public void LogDebug(string message, bool parseColors = false) {
+        public void LogDebug(string message, bool parseColors = false)
+        {
             Log(message, ConsoleColor.DarkGray, Prefix + "[DEBUG] ", parseColors: parseColors);
         }
 
         public void Log(string message, ConsoleColor color, string prefix = "default",
-                        string suffix = "default", bool parseColors = false) {
-            if (prefix == "default") {
+                        string suffix = "default", bool parseColors = false)
+        {
+            if (prefix == "default")
+            {
                 prefix = Prefix;
             }
-            if (suffix == "default") {
+            if (suffix == "default")
+            {
                 suffix = System.Environment.NewLine;
             }
-            
+
             var lastColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
-            
-            lock (Console.Out) {
+
+            lock (Console.Out)
+            {
                 Write(prefix + message + suffix, parseColors);
             }
-            
+
             Console.ForegroundColor = lastColor;
-            
-            try {
-                if (R.Settings.Instance.RCON.Enabled) {
+
+            try
+            {
+                if (R.Settings.Instance.RCON.Enabled)
+                {
                     RCONServer.Broadcast(message);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine($"ConsoleLogger error: {ex.ToString()}");
             }
         }
 
-        private void Write(string text, bool parseColors = false) {
-            if (!parseColors) {
+        private void Write(string text, bool parseColors = false)
+        {
+            if (!parseColors)
+            {
                 Console.Write(text);
                 return;
             }
             var colorBuf = new char[11];
             var lastClrIdx = 0;
 
-            for (var i = 0; i < text.Length; i++) {
+            for (var i = 0; i < text.Length; i++)
+            {
                 var c = text[i];
-                if (c == '~') {
+                if (c == '~')
+                {
                     Console.Write(text.Substring(lastClrIdx, i - lastClrIdx));
                     var j = 0;
-                    for (;;) {
+                    for (; ; )
+                    {
                         c = text[++i];
                         if (c == '~' || i == text.Length || j == 11) break;
-                        if (c >= 'A' && c <= 'Z') {
-                            c = (char) (c + 32); // To lower case
+                        if (c >= 'A' && c <= 'Z')
+                        {
+                            c = (char)(c + 32); // To lower case
                         }
                         colorBuf[j++] = c;
                     }
                     i++; // Skip ~
                     lastClrIdx = i;
                     var strClr = new string(colorBuf, 0, j);
-                    switch (strClr) {
+                    switch (strClr)
+                    {
                         case "black":
                             Console.ForegroundColor = ConsoleColor.Black;
                             break;
@@ -163,7 +186,8 @@ namespace Essentials.Logging {
                             break;
                     }
                 }
-                if (i + 1 == text.Length && lastClrIdx != text.Length) {
+                if (i + 1 == text.Length && lastClrIdx != text.Length)
+                {
                     Console.Write(text.Substring(lastClrIdx, (i - lastClrIdx) + 1));
                 }
             }

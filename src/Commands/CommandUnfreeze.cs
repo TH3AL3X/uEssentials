@@ -21,15 +21,15 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Components.Player;
 using Essentials.I18n;
-using static UnityEngine.GraphicsBuffer;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "unfreeze",
@@ -38,31 +38,40 @@ namespace Essentials.Commands {
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandUnfreeze : EssCommand {
+    public class CommandUnfreeze : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args[0].Equals("*")) {
-                foreach (var player in UServer.Players.Where(player => player.HasComponent<FrozenPlayer>())) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args[0].Equals("*"))
+            {
+                foreach (var player in UServer.Players.Where(player => player.HasComponent<FrozenPlayer>()))
+                {
                     player.Movement.sendPluginSpeedMultiplier(1);
                     player.RemoveComponent<FrozenPlayer>();
-                    EssLang.Send(player, "UNFROZEN_PLAYER", src.DisplayName);
+                    EssLang.Send("generalicon", player, "UNFROZEN_PLAYER", src.DisplayName);
                 }
 
-                EssLang.Send(src, "UNFROZEN_ALL");
-            } else if (args[0].IsValidPlayerIdentifier) {
+                EssLang.Send("generalicon", src, "UNFROZEN_ALL");
+            }
+            else if (args[0].IsValidPlayerIdentifier)
+            {
                 var target = args[0].ToPlayer;
 
-                if (!target.HasComponent<FrozenPlayer>()) {
-                    return CommandResult.LangError("NOT_FROZEN", target.DisplayName);
+                if (!target.HasComponent<FrozenPlayer>())
+                {
+                    return CommandResult.LangError("icon_error_general", "NOT_FROZEN", target.DisplayName);
                 }
                 // Add movement again
                 target.Movement.sendPluginSpeedMultiplier(1);
                 target.RemoveComponent<FrozenPlayer>();
 
-                EssLang.Send(src, "UNFROZEN_SENDER", target.DisplayName);
-                EssLang.Send(target, "UNFROZEN_PLAYER", src.DisplayName);
-            } else {
-                return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                EssLang.Send("generalicon", src, "UNFROZEN_SENDER", target.DisplayName);
+                EssLang.Send("generalicon", target, "UNFROZEN_PLAYER", src.DisplayName);
+            }
+            else
+            {
+                return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
             }
             return CommandResult.Success();
         }

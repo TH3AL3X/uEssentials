@@ -25,48 +25,59 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
 
-namespace Essentials.NativeModules.Warp.Commands {
+namespace Essentials.NativeModules.Warp.Commands
+{
 
     [CommandInfo(
         Name = "setwarp",
         Description = "Set a warp.",
         Usage = "[warp_name] <x> <y> <z>"
     )]
-    public class CommandSetWarp : EssCommand {
-
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            switch (args.Length) {
+    public class CommandSetWarp : EssCommand
+    {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            switch (args.Length)
+            {
                 case 1:
-                    if (src.IsConsole) {
+                    if (src.IsConsole)
+                    {
                         return CommandResult.ShowUsage();
                     }
 
-                    if (WarpModule.Instance.WarpManager.Contains(args[0].ToString())) {
-                        return CommandResult.LangError("WARP_ALREADY_EXISTS");
+                    if (WarpModule.Instance.WarpManager.Contains(args[0].ToString()))
+                    {
+                        return CommandResult.LangError("icon_error_general", "WARP_ALREADY_EXISTS");
                     }
-
+                    // ellocoed
+                    string add = "<color=#ffffff>";
                     var player = src.ToPlayer();
-                    var warp = new Warp(args[0].ToString(), player.Position, player.Rotation);
+                    var warp = new Warp(args[0].ToString(), player.Position, player.Rotation, add);
 
                     WarpModule.Instance.WarpManager.Add(warp);
-                    EssLang.Send(src, "WARP_SET", args[0]);
+                    EssLang.Send("generalicon", src, "WARP_SET", args[0]);
                     break;
 
                 case 4:
                     var pos = args.GetVector3(1);
 
-                    if (pos.HasValue) {
-                        warp = new Warp(args[0].ToString(), pos.Value, 0.0F);
+                    if (pos.HasValue)
+                    {
+                        warp = new Warp(args[0].ToString(), pos.Value, 0.0F, null);
 
-                        if (WarpModule.Instance.WarpManager.Contains(args[0].ToString())) {
-                            return CommandResult.LangError("WARP_ALREADY_EXISTS");
+
+                        if (WarpModule.Instance.WarpManager.Contains(args[0].ToString()))
+                        {
+                            return CommandResult.LangError("icon_error_general", "WARP_ALREADY_EXISTS");
                         }
 
                         WarpModule.Instance.WarpManager.Add(warp);
 
-                        EssLang.Send(src, "WARP_SET", args[0]);
-                    } else {
-                        return CommandResult.LangError("INVALID_COORDS", args[1], args[2], args[3]);
+                        EssLang.Send("iconwarp_set", src, "WARP_SET", args[0]);
+                    }
+                    else
+                    {
+                        return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[1], args[2], args[3]);
                     }
                     break;
 

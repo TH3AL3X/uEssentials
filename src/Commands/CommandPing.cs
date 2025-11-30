@@ -25,30 +25,38 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "ping",
         Description = "View your/player ping",
         Usage = "<player>"
     )]
-    public class CommandPing : EssCommand {
+    public class CommandPing : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty || args.Length > 1) {
-                if (src.IsConsole) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty || args.Length > 1)
+            {
+                if (src.IsConsole)
+                {
                     return CommandResult.ShowUsage();
                 }
 
-                EssLang.Send(src, "PING", src.ToPlayer().Ping);
-            } else {
+                EssLang.Send("generalicon", src, "PING", src.ToPlayer().Ping);
+            }
+            else
+            {
                 var target = args[0].ToPlayer;
 
-                if (target == null) {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                if (target == null)
+                {
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
-                EssLang.Send(src, "PING_OTHER", target.DisplayName, target.Ping);
+                EssLang.Send("generalicon", src, "PING_OTHER", target.DisplayName, target.Ping);
             }
 
             return CommandResult.Success();

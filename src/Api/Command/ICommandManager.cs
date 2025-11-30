@@ -21,17 +21,19 @@
 */
 #endregion
 
+using Essentials.Api.Command.Source;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Essentials.Api.Command.Source;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
     /// <summary>
     /// Author: leonardosnt
     /// </summary>
-    public interface ICommandManager {
+    public interface ICommandManager
+    {
 
         IEnumerable<ICommand> Commands { get; }
 

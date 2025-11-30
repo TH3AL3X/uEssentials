@@ -24,7 +24,6 @@
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
-using SDG.Framework.Utilities;
 using SDG.Unturned;
 using UnityEngine;
 
@@ -33,7 +32,7 @@ namespace Essentials.Commands
 
     [CommandInfo(
         Name = "opendoor",
-        Aliases = new[] { "door" },
+        Aliases = new[] { "opend" },
         Description = "Force open any door!",
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = 0,
@@ -57,17 +56,17 @@ namespace Essentials.Commands
                     bool open = !door.isOpen;
                     BarricadeManager.ServerSetDoorOpen(door, open);
 
-                    EssLang.Send(src, "DOOR_TOGGLED", open ? "opened" : "closed");
+                    EssLang.Send("generalicon", src, "DOOR_TOGGLED", open ? "opened" : "closed");
                     return CommandResult.Success();
                 }
                 else
                 {
-                    return CommandResult.LangError("DOOR_INVALID");
+                    return CommandResult.LangError("icon_error_general", "DOOR_INVALID");
                 }
             }
             else
             {
-                return CommandResult.LangError("NO_OBJECT");
+                return CommandResult.LangError("icon_error_general", "NO_OBJECT");
             }
         }
 

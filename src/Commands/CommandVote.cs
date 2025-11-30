@@ -21,13 +21,14 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
+using System.Linq;
 using static Essentials.Commands.CommandPoll;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "vote",
@@ -35,27 +36,34 @@ namespace Essentials.Commands {
         Usage = "[yes/no] [poll_name]",
         AllowedSource = AllowedSource.PLAYER
     )]
-    public class CommandVote : EssCommand {
+    public class CommandVote : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if ((args.Length != 2 && Polls.Count != 1) || args.Length < 1) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if ((args.Length != 2 && Polls.Count != 1) || args.Length < 1)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            switch (args[0].ToString().ToLower()) {
+            switch (args[0].ToString().ToLower())
+            {
                 case "yes":
                 case "y":
                     var pollName = args.Length == 1 ? Polls.Keys.First() : args[1].ToString();
 
-                    if (!PollExists(pollName, src)) {
+                    if (!PollExists(pollName, src))
+                    {
                         return CommandResult.Empty();
                     }
 
-                    lock (Polls) {
+                    lock (Polls)
+                    {
                         var poll = Polls[pollName];
 
-                        if (poll.Voted.Contains(src.DisplayName)) {
-                            return CommandResult.LangError("POLL_ALREADY_VOTED");
+                        if (poll.Voted.Contains(src.DisplayName))
+                        {
+                            return CommandResult.LangError("icon_error_general", "POLL_ALREADY_VOTED");
                         }
 
                         poll.YesVotes += 1;
@@ -63,7 +71,7 @@ namespace Essentials.Commands {
 
                         Polls[pollName] = poll;
 
-                        EssLang.Send(src, "POLL_VOTED_YES", pollName);
+                        EssLang.Send("generalicon", src, "POLL_VOTED_YES", pollName);
                     }
                     break;
 
@@ -71,15 +79,18 @@ namespace Essentials.Commands {
                 case "n":
                     pollName = args.Length == 1 ? Polls.Keys.First() : args[1].ToString();
 
-                    if (!PollExists(pollName, src)) {
+                    if (!PollExists(pollName, src))
+                    {
                         return CommandResult.Empty();
                     }
 
-                    lock (Polls) {
+                    lock (Polls)
+                    {
                         var poll = Polls[pollName];
 
-                        if (poll.Voted.Contains(src.DisplayName)) {
-                            return CommandResult.LangError("POLL_ALREADY_VOTED");
+                        if (poll.Voted.Contains(src.DisplayName))
+                        {
+                            return CommandResult.LangError("icon_error_general", "POLL_ALREADY_VOTED");
                         }
 
                         poll.NoVotes += 1;
@@ -87,7 +98,7 @@ namespace Essentials.Commands {
 
                         Polls[pollName] = poll;
 
-                        EssLang.Send(src, "POLL_VOTED_NO", pollName);
+                        EssLang.Send("generalicon", src, "POLL_VOTED_NO", pollName);
                     }
                     break;
 

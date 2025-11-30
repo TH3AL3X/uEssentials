@@ -26,11 +26,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Object = UnityEngine.Object;
 
-namespace Essentials.Api.Unturned {
+namespace Essentials.Api.Unturned
+{
 
-    public class UWorld {
+    public class UWorld
+    {
 
-        public static uint Time {
+        public static uint Time
+        {
             get { return LightingManager.time; }
             set { LightingManager.time = value; }
         }

@@ -21,16 +21,17 @@
 */
 #endregion
 
-using System.IO;
-using Steamworks;
-using System;
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Common;
 using Essentials.I18n;
+using Steamworks;
+using System;
+using System.IO;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "resetplayer",
@@ -39,39 +40,48 @@ namespace Essentials.Commands {
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandResetPlayer : EssCommand {
+    public class CommandResetPlayer : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty || args.Length > 1) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty || args.Length > 1)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            try {
+            try
+            {
                 var steamId = new CSteamID(ulong.Parse(args[0].ToString()));
 
-                if (!steamId.IsValid()) {
-                    return CommandResult.LangError("INVALID_STEAMID", steamId.m_SteamID);
+                if (!steamId.IsValid())
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_STEAMID", steamId.m_SteamID);
                 }
 
                 ResetPlayer(steamId.m_SteamID);
-                EssLang.Send(src, "PLAYER_RESET");
-            } catch (FormatException) {
+                EssLang.Send("generalicon", src, "PLAYER_RESET");
+            }
+            catch (FormatException)
+            {
                 var target = args[0].ToPlayer;
 
-                if (target == null) {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                if (target == null)
+                {
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 target.Kick(EssLang.Translate("PLAYER_RESET_KICK"));
                 ResetPlayer(target.CSteamId.m_SteamID);
 
-                EssLang.Send(src, "PLAYER_RESET");
+                EssLang.Send("generalicon", src, "PLAYER_RESET");
             }
 
             return CommandResult.Success();
         }
 
-        private void ResetPlayer(ulong steamId) {
+        private void ResetPlayer(ulong steamId)
+        {
             var sep = Path.DirectorySeparatorChar.ToString();
             var idStr = steamId.ToString();
             var parentDir = Directory.GetParent(Directory.GetCurrentDirectory());

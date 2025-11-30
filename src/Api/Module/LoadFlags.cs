@@ -23,10 +23,12 @@
 
 using System;
 
-namespace Essentials.Api.Module {
+namespace Essentials.Api.Module
+{
 
     [Flags]
-    public enum LoadFlags {
+    public enum LoadFlags
+    {
 
         /// <summary>
         /// Nothing

@@ -22,19 +22,20 @@
 #endregion
 
 using Essentials.Api.Module;
-using static Essentials.Api.UEssentials;
 using SDG.Unturned;
+using static Essentials.Api.UEssentials;
 
 namespace Essentials.NativeModules.Kit
 {
 
     [ModuleInfo(Name = "Kits")]
-    public class KitModule : NativeModule
+
+    public class KItModule : NativeModule
     {
 
         private const string CommandsNamespace = "Essentials.NativeModules.Kit.Commands";
         public KitManager KitManager { get; internal set; }
-        public static KitModule Instance { get; internal set; }
+        public static KItModule Instance { get; internal set; }
 
         public override void OnLoad()
         {

@@ -33,7 +33,7 @@ namespace Essentials.Commands
 
     [CommandInfo(
         Name = "openstorage",
-        Aliases = new[] { "storage" },
+        Aliases = new[] { "open" },
         Description = "Force open any storage!",
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = 0,
@@ -61,17 +61,17 @@ namespace Essentials.Commands
                     player.Inventory.updateItems(PlayerInventory.STORAGE, storage.items);
                     player.Inventory.sendStorage();
 
-                    EssLang.Send(src, "STORAGE_OPEN");
+                    EssLang.Send("generalicon", src, "STORAGE_OPEN");
                     return CommandResult.Success();
                 }
                 else
                 {
-                    return CommandResult.LangError("STORAGE_INVALID");
+                    return CommandResult.LangError("icon_error_general", "STORAGE_INVALID");
                 }
             }
             else
             {
-                return CommandResult.LangError("NO_OBJECT");
+                return CommandResult.LangError("icon_error_general", "NO_OBJECT");
             }
         }
 

@@ -21,33 +21,37 @@
 */
 #endregion
 
-using System.Collections.Generic;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
 using Essentials.Common.Util;
+using System.Collections.Generic;
 using static Essentials.Commands.MiscCommands;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "tell",
-        Aliases = new[] { "msg", "pm" },
+        Aliases = new[] { "mg", "pm" },
         Description = "Send private message to a player",
         Usage = "[player] [message]",
         MinArgs = 2
     )]
-    public class CommandTell : EssCommand {
+    public class CommandTell : EssCommand
+    {
 
         internal static readonly Dictionary<ulong, ulong> ReplyTo = new Dictionary<ulong, ulong>();
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var target = args[0].ToPlayer;
 
-            if (target == null) {
-                return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+            if (target == null)
+            {
+                return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
             }
 
             var pmSettings = UEssentials.Config.PrivateMessage;
@@ -69,11 +73,13 @@ namespace Essentials.Commands {
             target.SendMessage(formatFrom, formatFromColor);
             src.SendMessage(formatTo, formatToColor);
 
-            Spies.ForEach(p => {
+            Spies.ForEach(p =>
+            {
                 UPlayer.From(p).SendMessage(formatSpy, formatSpyColor);
             });
 
-            if (!src.IsConsole) {
+            if (!src.IsConsole)
+            {
                 ReplyTo[target.CSteamId.m_SteamID] = src.ToPlayer().CSteamId.m_SteamID;
             }
 

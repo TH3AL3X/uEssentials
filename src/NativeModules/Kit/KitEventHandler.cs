@@ -31,23 +31,27 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 
-namespace Essentials.NativeModules.Kit {
+namespace Essentials.NativeModules.Kit
+{
 
-    internal class KitEventHandler {
+    internal class KitEventHandler
+    {
 
         [SubscribeEvent(EventType.PLAYER_DEATH)]
         void OnPlayerDeath(UnturnedPlayer player, EDeathCause c, ELimb l, CSteamID k)
         {
             var playerId = player.CSteamID.m_SteamID;
 
-            if (EssCore.Instance.Config.Kit.ResetGlobalCooldownWhenDie && CommandKit.GlobalCooldown.ContainsKey(playerId)) {
+            if (EssCore.Instance.Config.Kit.ResetGlobalCooldownWhenDie && CommandKit.GlobalCooldown.ContainsKey(playerId))
+            {
                 CommandKit.GlobalCooldown[playerId] = DateTime.Now.AddSeconds(-EssCore.Instance.Config.Kit.GlobalCooldown);
             }
 
             if (!CommandKit.Cooldowns.ContainsKey(playerId))
                 return;
 
-            if (CommandKit.Cooldowns[playerId] == null) {
+            if (CommandKit.Cooldowns[playerId] == null)
+            {
                 CommandKit.Cooldowns.Remove(playerId);
                 return;
             }
@@ -55,30 +59,36 @@ namespace Essentials.NativeModules.Kit {
             var playerCooldowns = CommandKit.Cooldowns[playerId];
             var keys = new List<string>(playerCooldowns.Keys);
 
-            foreach (var kitName in keys) {
-                var kit = KitModule.Instance.KitManager.GetByName(kitName);
+            foreach (var kitName in keys)
+            {
+                var kit = KItModule.Instance.KitManager.GetByName(kitName);
 
                 // The kit may not exist anymore. If it is the case, we remove it from the cooldown list.
-                if (kit == null) {
+                if (kit == null)
+                {
                     playerCooldowns.Remove(kitName);
                     continue;
                 }
 
-                if (kit.ResetCooldownWhenDie) {
+                if (kit.ResetCooldownWhenDie)
+                {
                     playerCooldowns[kitName] = DateTime.Now.AddSeconds(-kit.Cooldown);
                 }
             }
         }
 
         [SubscribeEvent(EventType.PLAYER_DISCONNECTED)]
-        void OnPlayerDisconnected(UnturnedPlayer player) {
+        void OnPlayerDisconnected(UnturnedPlayer player)
+        {
             var playerId = player.CSteamID.m_SteamID;
 
-            if (CommandKit.Cooldowns.Count == 0 || !CommandKit.Cooldowns.ContainsKey(playerId)) {
+            if (CommandKit.Cooldowns.Count == 0 || !CommandKit.Cooldowns.ContainsKey(playerId))
+            {
                 return;
             }
 
-            if (CommandKit.Cooldowns[playerId] == null) {
+            if (CommandKit.Cooldowns[playerId] == null)
+            {
                 CommandKit.Cooldowns.Remove(playerId);
                 return;
             }
@@ -86,23 +96,27 @@ namespace Essentials.NativeModules.Kit {
             if (
                 CommandKit.GlobalCooldown.TryGetValue(playerId, out var playerGlobalCooldown) &&
                 playerGlobalCooldown.AddSeconds(UEssentials.Config.Kit.GlobalCooldown) < DateTime.Now
-            ) {
+            )
+            {
                 CommandKit.GlobalCooldown.Remove(playerId);
             }
 
             var playerCooldowns = CommandKit.Cooldowns[playerId];
             var keys = new List<string>(playerCooldowns.Keys);
 
-            foreach (var kitName in keys) {
-                var kit = KitModule.Instance.KitManager.GetByName(kitName);
+            foreach (var kitName in keys)
+            {
+                var kit = KItModule.Instance.KitManager.GetByName(kitName);
 
                 // Remove from the list only if the cooldown expired.
-                if (kit == null || playerCooldowns[kitName].AddSeconds(kit.Cooldown) < DateTime.Now) {
+                if (kit == null || playerCooldowns[kitName].AddSeconds(kit.Cooldown) < DateTime.Now)
+                {
                     playerCooldowns.Remove(kitName);
                 }
             }
 
-            if (playerCooldowns.Count == 0) {
+            if (playerCooldowns.Count == 0)
+            {
                 CommandKit.Cooldowns.Remove(playerId);
             }
         }

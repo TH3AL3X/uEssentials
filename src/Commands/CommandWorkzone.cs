@@ -46,14 +46,14 @@ namespace Essentials.Commands
             {
                 player.Look.sendWorkzoneAllowed(true);
 
-                EssLang.Send(src, "WORKZONE_ON");
+                EssLang.Send("generalicon", src, "WORKZONE_ON");
                 return CommandResult.Success();
             }
             else if (args[0].ToString() == "off")
             {
                 player.Look.sendWorkzoneAllowed(false);
 
-                EssLang.Send(src, "WORKZONE_OFF");
+                EssLang.Send("generalicon", src, "WORKZONE_OFF");
                 return CommandResult.Success();
             }
             else

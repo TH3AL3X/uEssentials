@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Updater {
+namespace Essentials.Updater
+{
 
-    public interface IUpdater {
+    public interface IUpdater
+    {
 
         UpdateResult LastResult { get; }
 

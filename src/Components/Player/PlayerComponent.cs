@@ -21,31 +21,37 @@
 */
 #endregion
 
-using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using HarmonyLib;
-using SDG.Unturned;
 using System;
 using UnityEngine;
 
-namespace Essentials.Components.Player {
-    public abstract class PlayerComponent : MonoBehaviour {
+namespace Essentials.Components.Player
+{
+    public abstract class PlayerComponent : MonoBehaviour
+    {
 
         public UPlayer Player;
-        protected PlayerComponent() {
+        protected PlayerComponent()
+        {
             Player = UPlayer.From(GetComponent<SDG.Unturned.Player>());
         }
 
-        protected virtual void FixedUpdate() {
-            try {
+        public object PlayerVaul { get; internal set; }
+
+        protected virtual void FixedUpdate()
+        {
+            try
+            {
                 SafeFixedUpdate();
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 Player.RemoveComponent(GetType());
                 throw;
             }
         }
 
-        protected virtual void SafeFixedUpdate() {}
+        protected virtual void SafeFixedUpdate() { }
     }
 
 }

@@ -30,21 +30,26 @@ using Rocket.Unturned.Player;
 using UnityEngine;
 using EventType = Essentials.Api.Event.EventType;
 
-namespace Essentials.NativeModules.Warp {
+namespace Essentials.NativeModules.Warp
+{
 
-    class WarpEventHandler {
+    class WarpEventHandler
+    {
 
         [SubscribeEvent(EventType.PLAYER_UPDATE_POSITION)]
-        void OnPlayerMove(UnturnedPlayer player, Vector3 newPosition) {
-            if (!UEssentials.Config.Warp.CancelTeleportWhenMove || !CommandWarp.Delay.ContainsKey(player.CSteamID.m_SteamID)) {
+        void OnPlayerMove(UnturnedPlayer player, Vector3 newPosition)
+        {
+            if (!UEssentials.Config.Warp.CancelTeleportWhenMove || !CommandWarp.Delay.ContainsKey(player.CSteamID.m_SteamID))
+            {
                 return;
             }
 
             CommandWarp.Delay[player.CSteamID.m_SteamID].Cancel();
             CommandWarp.Delay.Remove(player.CSteamID.m_SteamID);
 
-            UPlayer.TryGet(player, p => {
-                EssLang.Send(p, "TELEPORT_CANCELLED_MOVED");
+            UPlayer.TryGet(player, p =>
+            {
+                EssLang.Send("generalicon", p, "TELEPORT_CANCELLED_MOVED");
             });
         }
 

@@ -24,32 +24,37 @@
 using SDG.Unturned;
 using UnityEngine;
 
-namespace Essentials.Components.Player {
+namespace Essentials.Components.Player
+{
 
-    public class FrozenPlayer : PlayerComponent {
+    public class FrozenPlayer : PlayerComponent
+    {
 
         private readonly Vector3 _frozenPos;
         private Vector3 _lastPos;
 
-        private FrozenPlayer() {
+        private FrozenPlayer()
+        {
             _frozenPos = _lastPos = Player.Position;
 
             if (!Player.IsInVehicle) return;
             var veh = Player.CurrentVehicle;
             var passengers = veh.passengers;
 
-            for (var i = 0; i < passengers.Length; i++) {
+            for (var i = 0; i < passengers.Length; i++)
+            {
                 if (passengers[i].player != Player.SteamPlayer) continue;
 
                 var pos = Player.Position;
-                var seat = (byte) i;
+                var seat = (byte)i;
 
                 veh.forceRemovePlayer(out seat, passengers[i].player.playerID.steamID, out var exitPoint, out var exitAngle);
                 VehicleManager.sendExitVehicle(veh, seat, (exitPoint + (exitPoint - pos)), exitAngle, false);
             }
         }
 
-        protected override void SafeFixedUpdate() {
+        protected override void SafeFixedUpdate()
+        {
             if (Player.Position == _lastPos) return;
             Player.Teleport(_frozenPos);
             _lastPos = Player.Position;

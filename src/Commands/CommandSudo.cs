@@ -25,9 +25,9 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
-using SDG.Unturned;
 using Essentials.I18n;
 using Rocket.Core;
+using SDG.Unturned;
 
 namespace Essentials.Commands
 {
@@ -81,7 +81,8 @@ namespace Essentials.Commands
             }
             else if (args[0].Equals("*"))
             {
-                UServer.Players.ForEach(p => {
+                UServer.Players.ForEach(p =>
+                {
                     ChatManager.instance.askChat(p.CSteamId, (byte)EChatMode.GLOBAL, args.Join(1));
                 });
 
@@ -91,7 +92,7 @@ namespace Essentials.Commands
             {
                 if (!args[0].IsValidPlayerIdentifier)
                 {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 var targetPlayer = args[0].ToPlayer;
@@ -101,7 +102,7 @@ namespace Essentials.Commands
                 name = targetPlayer.CharacterName;
             }
 
-            EssLang.Send(src, "SUDO_EXECUTED", name, args.Join(1));
+            EssLang.Send("generalicon", src, "SUDO_EXECUTED", name, args.Join(1));
 
             return CommandResult.Success();
         }

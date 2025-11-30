@@ -29,28 +29,28 @@ namespace Essentials.Commands
 {
 
     [CommandInfo(
-        Name = "speed",
-        Aliases = new[] { "spd" },
+        Name = "espeed",
+        Aliases = new[] { "sp" },
         Description = "Change your movement speed. 0 = Freeze, 1 = Normal",
         Usage = "<amount>",
         AllowedSource = AllowedSource.PLAYER,
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandSpeed : EssCommand
+    public class Commandmovespeed : EssCommand
     {
 
         public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
         {
             if (!float.TryParse(args[0].ToString(), out var amount))
             {
-                return CommandResult.LangError("INVALID_NUMBER", amount);
+                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", amount);
             }
 
             var player = src.ToPlayer();
             player.Movement.sendPluginSpeedMultiplier(amount);
 
-            EssLang.Send(src, "SPEED_CHANGED", amount);
+            EssLang.Send("icon_speed", src, "speedchanged", amount);
             return CommandResult.Success();
         }
 

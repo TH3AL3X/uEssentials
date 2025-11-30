@@ -32,9 +32,11 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Essentials.Compatibility.Hooks {
+namespace Essentials.Compatibility.Hooks
+{
 
-    public class AviEconomyHook : Hook, IEconomyProvider {
+    public class AviEconomyHook : Hook, IEconomyProvider
+    {
 
         public string CurrencySymbol => UEssentials.Config.Economy.UconomyCurrency;
 
@@ -44,7 +46,8 @@ namespace Essentials.Compatibility.Hooks {
 
         public AviEconomyHook() : base("avi_economy") { }
 
-        public override void OnLoad() {
+        public override void OnLoad()
+        {
             UEssentials.Logger.LogInfo("Loading AviEconomy hook...");
 
             IRocketPlugin economyPlugin = R.Plugins.GetPlugins().FirstOrDefault(c => c.Name.EqualsIgnoreCase("AviEconomy"));
@@ -55,16 +58,16 @@ namespace Essentials.Compatibility.Hooks {
             this._bankType = economyPlugin.GetType().Assembly.GetType("com.aviadmini.rocketmod.AviEconomy.Bank");
 
             if (this._bankType == null)
-              throw new Exception("AviEconomy Bank type couldn't be loaded...");
+                throw new Exception("AviEconomy Bank type couldn't be loaded...");
 
             this._getBalanceMethod = ReflectUtil.GetMethod(this._bankType, "GetBalance", BindingFlags.Static | BindingFlags.Public,
-                new[] {typeof(string)});
+                new[] { typeof(string) });
 
             if (this._getBalanceMethod == null)
                 throw new Exception("AviEconomy GetBalance method couldn't be loaded...");
 
             this._payAsServerMethod = ReflectUtil.GetMethod(this._bankType, "PayAsServer", BindingFlags.Static | BindingFlags.Public,
-                new[] {typeof(IRocketPlayer), typeof(decimal), typeof(bool), typeof(decimal).MakeByRefType(), typeof(string)});
+                new[] { typeof(IRocketPlayer), typeof(decimal), typeof(bool), typeof(decimal).MakeByRefType(), typeof(string) });
 
             if (this._payAsServerMethod == null)
                 throw new Exception("AviEconomy PayAsServer method couldn't be loaded...");
@@ -76,18 +79,20 @@ namespace Essentials.Compatibility.Hooks {
 
         public override bool CanBeLoaded() => R.Plugins.GetPlugins().Any(c => c.Name.EqualsIgnoreCase("AviEconomy"));
 
-        public decimal Withdraw(UPlayer player, decimal amount) {
+        public decimal Withdraw(UPlayer player, decimal amount)
+        {
             return Deposit(player, -amount);
         }
 
-        public decimal Deposit(UPlayer player, decimal amount) {
+        public decimal Deposit(UPlayer player, decimal amount)
+        {
             // args[3] = out decimal pFinalBalance
             var args = new object[] { player.RocketPlayer, amount, false, null, null };
             this._payAsServerMethod.Invoke(this._bankType, args);
-            return (decimal) args[3];
+            return (decimal)args[3];
         }
 
-        public decimal GetBalance(UPlayer player) => (decimal) this._getBalanceMethod.Invoke(this._bankType, new object[] {player.Id});
+        public decimal GetBalance(UPlayer player) => (decimal)this._getBalanceMethod.Invoke(this._bankType, new object[] { player.Id });
 
         public bool Has(UPlayer player, decimal amount) => this.GetBalance(player) - amount >= 0;
 

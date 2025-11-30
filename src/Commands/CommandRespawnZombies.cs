@@ -22,30 +22,34 @@
 #endregion
 
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
-using SDG.Unturned;
 using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "respawnzombies",
         Description = "Respawn all zombies"
     )]
-    public class CommandRespawnZombies : EssCommand {
+    public class CommandRespawnZombies : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var count = 0;
 
-            UWorld.Zombies.Where(z => z.isDead).ForEach(zombie => {
+            UWorld.Zombies.Where(z => z.isDead).ForEach(zombie =>
+            {
                 ZombieManager.sendZombieAlive(
                     zombie,
                     zombie.type,
-                    (byte) zombie.speciality,
+                    (byte)zombie.speciality,
                     zombie.shirt,
                     zombie.pants,
                     zombie.hat,
@@ -56,7 +60,7 @@ namespace Essentials.Commands {
                 count++;
             });
 
-            EssLang.Send(src, "RESPAWNED_ZOMBIES", count);
+            EssLang.Send("generalicon", src, "RESPAWNED_ZOMBIES", count);
 
             return CommandResult.Success();
         }

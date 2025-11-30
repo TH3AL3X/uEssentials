@@ -28,12 +28,14 @@ using Essentials.Logging;
 using System.IO;
 using System.Reflection;
 
-namespace Essentials.Api.Module {
+namespace Essentials.Api.Module
+{
 
     /// <summary>
     /// Author: leonardosnt
     /// </summary>
-    public abstract class EssModule {
+    public abstract class EssModule
+    {
 
         /// <summary>
         /// The assembly that is running this module
@@ -58,7 +60,8 @@ namespace Essentials.Api.Module {
         /// <summary>
         /// Constructor :D
         /// </summary>
-        protected EssModule() {
+        protected EssModule()
+        {
             Info = ReflectUtil.GetAttributeFrom<ModuleInfo>(this);
             Preconditions.NotNull(Info, "Module must have 'ModuleInfo' attribute");
             Preconditions.NotNull(Info.Name, "Module name cannot be null");
@@ -73,26 +76,29 @@ namespace Essentials.Api.Module {
         /// <summary>
         /// Called when module loads
         /// </summary>
-        public virtual void OnLoad() {}
+        public virtual void OnLoad() { }
 
         /// <summary>
         /// Called when module Unloads
         /// </summary>
-        public virtual void OnUnload() {}
+        public virtual void OnUnload() { }
 
         /// <summary>
         /// Load this module
         /// </summary>
-        internal virtual void Load() {
+        internal virtual void Load()
+        {
             Preconditions.CheckState(Assembly != null, "module assembly null");
 
             OnLoad();
 
-            if ((Info.Flags & LoadFlags.AUTO_REGISTER_COMMANDS) != 0) {
+            if ((Info.Flags & LoadFlags.AUTO_REGISTER_COMMANDS) != 0)
+            {
                 UEssentials.CommandManager.RegisterAll(Assembly);
             }
 
-            if ((Info.Flags & LoadFlags.AUTO_REGISTER_EVENTS) != 0) {
+            if ((Info.Flags & LoadFlags.AUTO_REGISTER_EVENTS) != 0)
+            {
                 UEssentials.EventManager.RegisterAll(Assembly);
             }
         }
@@ -100,7 +106,8 @@ namespace Essentials.Api.Module {
         /// <summary>
         /// Unload this module
         /// </summary>
-        internal virtual void Unload() {
+        internal virtual void Unload()
+        {
             Preconditions.CheckState(Assembly != null, "module assembly null");
 
             OnUnload();
@@ -111,18 +118,21 @@ namespace Essentials.Api.Module {
 
     }
 
-    public abstract class EssModule<TConfigType> : EssModule where TConfigType : IConfig, new() {
+    public abstract class EssModule<TConfigType> : EssModule where TConfigType : IConfig, new()
+    {
 
         public TConfigType Configuration { get; private set; }
 
-        internal override void Load() {
+        internal override void Load()
+        {
             Configuration = new TConfigType();
             Configuration.Load(Folder + Configuration.FileName);
 
             base.Load();
         }
 
-        internal override void Unload() {
+        internal override void Unload()
+        {
             Configuration?.Save(Folder + Configuration.FileName);
             base.Load();
         }

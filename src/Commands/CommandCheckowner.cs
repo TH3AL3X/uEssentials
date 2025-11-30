@@ -21,19 +21,9 @@
 */
 #endregion
 
-using System.Linq;
-using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
-using Essentials.Api.Unturned;
-using Essentials.Common;
-using Essentials.Compatibility;
-using Essentials.Components.Player;
-using Essentials.Event.Handling;
 using Essentials.I18n;
-using Rocket.Unturned.Chat;
-using Rocket.Unturned.Player;
-using SDG.Framework.Utilities;
 using SDG.Unturned;
 using UnityEngine;
 
@@ -76,11 +66,11 @@ namespace Essentials.Commands
                         break;
                 }
 
-                EssLang.Send(src, "CHECKOWNER", owner);
+                EssLang.Send("icon_checkowner", src, "CHECKOWNER", owner);
             }
             else
             {
-                return CommandResult.LangError("CHECKOWNER_LOOKING_NONE");
+                return CommandResult.LangError("icon_error_general", "CHECKOWNER_LOOKING_NONE");
             }
 
             return CommandResult.Success();

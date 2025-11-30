@@ -22,18 +22,12 @@
 #endregion
 
 using SDG.Unturned;
-using System.Globalization;
-using System.Linq;
-using Essentials.Api.Module;
-using static Essentials.Api.UEssentials;
-using SDG.Unturned;
-using Essentials.Api.Command;
-using Essentials.Api;
-using Essentials.I18n;
 
-namespace Essentials.Common.Util {
+namespace Essentials.Common.Util
+{
 
-    public static class VehicleUtil {
+    public static class VehicleUtil
+    {
 
         public static Asset GetVehicle(string name)
         {

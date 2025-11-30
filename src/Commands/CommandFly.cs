@@ -21,24 +21,11 @@
 */
 #endregion
 
-using System;
-using System.Linq;
-using System.Numerics;
-using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using Essentials.Common;
-using Essentials.Compatibility;
 using Essentials.Components.Player;
-using Essentials.Event.Handling;
 using Essentials.I18n;
-using Rocket.Unturned.Chat;
-using Rocket.Unturned.Player;
-using SDG.Framework.Utilities;
-using SDG.Unturned;
-using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Essentials.Commands
 {
@@ -63,20 +50,20 @@ namespace Essentials.Commands
 
                 if (!UPlayer.TryGet(args[0].ToString(), out var player))
                 {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 var component_to_player = player.GetComponent<FlyPlayer>() ?? player.AddComponent<FlyPlayer>();
 
                 if (component_to_player.session)
                 {
-                    EssLang.Send(src, "FLY_TOPLAYER", "disabled", player.DisplayName);
+                    EssLang.Send("generalicon", src, "FLY_TOPLAYER", "disabled", player.DisplayName);
                     player.RemoveComponent<FlyPlayer>();
                 }
                 else
                 {
                     component_to_player.session = true;
-                    EssLang.Send(src, "FLY_TOPLAYER", "enabled", player.DisplayName);
+                    EssLang.Send("generalicon", src, "FLY_TOPLAYER", "enabled", player.DisplayName);
                     component_to_player.SetReady(player);
                 }
             }
@@ -88,13 +75,13 @@ namespace Essentials.Commands
 
                 if (component.session)
                 {
-                    EssLang.Send(src, "FLY", "disabled");
+                    EssLang.Send("generalicon", src, "FLY", "disabled");
                     player.RemoveComponent<FlyPlayer>();
                 }
                 else
                 {
                     component.session = true;
-                    EssLang.Send(src, "FLY", "enabled");
+                    EssLang.Send("generalicon", src, "FLY", "enabled");
                     component.SetReady(player);
                 }
             }

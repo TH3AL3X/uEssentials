@@ -25,7 +25,8 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
 
-namespace Essentials.NativeModules.Warp.Commands {
+namespace Essentials.NativeModules.Warp.Commands
+{
 
     [CommandInfo(
         Name = "delwarp",
@@ -35,17 +36,20 @@ namespace Essentials.NativeModules.Warp.Commands {
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandDelWarp : EssCommand {
+    public class CommandDelWarp : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var warpName = args[0].ToString();
 
-            if (!WarpModule.Instance.WarpManager.Contains(warpName)) {
-                return CommandResult.LangError("WARP_NOT_EXIST", warpName);
+            if (!WarpModule.Instance.WarpManager.Contains(warpName))
+            {
+                return CommandResult.LangError("icon_error_general", "WARP_NOT_EXIST", warpName);
             }
 
             WarpModule.Instance.WarpManager.Delete(warpName);
-            EssLang.Send(src, "WARP_REMOVED", warpName);
+            EssLang.Send("generalicon", src, "WARP_REMOVED", warpName);
 
             return CommandResult.Success();
         }

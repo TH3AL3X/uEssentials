@@ -24,14 +24,15 @@
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using UnityEngine;
-using SDG.Unturned;
 using Essentials.Common;
-using System.Linq;
+using SDG.Unturned;
 using Steamworks;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "boom",
@@ -41,34 +42,44 @@ namespace Essentials.Commands {
         MinArgs = 0,
         MaxArgs = 3
     )]
-    public class CommandBoom : EssCommand {
+    public class CommandBoom : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            switch (args.Length) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            switch (args.Length)
+            {
                 case 0:
-                    if (src.IsConsole) {
+                    if (src.IsConsole)
+                    {
                         return CommandResult.ShowUsage();
                     }
 
                     var eyePos = src.ToPlayer().GetEyePosition(3000);
 
-                    if (eyePos.HasValue) {
+                    if (eyePos.HasValue)
+                    {
                         Explode(eyePos.Value);
                     }
                     break;
 
                 case 1:
-                    if (args[0].Equals("*")) {
+                    if (args[0].Equals("*"))
+                    {
                         UPlayer caller = null;
 
-                        if (!src.IsConsole) {
+                        if (!src.IsConsole)
+                        {
                             caller = src.ToPlayer();
                         }
 
                         UServer.Players.Where(p => p != caller).ForEach(p => Explode(p.Position));
-                    } else {
-                        if (!UPlayer.TryGet(args[0].ToString(), out var player)) {
-                            return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    }
+                    else
+                    {
+                        if (!UPlayer.TryGet(args[0].ToString(), out var player))
+                        {
+                            return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                         }
                         Explode(player.Position);
                     }
@@ -77,10 +88,13 @@ namespace Essentials.Commands {
                 case 3:
                     var pos = args.GetVector3(0);
 
-                    if (pos.HasValue) {
+                    if (pos.HasValue)
+                    {
                         Explode(pos.Value);
-                    } else {
-                        return CommandResult.LangError("INVALID_COORDS", args[0], args[1], args[2]);
+                    }
+                    else
+                    {
+                        return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[0], args[1], args[2]);
                     }
                     break;
 
@@ -91,7 +105,8 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        private static void Explode(Vector3 pos) {
+        private static void Explode(Vector3 pos)
+        {
             const float DAMAGE = 200;
 
             EffectManager.sendEffect(20, EffectManager.INSANE, pos);

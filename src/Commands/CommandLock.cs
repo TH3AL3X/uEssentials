@@ -54,17 +54,17 @@ namespace Essentials.Commands
                 if (!veh.vehicle.isLocked)
                 {
                     VehicleManager.ServerSetVehicleLock(veh.vehicle, player.CSteamId, player.UnturnedPlayer.quests.groupID, true);
-                    EssLang.Send(src, "VEHICLE_LOCK");
+                    EssLang.Send("generalicon", src, "VEHICLE_LOCK");
                     return CommandResult.Success();
                 }
                 else
                 {
-                    return CommandResult.LangError("VEHICLE_ALREADY_LOCKED");
+                    return CommandResult.LangError("icon_error_general", "VEHICLE_ALREADY_LOCKED");
                 }
             }
             else
             {
-                return CommandResult.LangError("NO_OBJECT");
+                return CommandResult.LangError("icon_error_general", "NO_OBJECT");
             }
         }
     }

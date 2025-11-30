@@ -24,21 +24,26 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Essentials.Common.Util {
+namespace Essentials.Common.Util
+{
 
-    public static class MiscUtil {
+    public static class MiscUtil
+    {
 
         public static string ValuesToString<T>(IEnumerable<T> enumarable, string separator = ", ",
-                                              string start = "[", string end = "]") {
+                                              string start = "[", string end = "]")
+        {
             var sb = new StringBuilder(start);
             var enumerator = enumarable.GetEnumerator();
 
-            while (enumerator.MoveNext()) {
+            while (enumerator.MoveNext())
+            {
                 sb.Append(enumerator.Current?.ToString() ?? "null");
                 sb.Append(separator);
             }
 
-            if (sb.Length > 1) {
+            if (sb.Length > 1)
+            {
                 sb.Remove(sb.Length - separator.Length, separator.Length);
             }
 

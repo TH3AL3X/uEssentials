@@ -30,7 +30,8 @@ using Essentials.Event.Handling;
 using Essentials.I18n;
 using SDG.Unturned;
 
-namespace Essentials.NativeModules.Warp.Commands {
+namespace Essentials.NativeModules.Warp.Commands
+{
 
     [CommandInfo(
         Name = "warp",
@@ -38,7 +39,8 @@ namespace Essentials.NativeModules.Warp.Commands {
         AllowedSource = AllowedSource.PLAYER,
         Usage = "[warp_name]"
     )]
-    public class CommandWarp : EssCommand {
+    public class CommandWarp : EssCommand
+    {
 
         internal static PlayerDictionary<Task> Delay = new PlayerDictionary<Task>(
             PlayerDictionaryOptions.LAZY_REGISTER_HANDLERS |
@@ -47,44 +49,52 @@ namespace Essentials.NativeModules.Warp.Commands {
             task => task.Cancel()
         );
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var player = src.ToPlayer();
 
-            if (args.Length == 0 || args.Length > 1) {
+            if (args.Length == 0 || args.Length > 1)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            if (!WarpModule.Instance.WarpManager.Contains(args[0].ToString())) {
-                return CommandResult.LangError("WARP_NOT_EXIST", args[0]);
+            if (!WarpModule.Instance.WarpManager.Contains(args[0].ToString()))
+            {
+                return CommandResult.LangError("icon_error_general", "WARP_NOT_EXIST", args[0]);
             }
 
             if (player.Stance == EPlayerStance.DRIVING ||
-                player.Stance == EPlayerStance.SITTING) {
-                return CommandResult.LangError("CANNOT_TELEPORT_DRIVING");
+                player.Stance == EPlayerStance.SITTING)
+            {
+                return CommandResult.LangError("icon_error_general", "CANNOT_TELEPORT_DRIVING");
             }
 
-            if (Delay.ContainsKey(player.CSteamId.m_SteamID)) {
-                return CommandResult.LangError("ALREADY_WAITING");
+            if (Delay.ContainsKey(player.CSteamId.m_SteamID))
+            {
+                return CommandResult.LangError("icon_error_general", "ALREADY_WAITING");
             }
 
             var targetWarp = WarpModule.Instance.WarpManager.GetByName(args[0].ToString());
             var cooldown = UEssentials.Config.Warp.TeleportDelay;
 
-            if (!targetWarp.CanBeUsedBy(src)) {
-                return CommandResult.LangError("WARP_NO_PERMISSION", args[0]);
+            if (!targetWarp.CanBeUsedBy(src))
+            {
+                return CommandResult.LangError("icon_error_general", "WARP_NO_PERMISSION", args[0]);
             }
 
-            if (cooldown > 0 && !player.HasPermission("essentials.bypass.warpcooldown")) {
-                EssLang.Send(src, "WARP_COOLDOWN", cooldown);
+            if (cooldown > 0 && !player.HasPermission("essentials.bypass.warpcooldown"))
+            {
+                EssLang.Send("iconwarp_cooldown", src, "WARP_COOLDOWN", cooldown, args[0].ToString().ToLowerInvariant());
             }
 
             var task = Task.Create()
                 .Id($"Warp teleport '{player.DisplayName}'")
                 .Delay(player.HasPermission("essentials.bypass.warpcooldown") ? 0 : cooldown * 1000)
-                .Action(t => {
+                .Action(t =>
+                {
                     Delay.Remove(player.CSteamId.m_SteamID);
                     player.Teleport(targetWarp.Location, targetWarp.Rotation);
-                    EssLang.Send(src, "WARP_TELEPORTED", args[0]);
+                    EssLang.Send("iconwarp_teleported", src, "WARP_TELEPORTED", args[0].ToString().ToLowerInvariant());
                 })
                 .Submit();
 
@@ -93,7 +103,8 @@ namespace Essentials.NativeModules.Warp.Commands {
             return CommandResult.Success();
         }
 
-        protected override void OnUnregistered() {
+        protected override void OnUnregistered()
+        {
             Delay.Clear();
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("WarpPlayerMove");
         }

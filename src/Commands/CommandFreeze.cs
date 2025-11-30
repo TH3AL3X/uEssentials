@@ -21,7 +21,6 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
@@ -30,8 +29,10 @@ using Essentials.Common;
 using Essentials.Components.Player;
 using Essentials.Event.Handling;
 using Essentials.I18n;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "freeze",
@@ -40,32 +41,42 @@ namespace Essentials.Commands {
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandFreeze : EssCommand {
+    public class CommandFreeze : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args[0].Equals("*")) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args[0].Equals("*"))
+            {
                 UServer.Players
                     .Where(player => !player.HasComponent<FrozenPlayer>())
-                    .ForEach(player => {
+                    .ForEach(player =>
+                    {
                         player.AddComponent<FrozenPlayer>();
-                        EssLang.Send(player, "FROZEN_PLAYER", src.DisplayName);
+                        EssLang.Send("generalicon", player, "FROZEN_PLAYER", src.DisplayName);
                         // Better
                         player.Movement.sendPluginSpeedMultiplier(0);
                     });
 
-                EssLang.Send(src, "FROZEN_ALL");
-            } else {
-                if (!UPlayer.TryGet(args[0].ToString(), out var player)) {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                EssLang.Send("generalicon", src, "FROZEN_ALL");
+            }
+            else
+            {
+                if (!UPlayer.TryGet(args[0].ToString(), out var player))
+                {
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
-                if (player.HasComponent<FrozenPlayer>()) {
-                    EssLang.Send(src, "ALREADY_FROZEN", player.DisplayName);
-                } else {
+                if (player.HasComponent<FrozenPlayer>())
+                {
+                    EssLang.Send("generalicon", src, "ALREADY_FROZEN", player.DisplayName);
+                }
+                else
+                {
                     player.AddComponent<FrozenPlayer>();
 
-                    EssLang.Send(src, "FROZEN_SENDER", player.DisplayName);
-                    EssLang.Send(player, "FROZEN_PLAYER", src.DisplayName);
+                    EssLang.Send("generalicon", src, "FROZEN_SENDER", player.DisplayName);
+                    EssLang.Send("generalicon", player, "FROZEN_PLAYER", src.DisplayName);
                     // Better
                     player.Movement.sendPluginSpeedMultiplier(0);
                 }
@@ -74,7 +85,8 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        protected override void OnUnregistered() {
+        protected override void OnUnregistered()
+        {
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("FreezePlayerDisconnect");
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("FreezePlayerConnected");
             UEssentials.EventManager.Unregister<EssentialsEventHandler>("FreezePlayerDeath");

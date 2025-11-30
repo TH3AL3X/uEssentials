@@ -25,7 +25,8 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.I18n;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "jump",
@@ -33,31 +34,36 @@ namespace Essentials.Commands {
         Usage = "<max_distance>",
         AllowedSource = AllowedSource.PLAYER
     )]
-    public class CommandJump : EssCommand {
+    public class CommandJump : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var player = src.ToPlayer();
             var dist = 1000f;
 
-            if (args.Length == 1) {
-                if (!args[0].IsDouble) {
+            if (args.Length == 1)
+            {
+                if (!args[0].IsDouble)
+                {
                     return CommandResult.ShowUsage();
                 }
 
-                dist = (float) args[0].ToDouble;
+                dist = (float)args[0].ToDouble;
             }
 
             var eyePos = player.GetEyePosition(dist);
 
-            if (!eyePos.HasValue) {
-                return CommandResult.LangError("JUMP_NO_POSITION");
+            if (!eyePos.HasValue)
+            {
+                return CommandResult.LangError("icon_error_general", "JUMP_NO_POSITION");
             }
 
             var point = eyePos.Value;
             point.y += 6;
             // fix
             player.UnturnedPlayer.teleportToLocationUnsafe(point, player.Rotation);
-            EssLang.Send(src, "JUMPED", point.x, point.y, point.z);
+            EssLang.Send("generalicon", src, "JUMPED", point.x, point.y, point.z);
 
             return CommandResult.Success();
         }

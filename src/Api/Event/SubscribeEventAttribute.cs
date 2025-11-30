@@ -26,10 +26,12 @@ using Rocket.Unturned;
 using Rocket.Unturned.Events;
 using System;
 
-namespace Essentials.Api.Event {
+namespace Essentials.Api.Event
+{
 
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class SubscribeEvent : Attribute {
+    public sealed class SubscribeEvent : Attribute
+    {
 
         /// <summary>
         /// Type of event
@@ -43,10 +45,12 @@ namespace Essentials.Api.Event {
 
         public string DelegateName { get; }
 
-        public SubscribeEvent(EventType eventType) {
+        public SubscribeEvent(EventType eventType)
+        {
             EventType = eventType;
 
-            switch (eventType) {
+            switch (eventType)
+            {
                 case EventType.PLAYER_UPDATE_BLEEDING:
                 case EventType.PLAYER_UPDATE_BROKEN:
                 case EventType.PLAYER_UPDATE_POSITION:
@@ -88,7 +92,8 @@ namespace Essentials.Api.Event {
                         eventType, null);
             }
 
-            switch (EventType) {
+            switch (EventType)
+            {
                 case EventType.PLAYER_UPDATE_BLEEDING:
                     DelegateName = "OnPlayerUpdateBleeding";
                     break;
@@ -182,7 +187,8 @@ namespace Essentials.Api.Event {
 
     }
 
-    public enum EventType {
+    public enum EventType
+    {
 
         /// <summary>
         /// Signature: (UnturnedPlayer player, bool bleeding)

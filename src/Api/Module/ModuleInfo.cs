@@ -23,10 +23,12 @@
 
 using System;
 
-namespace Essentials.Api.Module {
+namespace Essentials.Api.Module
+{
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class ModuleInfo : Attribute {
+    public sealed class ModuleInfo : Attribute
+    {
 
         /// <summary>
         /// Name of module

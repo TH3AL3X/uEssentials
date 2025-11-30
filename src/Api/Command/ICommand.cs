@@ -23,9 +23,11 @@
 
 using Essentials.Api.Command.Source;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
-    public interface ICommand {
+    public interface ICommand
+    {
 
         /// <summary>
         /// Name of this command

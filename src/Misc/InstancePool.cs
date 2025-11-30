@@ -24,14 +24,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace Essentials.Misc {
+namespace Essentials.Misc
+{
 
-    internal class InstancePool {
+    internal class InstancePool
+    {
 
         private readonly Dictionary<Type, object> _instances = new Dictionary<Type, object>();
 
-        public object GetOrCreate(Type type, params object[] constructorArgs) {
-            if (_instances.TryGetValue(type, out var inst)) {
+        public object GetOrCreate(Type type, params object[] constructorArgs)
+        {
+            if (_instances.TryGetValue(type, out var inst))
+            {
                 return inst;
             }
             inst = Activator.CreateInstance(type, constructorArgs);

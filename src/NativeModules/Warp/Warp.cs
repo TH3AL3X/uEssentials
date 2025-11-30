@@ -28,17 +28,22 @@ using Essentials.Json.Converters;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Essentials.NativeModules.Warp {
+namespace Essentials.NativeModules.Warp
+{
 
     /// <summary>
     /// Author: leonardosnt
     /// </summary>
-    public sealed class Warp {
+    public sealed class Warp
+    {
 
         /// <summary>
         /// Name of warp
         /// </summary>
         public string Name { get; set; }
+
+        //ellocoed
+        public string Mensageaddon { get; set; }
 
         /// <summary>
         /// Rotation of warp
@@ -57,10 +62,12 @@ namespace Essentials.NativeModules.Warp {
         /// <param name="name">Name of warp</param>
         /// <param name="location">Location of warp</param>
         /// <param name="rotation">Rotation of warp</param>
-        public Warp([NotNull] string name, Vector3 location, float rotation) {
+        public Warp([NotNull] string name, Vector3 location, float rotation, string mensageaddon)
+        {
             Name = name;
             Rotation = rotation;
             Location = location;
+            Mensageaddon = mensageaddon;
         }
 
         /// <summary>
@@ -68,12 +75,15 @@ namespace Essentials.NativeModules.Warp {
         /// </summary>
         /// <param name="source">Source that you want to check if is authorized</param>
         /// <returns>If source has permission to use this warp</returns>
-        public bool CanBeUsedBy(ICommandSource source) {
+        public bool CanBeUsedBy(ICommandSource source)
+        {
             return source.HasPermission($"essentials.warp.{Name.ToLowerInvariant()}") || !UEssentials.Config.Warp.PerWarpPermission;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "Warp{Name= " + Name + ", " +
+                   "Mensageaddon= " + Mensageaddon + ", " +
                    "Location= " + Location + ", " +
                    "Rotation= " + Rotation + "}";
         }

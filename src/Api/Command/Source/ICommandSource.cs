@@ -24,9 +24,11 @@
 using Essentials.Api.Permission;
 using UnityEngine;
 
-namespace Essentials.Api.Command.Source {
+namespace Essentials.Api.Command.Source
+{
 
-    public interface ICommandSource : IPermissible {
+    public interface ICommandSource : IPermissible
+    {
 
         /// <summary>
         /// Returns the CSteamID of source ( as string )

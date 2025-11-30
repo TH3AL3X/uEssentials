@@ -26,39 +26,50 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
-    public abstract class AbstractTaskExecutor : ITaskExecutor {
+    public abstract class AbstractTaskExecutor : ITaskExecutor
+    {
 
         protected readonly Queue<Task> Queue = new Queue<Task>();
 
-        protected void Update() {
-            lock (Queue) {
-                if (Queue.Count == 0) {
+        protected void Update()
+        {
+            lock (Queue)
+            {
+                if (Queue.Count == 0)
+                {
                     return;
                 }
 
                 var dequeued = 0;
 
-                start:
+            start:
                 var task = Queue.Dequeue();
                 dequeued++;
 
-                if (!task.IsAlive) {
+                if (!task.IsAlive)
+                {
                     goto end;
                 }
 
-                if (task.NextExecution > DateTime.Now) {
+                if (task.NextExecution > DateTime.Now)
+                {
                     Queue.Enqueue(task);
-                } else {
-                    try {
+                }
+                else
+                {
+                    try
+                    {
                         var shouldDebugTask = (EssCore.DebugFlags & EssCore.kDebugTasks) != 0;
                         var sw2 = shouldDebugTask ? Stopwatch.StartNew() : null;
 
                         // Execute task
                         task.Run();
 
-                        if (shouldDebugTask) {
+                        if (shouldDebugTask)
+                        {
                             sw2.Stop();
                             UEssentials.Logger.LogDebug("Executed task {");
                             UEssentials.Logger.LogDebug($"  Id: '{task.Id ?? "unknown"}'");
@@ -72,42 +83,52 @@ namespace Essentials.Api.Task {
                         }
 
                         // The task can be cancelled when executed...
-                        if (!task.IsAlive) {
+                        if (!task.IsAlive)
+                        {
                             goto end;
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         UEssentials.Logger.LogError($"An error ocurred while executing task '{task.Id ?? "unknown_id"}'");
                         UEssentials.Logger.LogException(ex);
                         goto end;
                     }
 
-                    if (task.Interval > 0) {
+                    if (task.Interval > 0)
+                    {
                         task.NextExecution = DateTime.Now.AddMilliseconds(task.Interval);
                         Queue.Enqueue(task);
                     }
                 }
 
-                end:
-                if (dequeued < Queue.Count) {
+            end:
+                if (dequeued < Queue.Count)
+                {
                     goto start;
                 }
             }
         }
 
 
-        public virtual void Enqueue(Task task) {
-            lock (Queue) {
+        public virtual void Enqueue(Task task)
+        {
+            lock (Queue)
+            {
                 Queue.Enqueue(task);
             }
         }
 
-        public virtual void DequeueAll() {
-            lock (Queue) {
+        public virtual void DequeueAll()
+        {
+            lock (Queue)
+            {
                 Queue.Clear();
             }
         }
 
-        public virtual void Stop() {
+        public virtual void Stop()
+        {
             DequeueAll();
         }
     }

@@ -125,7 +125,7 @@
   "GIVEN_ITEM_ALL": "You gave {0}x {1} ({2}) to all players!",
   "GIVEN_VEHICLE": "You gave a {0} ({1}) to '{2}'",
   "GIVEN_VEHICLE_ALL": "You gave a {0} ({1}) to all players.",
-  "GRAVITY_CHANGED": "Your gravity has changed to {0}!",
+  "speedchanged,": "Your speed has changed to {0}",
   "HOUR": "hour",
   "HOURS": "hours",
   "INVALID_BOOLEAN": "Invalid value '{0}'. Expected 'true' or 'false'.",
@@ -309,7 +309,6 @@
   "ITEMINFO_TYPE": "Type: {0}",
 
   "GOTOBED": "You has been teleported to player bed",
-  "GOTOBED_MULTIPLE": "This player has multiple beds ({0}), use /gotobed {1} number",
   "GOTOBED_NOT_FOUND": "Player bed not found",
   "CHECKOWNER": "Owner of this SteamID64: {0}",
   "CHECKOWNER_LOOKING_NONE": "You're not looking to anything",

@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
-    public interface ITaskExecutor {
+    public interface ITaskExecutor
+    {
 
         void Enqueue(Task task);
 

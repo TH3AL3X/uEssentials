@@ -25,28 +25,36 @@ using Essentials.Api.Task;
 using System;
 using System.Diagnostics;
 
-namespace Essentials.Misc {
+namespace Essentials.Misc
+{
 
-    internal static class Analytics {
+    internal static class Analytics
+    {
 
         private static int _errorCount;
 
-        internal static void SendEvent(string name) {
+        internal static void SendEvent(string name)
+        {
             // If something goes wrong, just stop sending events
-            if (_errorCount > 10) {
+            if (_errorCount > 10)
+            {
                 return;
             }
             Task.Create()
                 .Id($"TriggerGaData '{name}'")
                 .Async()
-                .Action(() => {
-                    try {
-                        using (var wc = new System.Net.WebClient()) {
+                .Action(() =>
+                {
+                    try
+                    {
+                        using (var wc = new System.Net.WebClient())
+                        {
                             var data = wc.DownloadData($"https://ga-beacon.appspot.com/UA-81494650-1/{name}");
                             Debug.Print($"TriggerGaData: Success (data_len: {data.Length})");
                         }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Debug.Print(ex.ToString());
                         _errorCount++;
                     }

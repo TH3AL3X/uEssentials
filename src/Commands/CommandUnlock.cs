@@ -51,20 +51,20 @@ namespace Essentials.Commands
 
             if (veh.vehicle != null)
             {
-                if (veh.vehicle.isLocked) 
-                { 
+                if (veh.vehicle.isLocked)
+                {
                     VehicleManager.unlockVehicle(veh.vehicle, player.UnturnedPlayer);
-                    EssLang.Send(src, "VEHICLE_UNLOCK");
+                    EssLang.Send("generalicon", src, "VEHICLE_UNLOCK");
                     return CommandResult.Success();
                 }
                 else
                 {
-                    return CommandResult.LangError("VEHICLE_NOT_LOCKED");
+                    return CommandResult.LangError("icon_error_general", "VEHICLE_NOT_LOCKED");
                 }
             }
             else
             {
-                return CommandResult.LangError("NO_OBJECT");
+                return CommandResult.LangError("icon_error_general", "NO_OBJECT");
             }
         }
     }

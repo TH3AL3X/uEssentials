@@ -60,7 +60,7 @@ namespace Essentials.Commands
                             if (barricadeDrop != null)
                             {
                                 BarricadeManager.destroyBarricade(barricadeDrop, x, y, num);
-                                EssLang.Send(src, "BARRICADE_REMOVED");
+                                EssLang.Send("iconbarricade_removed", src, "BARRICADE_REMOVED");
                                 return CommandResult.Success();
                             }
                             else
@@ -68,7 +68,7 @@ namespace Essentials.Commands
                                 /* Case for doors */
                                 barricadeDrop = barricadeRegion.FindBarricadeByRootTransform(hit.transform.root);
                                 BarricadeManager.destroyBarricade(barricadeDrop, x, y, num);
-                                EssLang.Send(src, "BARRICADE_REMOVED");
+                                EssLang.Send("iconbarricade_removed", src, "BARRICADE_REMOVED");
                                 return CommandResult.Success();
                             }
                         }
@@ -81,7 +81,7 @@ namespace Essentials.Commands
                             if (structureDrop != null)
                             {
                                 StructureManager.destroyStructure(structureDrop, x, y, Vector3.zero);
-                                EssLang.Send(src, "STRUCTURE_REMOVED");
+                                EssLang.Send("iconstructure_removed", src, "STRUCTURE_REMOVED");
                                 return CommandResult.Success();
                             }
                         }
@@ -91,14 +91,14 @@ namespace Essentials.Commands
                         if (veh != null)
                         {
                             VehicleManager.askVehicleDestroy(veh);
-                            EssLang.Send(src, "VEHICLE_REMOVED");
+                            EssLang.Send("vehicle_removed", src, "VEHICLE_REMOVED");
                             return CommandResult.Success();
                         }
                         break;
                 }
             }
 
-            return CommandResult.LangError("DESTROY_INVALID");
+            return CommandResult.LangError("icon_error_general", "DESTROY_INVALID");
         }
     }
 }

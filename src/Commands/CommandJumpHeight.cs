@@ -44,13 +44,13 @@ namespace Essentials.Commands
         {
             if (!float.TryParse(args[0].ToString(), out var amount))
             {
-                return CommandResult.LangError("INVALID_NUMBER", amount);
+                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", amount);
             }
 
             var player = src.ToPlayer();
             player.Movement.sendPluginSpeedMultiplier(amount);
 
-            EssLang.Send(src, "JUMP_CHANGED", amount);
+            EssLang.Send("generalicon", src, "JUMP_CHANGED", amount);
             return CommandResult.Success();
         }
 

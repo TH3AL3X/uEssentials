@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Api.Command.Source {
+namespace Essentials.Api.Command.Source
+{
 
-    public enum AllowedSource {
+    public enum AllowedSource
+    {
 
         /// <summary>
         /// Represents the server Console

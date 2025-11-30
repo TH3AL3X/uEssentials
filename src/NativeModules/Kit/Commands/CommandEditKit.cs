@@ -29,7 +29,8 @@ using SDG.Unturned;
 
 // TODO: add translations
 
-namespace Essentials.NativeModules.Kit.Commands {
+namespace Essentials.NativeModules.Kit.Commands
+{
 
     [CommandInfo(
         Name = "editkit",
@@ -37,10 +38,13 @@ namespace Essentials.NativeModules.Kit.Commands {
         Description = "Edit a kit",
         Usage = "[kit] [view | additem | delitem | set]"
     )]
-    public class CommandEditKit : EssCommand {
+    public class CommandEditKit : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.Length < 2) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.Length < 2)
+            {
                 src.SendMessage(UsageMessage);
                 src.SendMessage("SubCommands' Usage:");
                 src.SendMessage(" - additem [type(normal|vehicle|xp)] ...");
@@ -59,16 +63,18 @@ namespace Essentials.NativeModules.Kit.Commands {
                 return CommandResult.InvalidArgs();
             }
 
-            var kitManager = KitModule.Instance.KitManager;
+            var kitManager = KItModule.Instance.KitManager;
             var kitName = args[0].ToString();
 
-            if (!kitManager.Contains(kitName)) {
-                return CommandResult.LangError("KIT_NOT_EXIST", kitName);
+            if (!kitManager.Contains(kitName))
+            {
+                return CommandResult.LangError("icon_error_general", "KIT_NOT_EXIST", kitName);
             }
 
             var kit = kitManager.GetByName(kitName);
 
-			switch (args[1].ToLowerString) {
+            switch (args[1].ToLowerString)
+            {
                 case "view":
                     src.SendMessage($"Name: {kit.Name}");
                     src.SendMessage($"Cooldown: {kit.Cooldown}");
@@ -76,25 +82,31 @@ namespace Essentials.NativeModules.Kit.Commands {
                     src.SendMessage($"ResetCooldownWhenDie: {kit.ResetCooldownWhenDie}");
                     src.SendMessage(string.Empty);
 
-                    if (kit.Items.Count > 0) {
+                    if (kit.Items.Count > 0)
+                    {
                         src.SendMessage("Items:");
 
                         var index = 0;
                         kit.Items.ForEach(item => src.SendMessage(item.ToString().Insert(0, $" [{(++index)}] ")));
-                    } else {
+                    }
+                    else
+                    {
                         src.SendMessage("This kit has no items.");
                     }
                     return CommandResult.Success();
 
                 /* ekit name additem normal id amount durability */
                 case "additem":
-                    if (args.Length < 3) {
+                    if (args.Length < 3)
+                    {
                         return CommandResult.InvalidArgs("Use /ekit [kit] additem [type]");
                     }
 
-                    switch (args[2].ToLowerString) {
+                    switch (args[2].ToLowerString)
+                    {
                         case "normal":
-                            if (args.Length < 4) {
+                            if (args.Length < 4)
+                            {
                                 return CommandResult.InvalidArgs("Use /ekit [kit] additem normal [id] [amount] [durability]");
                             }
 
@@ -102,19 +114,22 @@ namespace Essentials.NativeModules.Kit.Commands {
                             byte? amount = 1;
 
                             // Try to convert 'amount'
-                            if (args.Length >= 5 && !args[4].TryConvertToByte(out amount, out var error)) {
+                            if (args.Length >= 5 && !args[4].TryConvertToByte(out amount, out var error))
+                            {
                                 return error;
                             }
 
                             // Try to convert 'durability'
-                            if (args.Length >= 6 && !args[5].TryConvertToByte(out durability, out error)) {
+                            if (args.Length >= 6 && !args[5].TryConvertToByte(out durability, out error))
+                            {
                                 return error;
                             }
 
                             var optAsset = ItemUtil.GetItem(args[3].ToString());
 
-                            if (optAsset.IsAbsent) {
-                                return CommandResult.LangError("INVALID_ITEM_ID_NAME", args[3]);
+                            if (optAsset.IsAbsent)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_ITEM_ID_NAME", args[3]);
                             }
 
                             kit.Items.Add(new KitItem(optAsset.Value.id, durability ?? 100, amount ?? 1));
@@ -123,41 +138,48 @@ namespace Essentials.NativeModules.Kit.Commands {
                             break;
 
                         case "vehicle":
-                            if (args.Length != 4) {
+                            if (args.Length != 4)
+                            {
                                 return CommandResult.InvalidArgs("Use /ekit [kit] additem vehicle [id]");
                             }
 
-                            if (!args[3].IsInt) {
-                                return CommandResult.LangError("INVALID_NUMBER", args[3]);
+                            if (!args[3].IsInt)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                             }
 
                             var argAsInt = args[3].ToInt;
 
-                            if (argAsInt < 0 || argAsInt > ushort.MaxValue) {
-                                return CommandResult.LangError("NEGATIVE_OR_LARGE");
+                            if (argAsInt < 0 || argAsInt > ushort.MaxValue)
+                            {
+                                return CommandResult.LangError("icon_error_general", "NEGATIVE_OR_LARGE");
                             }
 
-                            var vehicleAsset = Assets.find(EAssetType.VEHICLE, (ushort) argAsInt);
+                            var vehicleAsset = Assets.find(EAssetType.VEHICLE, (ushort)argAsInt);
 
-                            if (vehicleAsset == null) {
-                                return CommandResult.LangError("INVALID_VEHICLE_ID", argAsInt);
+                            if (vehicleAsset == null)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_VEHICLE_ID", argAsInt);
                             }
 
-                            kit.Items.Add(new KitItemVehicle((ushort) argAsInt));
+                            kit.Items.Add(new KitItemVehicle((ushort)argAsInt));
                             src.SendMessage($"Added Vehicle item. Id: {argAsInt}");
                             break;
 
                         case "money":
-                            if (args.Length != 4) {
+                            if (args.Length != 4)
+                            {
                                 return CommandResult.InvalidArgs("Use /ekit [kit] additem money [amount]");
                             }
 
-                            if (!args[3].IsInt) {
-                                return CommandResult.LangError("INVALID_NUMBER", args[3]);
+                            if (!args[3].IsInt)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                             }
 
-                            if (args[3].ToInt < 0) {
-                                return CommandResult.LangError("MUST_POSITIVE");
+                            if (args[3].ToInt < 0)
+                            {
+                                return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                             }
 
                             var moneyAmount = args[3].ToUInt;
@@ -166,16 +188,19 @@ namespace Essentials.NativeModules.Kit.Commands {
                             break;
 
                         case "xp":
-                            if (args.Length != 4) {
+                            if (args.Length != 4)
+                            {
                                 return CommandResult.InvalidArgs("Use /ekit [kit] additem xp [amount]");
                             }
 
-                            if (!args[3].IsInt) {
-                                return CommandResult.LangError("INVALID_NUMBER", args[3]);
+                            if (!args[3].IsInt)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                             }
 
-                            if (args[3].ToInt < 0) {
-                                return CommandResult.LangError("MUST_POSITIVE");
+                            if (args[3].ToInt < 0)
+                            {
+                                return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                             }
 
                             var expAmount = args[3].ToUInt;
@@ -191,25 +216,29 @@ namespace Essentials.NativeModules.Kit.Commands {
 
                 /* ekit name delitem [itemindex] */
                 case "delitem":
-                    if (args.Length != 3) {
+                    if (args.Length != 3)
+                    {
                         src.SendMessage("Use '/ekit [kit] delitem [itemIndex]'");
                         src.SendMessage("Use '/ekit [kit] view' to view valid indexes.");
 
                         return CommandResult.InvalidArgs();
                     }
 
-                    if (!args[2].IsInt) {
-                        return CommandResult.LangError("INVALID_NUMBER", args[2]);
+                    if (!args[2].IsInt)
+                    {
+                        return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[2]);
                     }
 
                     var argAsInt2 = args[2].ToInt;
 
-                    if (argAsInt2 <= 0) {
-                        return CommandResult.LangError("MUST_POSITIVE");
+                    if (argAsInt2 <= 0)
+                    {
+                        return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                     }
 
                     /* 1 to kitItems.Count */
-                    if ((argAsInt2 - 1) > kit.Items.Count) {
+                    if ((argAsInt2 - 1) > kit.Items.Count)
+                    {
                         src.SendMessage($"Invalid index, index must be between 1 and {kit.Items.Count}");
                         src.SendMessage("Use '/ekit [kit] view' to view valid indexes.");
 
@@ -221,7 +250,8 @@ namespace Essentials.NativeModules.Kit.Commands {
                     break;
 
                 case "set":
-                    if (args.Length < 3) {
+                    if (args.Length < 3)
+                    {
                         src.SendMessage("Use /ekit [kit] set [option] [value]");
                         src.SendMessage("nm  = Name");
                         src.SendMessage("cst = Cost");
@@ -231,14 +261,16 @@ namespace Essentials.NativeModules.Kit.Commands {
                         return CommandResult.InvalidArgs();
                     }
 
-                    switch (args[2].ToLowerString) {
+                    switch (args[2].ToLowerString)
+                    {
                         case "cost":
                         case "cst":
-                            if (!args[3].IsDouble) {
-	                            return CommandResult.LangError("INVALID_NUMBER", args[3]);
+                            if (!args[3].IsDouble)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                             }
 
-                            kit.Cost = (decimal) args[3].ToDouble;
+                            kit.Cost = (decimal)args[3].ToDouble;
                             src.SendMessage("Cost set to " + kit.Cost);
                             break;
 
@@ -250,12 +282,14 @@ namespace Essentials.NativeModules.Kit.Commands {
 
                         case "cooldown":
                         case "cd":
-                            if (!args[3].IsInt) {
-                                return CommandResult.LangError("INVALID_NUMBER", args[3]);
+                            if (!args[3].IsInt)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[3]);
                             }
 
-                            if (args[3].ToInt < 0) {
-                                return CommandResult.LangError("MUST_POSITIVE");
+                            if (args[3].ToInt < 0)
+                            {
+                                return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                             }
 
                             kit.Cooldown = args[3].ToUInt;
@@ -264,8 +298,9 @@ namespace Essentials.NativeModules.Kit.Commands {
 
                         case "resetcooldownwhendie":
                         case "rwd":
-                            if (!args[3].IsBool) {
-                                return CommandResult.LangError("INVALID_BOOLEAN", args[3]);
+                            if (!args[3].IsBool)
+                            {
+                                return CommandResult.LangError("icon_error_general", "INVALID_BOOLEAN", args[3]);
                             }
 
                             kit.ResetCooldownWhenDie = args[3].ToBool;

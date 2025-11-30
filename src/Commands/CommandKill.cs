@@ -27,7 +27,8 @@ using Essentials.Api.Unturned;
 using Essentials.Common;
 using Essentials.I18n;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "kill",
@@ -36,24 +37,28 @@ namespace Essentials.Commands {
         MinArgs = 1,
         MaxArgs = 1
     )]
-    public class CommandKill : EssCommand {
+    public class CommandKill : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args[0].Equals("*")) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args[0].Equals("*"))
+            {
                 UServer.Players.ForEach(p => p.Kill());
 
-                EssLang.Send(src, "KILL_ALL");
+                EssLang.Send("generalicon", src, "KILL_ALL");
                 return CommandResult.Success();
             }
 
-            if (!args[0].IsValidPlayerIdentifier) {
-                return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+            if (!args[0].IsValidPlayerIdentifier)
+            {
+                return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
             }
 
             var target = args[0].ToPlayer;
             target.Kill();
 
-            EssLang.Send(src, "KILL_PLAYER", target.DisplayName);
+            EssLang.Send("generalicon", src, "KILL_PLAYER", target.DisplayName);
             return CommandResult.Success();
         }
 

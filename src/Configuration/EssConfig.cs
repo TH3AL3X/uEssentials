@@ -25,25 +25,31 @@ using Essentials.Api;
 using Essentials.Api.Configuration;
 using Essentials.Common;
 using Essentials.Misc;
+using Essentials.NativeModules.Vault.Enums;
+using Essentials.NativeModules.Vault.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Essentials.Configuration {
+namespace Essentials.Configuration
+{
 
-    public class EssConfig : JsonConfig {
+    public class EssConfig : JsonConfig
+    {
 
         public string Locale;
+        public string MySqlConnectionString;
+        public string MessageColor;
+        public string AnnouncerIconUrl;
 
         public PrivateMessageSettings PrivateMessage;
 
         public bool OldFormatMessages;
-
         public bool UnfreezeOnDeath;
         public bool UnfreezeOnQuit;
-
+        public bool Consolefiltrer;
         public bool EnableTextCommands;
         public bool EnableDeathMessages;
         public bool EnableJoinLeaveMessage;
@@ -51,11 +57,13 @@ namespace Essentials.Configuration {
         public bool SaveCommandCooldowns;
         public bool Allow_Structures_Buildings;
         public bool Allow_Barricades_Buildings;
-
+        public bool All_auto_max_skill;
+        public bool EnableallConsolelogs;
         public bool EnablePollRunningMessage;
         public int PollRunningMessageCooldown;
         public int ServerFrameRate;
         public int BackDelay;
+        public Trash Trash;
 
         public ushort ItemSpawnLimit;
         public int AmmoCommandSpawnLimit;
@@ -66,9 +74,11 @@ namespace Essentials.Configuration {
         public WarpCommandSettings Warp;
         public VehicleFeaturesSettings VehicleFeatures;
         public ItemFeaturesSettings ItemFeatures;
+        public Vaults Vaultconfig;
         public KitSettings Kit;
         public TpaSettings Tpa;
         public EconomySettings Economy;
+        public Clime Climeinteraction;
 
         public AutoAnnouncer AutoAnnouncer;
         public AutoCommands AutoCommands;
@@ -77,30 +87,45 @@ namespace Essentials.Configuration {
         public HashSet<ushort> VehicleBlacklist;
         public HashSet<string> EnabledSystems;
         public HashSet<string> CommandsToOverride;
+        public HashSet<string> Vault;
         public List<string> DisabledCommands;
 
-        internal EssConfig() {}
+      
 
-        public override void LoadDefaults() {
-            Locale = "en";
+
+        internal EssConfig() { }
+
+        public override void LoadDefaults()
+        {
+            Locale = "es";
 
             BackDelay = 10;
             OldFormatMessages = false;
             UnfreezeOnDeath = true;
             UnfreezeOnQuit = true;
-
+            Consolefiltrer = true;
             EnableJoinLeaveMessage = true;
             EnableTextCommands = true;
             EnableDeathMessages = true;
-            
+            EnableallConsolelogs = true;
+
             ShowPermissionOnErrorMessage = true;
             SaveCommandCooldowns = false;
-
             EnablePollRunningMessage = true;
             PollRunningMessageCooldown = 20;
             ServerFrameRate = -1; // http://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
             Allow_Structures_Buildings = true;
             Allow_Barricades_Buildings = true;
+            All_auto_max_skill = true;
+
+            Climeinteraction = new Clime
+            {
+                InitialVoteDelay = 5f, // por defecto 3 segundos
+                Enabled = true,
+                VoteCooldown = 60,
+                VoteDuration = 30,
+                VoteThreshold = 0.5f
+            };
 
             CloseDoor = new AutoCloseDoor
             {
@@ -114,57 +139,90 @@ namespace Essentials.Configuration {
             AutoCommands = new AutoCommands();
             AutoCommands.LoadDefaults();
 
-            PrivateMessage = new PrivateMessageSettings {
+            PrivateMessage = new PrivateMessageSettings
+            {
                 FormatFrom = "(From {0}): {1}",
                 FormatTo = "(To {0}): {1}",
                 FormatSpy = "<gray>Spy: {0} -> {1}: {2}",
                 ConsoleDisplayName = "*console*"
             };
 
-            AntiSpam = new AntiSpamSettings {
+            AntiSpam = new AntiSpamSettings
+            {
                 Enabled = true,
-                Interval = 3
+                Interval = 3,
+
             };
 
-            Home = new HomeCommandSettings {
+            Home = new HomeCommandSettings
+            {
                 TeleportDelay = 5,
                 CancelTeleportWhenMove = true
             };
 
-            Warp = new WarpCommandSettings {
+            Warp = new WarpCommandSettings
+            {
                 TeleportDelay = 5,
                 PerWarpPermission = true,
                 CancelTeleportWhenMove = false
             };
 
-            Kit = new KitSettings {
+            Kit = new KitSettings
+            {
+                coldownkitcolor = "#B83232",
+                showcoldowntime = true,
                 ShowCost = true,
                 ShowCostIfZero = false,
                 CostFormat = "{0}({1}{2})",
                 GlobalCooldown = 0,
                 ResetGlobalCooldownWhenDie = false
+                
             };
 
-            Tpa = new TpaSettings {
+            Tpa = new TpaSettings
+            {
                 ExpireDelay = 10,
                 TeleportDelay = 5,
                 CancelTeleportWhenMove = true
             };
 
-            Economy = new EconomySettings {
+            Economy = new EconomySettings
+            {
                 UseXp = false,
                 UconomyCurrency = "$",
                 XpCurrency = "Xp"
             };
 
-            VehicleFeatures = new VehicleFeaturesSettings {
+            VehicleFeatures = new VehicleFeaturesSettings
+            {
                 RefuelPercentage = 20,
                 RepairPercentage = 70
             };
 
-            ItemFeatures = new ItemFeaturesSettings {
+            ItemFeatures = new ItemFeaturesSettings
+            {
                 ReloadPercentage = 80,
                 RepairPercentage = 80
+            };
+            Vaultconfig = new Vaults
+            {
+                Database = EDatabase.JSON,
+                MySqlConnectionString = "SERVER=127.0.0.1;DATABASE=unturned;UID=root;PASSWORD=123456;PORT=3306;TABLENAME=Essentials;",
+                Trash = new NativeModules.Vault.Models.Trash(10, 10),
+                AutoSortVault = false,
+                Vault = new HashSet<Vault>
+            {
+                new("Small", "vault.small", 4, 4, "#ffffff"),
+                new("Medium", "vault.medium", 7, 7, "#ffffff"),
+                new("VIPs", "vault.vip", 10, 10, "#ffffff"),
+                new("VIPs2", "vault.vip2", 10, 10, "#ffffff"),
+            },
+                BlacklistedItems = new HashSet<Blacklist>
+            {
+                new("vaultbypass.example", new List<ushort> {1, 2}),
+                new("vaultbypass.example1", new List<ushort> {3, 4}),
+
+            }
             };
 
             GiveItemBlacklist = new HashSet<ushort>();
@@ -172,21 +230,25 @@ namespace Essentials.Configuration {
             DisabledCommands = new List<string>();
             CommandsToOverride = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
             EnabledSystems = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) {
-                "kits", "warps"
+                "kits", "warps", "vault", "Autoperm"
             };
+
 
             ItemSpawnLimit = 10;
             AmmoCommandSpawnLimit = 10;
         }
 
-        public override void Load(string filePath) {
-            if (!File.Exists(filePath)) {
+        public override void Load(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
                 base.Load(filePath);
                 return;
             }
 
             // Custom config load
-            try {
+            try
+            {
                 var json = JObject.Parse(File.ReadAllText(filePath));
 
                 base.Load(filePath);
@@ -198,14 +260,17 @@ namespace Essentials.Configuration {
                 var needUpdate = configFields.Length != json.Count;
                 var nonNullFields = new Dictionary<string, object>();
 
-                if (needUpdate) {
-                    configFields.Where(f => json[f.Name] != null).ForEach(f => {
+                if (needUpdate)
+                {
+                    configFields.Where(f => json[f.Name] != null).ForEach(f =>
+                    {
                         nonNullFields.Add(f.Name, f.GetValue(this));
                     });
 
                     LoadDefaults();
 
-                    nonNullFields.ForEach(pair => {
+                    nonNullFields.ForEach(pair =>
+                    {
                         GetType().GetField(pair.Key).SetValue(this, pair.Value);
                     });
 
@@ -234,7 +299,9 @@ namespace Essentials.Configuration {
                 VehicleFeatures.RepairPercentage = assureRange(VehicleFeatures.RepairPercentage, 0, 100);
                 ItemFeatures.ReloadPercentage = assureRange(ItemFeatures.ReloadPercentage, 0, 100);
                 ItemFeatures.RepairPercentage = assureRange(ItemFeatures.RepairPercentage, 0, 100);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 UEssentials.Logger.LogError("Failed to load 'config.json'.");
                 UEssentials.Logger.LogException(ex);
                 UEssentials.Logger.LogError("Using default...");
@@ -242,18 +309,28 @@ namespace Essentials.Configuration {
             }
         }
 
-        public struct PrivateMessageSettings {
+        public struct PrivateMessageSettings
+        {
             public string FormatFrom;
             public string FormatTo;
             public string FormatSpy;
             public string ConsoleDisplayName;
         }
 
-        public struct AntiSpamSettings {
+        public struct AntiSpamSettings
+        {
             public bool Enabled;
             public int Interval;
         }
+        public struct Clime
+        {
+            public bool Enabled;
+            public float VoteCooldown;
+            public float VoteDuration;
+            public float VoteThreshold;
+            public float InitialVoteDelay;
 
+        }
         public struct AutoCloseDoor
         {
             public bool Enabled;
@@ -261,18 +338,23 @@ namespace Essentials.Configuration {
         }
 
 
-        public struct HomeCommandSettings {
+        public struct HomeCommandSettings
+        {
             public int TeleportDelay;
             public bool CancelTeleportWhenMove;
         }
 
-        public struct WarpCommandSettings {
+        public struct WarpCommandSettings
+        {
             public int TeleportDelay;
             public bool CancelTeleportWhenMove;
             public bool PerWarpPermission;
         }
 
-        public struct KitSettings {
+        public struct KitSettings
+        {
+            public string coldownkitcolor;
+            public bool showcoldowntime;
             public bool ShowCost;
             public bool ShowCostIfZero;
             public string CostFormat;
@@ -280,28 +362,45 @@ namespace Essentials.Configuration {
             public bool ResetGlobalCooldownWhenDie;
         }
 
-        public struct TpaSettings {
+        public struct TpaSettings
+        {
             public bool CancelTeleportWhenMove;
             public int ExpireDelay;
             public int TeleportDelay;
         }
 
-        public struct EconomySettings {
+        public struct EconomySettings
+        {
             public bool UseXp;
             public string XpCurrency;
             public string UconomyCurrency;
         }
 
-        public struct VehicleFeaturesSettings {
+        public struct VehicleFeaturesSettings
+        {
             public int RefuelPercentage;
             public int RepairPercentage;
         }
 
-        public struct ItemFeaturesSettings {
+        public struct ItemFeaturesSettings
+        {
             public int ReloadPercentage;
             public int RepairPercentage;
         }
 
+        public struct Vaults
+        {
+           
+            public bool DebugMode;
+            public EDatabase Database;
+            public string MySqlConnectionString;
+            public NativeModules.Vault.Models.Trash Trash;
+            public bool AutoSortVault;
+            public HashSet<Vault> Vault;
+            public HashSet<Blacklist> BlacklistedItems;
+        }
     }
 
 }
+
+

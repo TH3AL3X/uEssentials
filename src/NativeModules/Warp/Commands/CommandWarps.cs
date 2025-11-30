@@ -26,25 +26,32 @@ using Essentials.Api.Command.Source;
 using Essentials.I18n;
 using System.Linq;
 
-namespace Essentials.NativeModules.Warp.Commands {
+namespace Essentials.NativeModules.Warp.Commands
+{
 
     [CommandInfo(
         Name = "warps",
         Description = "View available warps"
     )]
-    public class CommandWarps : EssCommand {
+    public class CommandWarps : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            var warps = (
-                from warp in WarpModule.Instance.WarpManager.Warps
-                where warp.CanBeUsedBy(src)
-                select warp.Name
-            ).ToArray();
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            //ellocoed
 
-            if (warps.Length == 0) {
-                EssLang.Send(src, "WARP_NONE");
-            } else {
-                EssLang.Send(src, "WARP_LIST", string.Join(", ", warps));
+            var warps = WarpModule.Instance.WarpManager.Warps.Where(W => W.CanBeUsedBy(src)).Select(W =>
+            {
+                return W.Mensageaddon + W.Name;
+            }).ToList();
+
+            if (warps.Count == 0)
+
+                EssLang.Send("generalicon", src, "WARP_NONE");
+
+            else
+            {
+                EssLang.Send("generalicon", src, "WARP_LIST", string.Join(", ", warps.ToArray()));
             }
 
             return CommandResult.Success();

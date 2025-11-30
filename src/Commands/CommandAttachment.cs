@@ -21,25 +21,12 @@
 */
 #endregion
 
-using System;
-using System.Linq;
-using System.Numerics;
-using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
-using Essentials.Api.Unturned;
-using Essentials.Common;
-using Essentials.Compatibility;
-using Essentials.Components.Player;
-using Essentials.Event.Handling;
 using Essentials.I18n;
-using HarmonyLib;
-using Rocket.API;
-using Rocket.Unturned.Chat;
-using Rocket.Unturned.Player;
-using SDG.Framework.Utilities;
 using SDG.Unturned;
-using UnityEngine;
+using System;
+using System.Linq;
 
 namespace Essentials.Commands
 {
@@ -63,7 +50,7 @@ namespace Essentials.Commands
             if (args.Length > 0)
             {
                 if (Player.Equipment.state == null || Player.Equipment.state.Length < 12 || Player.Equipment.asset == null || Player.Equipment.asset.type != EItemType.GUN)
-                    return CommandResult.LangError("SET_ATTACHMENT_FAIL");
+                    return CommandResult.LangError("icon_error_general", "SET_ATTACHMENT_FAIL");
 
                 ItemAsset Item = null;
 
@@ -110,18 +97,18 @@ namespace Essentials.Commands
                     }
 
                     if (pos == 255)
-                        return CommandResult.LangError("SET_ATTACHMENT_FAIL");
+                        return CommandResult.LangError("icon_error_general", "SET_ATTACHMENT_FAIL");
 
                     byte[] ID = BitConverter.GetBytes(Item.id);
 
                     Array.Copy(ID, 0, Player.Equipment.state, pos, 2);
 
                     Player.Equipment.sendUpdateState();
-                    EssLang.Send(src, "SET_ATTACHMENT");
+                    EssLang.Send("icon_set_attachment", src, "SET_ATTACHMENT");
                 }
                 else
                 {
-                    return CommandResult.LangError("SET_ATTACHMENT_FAIL");
+                    return CommandResult.LangError("icon_error_general", "SET_ATTACHMENT_FAIL");
                 }
             }
             else

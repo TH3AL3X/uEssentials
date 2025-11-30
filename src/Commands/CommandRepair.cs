@@ -21,14 +21,14 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
-using Essentials.Common.Util;
-using SDG.Unturned;
-using Essentials.I18n;
 using Essentials.Common;
+using Essentials.Common.Util;
+using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
 
 namespace Essentials.Commands
 {
@@ -46,7 +46,7 @@ namespace Essentials.Commands
             var player = src.ToPlayer();
 
             player.Inventory.items.ForEach(item => Repair(player, item));
-            EssLang.Send(src, "ALL_REPAIRED");
+            EssLang.Send("generalicon", src, "ALL_REPAIRED");
 
             return CommandResult.Success();
         }
@@ -63,7 +63,8 @@ namespace Essentials.Commands
                 playerInv.sendUpdateQuality(item.page, itemJar.x, itemJar.y, 100);
 
                 var barrel = ItemUtil.GetWeaponAttachment(itemJar.item, ItemUtil.AttachmentType.BARREL);
-                barrel.IfPresent(attach => {
+                barrel.IfPresent(attach =>
+                {
                     if (attach.Durability == 100) return;
 
                     attach.Durability = 100;

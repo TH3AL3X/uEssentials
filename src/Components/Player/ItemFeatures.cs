@@ -21,77 +21,95 @@
 */
 #endregion
 
-using SDG.Unturned;
 using Essentials.Api;
+using SDG.Unturned;
 
-namespace Essentials.Components.Player {
+namespace Essentials.Components.Player
+{
 
-    public class ItemFeatures : PlayerComponent {
+    public class ItemFeatures : PlayerComponent
+    {
 
         public bool AutoRepair { get; set; }
         public bool AutoReload { get; set; }
 
         private ushort _lastArrowId;
 
-        protected override void SafeFixedUpdate() {
+        protected override void SafeFixedUpdate()
+        {
             var equip = Player.Equipment;
             var itemInHandId = equip.itemID;
 
-            if (itemInHandId == 0) {
+            if (itemInHandId == 0)
+            {
                 return; // Is not holding anything.
             }
 
-            if (AutoReload && equip.state.Length >= 18) {
+            if (AutoReload && equip.state.Length >= 18)
+            {
                 DoAutoReload(equip, itemInHandId);
             }
 
-            if (AutoRepair) {
+            if (AutoRepair)
+            {
                 DoAutoRepair(equip);
             }
         }
 
-        private void DoAutoRepair(PlayerEquipment equip) {
-            if (equip.quality < UEssentials.Config.ItemFeatures.RepairPercentage) {
+        private void DoAutoRepair(PlayerEquipment equip)
+        {
+            if (equip.quality < UEssentials.Config.ItemFeatures.RepairPercentage)
+            {
                 equip.quality = 100;
                 equip.sendUpdateQuality();
             }
 
             // This is for Barrel.
-            if (equip.state.Length > 16 && equip.state[16] < UEssentials.Config.ItemFeatures.RepairPercentage) {
+            if (equip.state.Length > 16 && equip.state[16] < UEssentials.Config.ItemFeatures.RepairPercentage)
+            {
                 equip.state[16] = 100;
                 equip.sendUpdateState();
             }
         }
-        
-        private void DoAutoReload(PlayerEquipment equip, ushort itemId) {
+
+        private void DoAutoReload(PlayerEquipment equip, ushort itemId)
+        {
             // NOTE:
             //  equip.state[8]  = magazine ID low bytes
             //  equip.state[9]  = magazine ID high bytes
             //  equip.state[10] = ammo
             var ammo = equip.state[10];
-            var ammoId = (ushort) (equip.state[8] | equip.state[9] << 8);
+            var ammoId = (ushort)(equip.state[8] | equip.state[9] << 8);
 
             // Save the last arrow id used by this bow, so we can
             // use the same arrow later.
-            if (ammo == 1 && IsBow(itemId)) {
+            if (ammo == 1 && IsBow(itemId))
+            {
                 _lastArrowId = ammoId;
             }
-            
-            if (HasSingleBullet(itemId)) {
-                if (ammo == 1) {
+
+            if (HasSingleBullet(itemId))
+            {
+                if (ammo == 1)
+                {
                     return;
                 }
-                if (IsBow(itemId)) {
-                    ammoId = _lastArrowId == 0 ? (ushort) 347 : _lastArrowId;
+                if (IsBow(itemId))
+                {
+                    ammoId = _lastArrowId == 0 ? (ushort)347 : _lastArrowId;
                     equip.state[17] = 100; // Arrow durability
-                } else if (itemId == 519 || itemId == 3517) { // Lancer & Rocket Launcher
+                }
+                else if (itemId == 519 || itemId == 3517)
+                { // Lancer & Rocket Launcher
                     ammoId = 520;
-                } else if (itemId == 300) { // Shadowstalker
+                }
+                else if (itemId == 300)
+                { // Shadowstalker
                     ammoId = 301;
                 }
 
-                equip.state[8] = (byte) (ammoId);
-                equip.state[9] = (byte) (ammoId >> 8);
+                equip.state[8] = (byte)(ammoId);
+                equip.state[9] = (byte)(ammoId >> 8);
                 equip.state[10] = 1;
                 equip.sendUpdateState();
                 return;
@@ -103,7 +121,8 @@ namespace Essentials.Components.Player {
                 return;
             }
 
-            if (((float) ammo / magazine.amount) * 100 <= UEssentials.Config.ItemFeatures.ReloadPercentage) {
+            if (((float)ammo / magazine.amount) * 100 <= UEssentials.Config.ItemFeatures.ReloadPercentage)
+            {
                 equip.state[10] = magazine.amount;
                 equip.sendUpdateState();
             }

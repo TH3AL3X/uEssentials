@@ -24,38 +24,48 @@
 using Essentials.Core;
 using System.Diagnostics;
 
-namespace Essentials.Api.Task {
+namespace Essentials.Api.Task
+{
 
-    internal class EssentialsTaskExecutor : ITaskExecutor {
+    internal class EssentialsTaskExecutor : ITaskExecutor
+    {
 
         private readonly SyncTaskExecutor _syncExecutor;
         private readonly AsyncTaskExecutor _asyncExecutor;
 
-        internal EssentialsTaskExecutor() {
+        internal EssentialsTaskExecutor()
+        {
             _syncExecutor = EssCore.Instance.TryAddComponent<SyncTaskExecutor.ExecutorComponent>().SyncExecutor;
             _asyncExecutor = new AsyncTaskExecutor();
         }
 
-        public void Stop() {
-            if (_syncExecutor != null) {
+        public void Stop()
+        {
+            if (_syncExecutor != null)
+            {
                 EssCore.Instance.TryRemoveComponent<SyncTaskExecutor.ExecutorComponent>();
                 _syncExecutor.Stop();
             }
             _asyncExecutor?.Stop();
         }
 
-        public void Enqueue(Task task) {
+        public void Enqueue(Task task)
+        {
             Debug.Assert(_syncExecutor != null, "_syncExecutor == null");
             Debug.Assert(_asyncExecutor != null, "_asyncExecutor == null");
 
-            if (task.IsAsync) {
+            if (task.IsAsync)
+            {
                 _asyncExecutor.Enqueue(task);
-            } else {
+            }
+            else
+            {
                 _syncExecutor.Enqueue(task);
             }
         }
 
-        public void DequeueAll() {
+        public void DequeueAll()
+        {
             _syncExecutor?.DequeueAll();
             _asyncExecutor?.DequeueAll();
         }

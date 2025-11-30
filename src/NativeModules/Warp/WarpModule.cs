@@ -25,10 +25,12 @@ using Essentials.Api.Module;
 using Essentials.Api.Task;
 using static Essentials.Api.UEssentials;
 
-namespace Essentials.NativeModules.Warp {
+namespace Essentials.NativeModules.Warp
+{
 
     [ModuleInfo(Name = "Warps")]
-    public class WarpModule : NativeModule {
+    public class WarpModule : NativeModule
+    {
 
         private const int kAutoSaveInterval = 60 * 1000; // 60 Seconds
         private const string kCommandsNamespace = "Essentials.NativeModules.Warp.Commands";
@@ -36,7 +38,8 @@ namespace Essentials.NativeModules.Warp {
         public WarpManager WarpManager { get; private set; }
         public static WarpModule Instance { get; private set; }
 
-        public override void OnLoad() {
+        public override void OnLoad()
+        {
             Instance = this;
 
             WarpManager = new WarpManager();
@@ -55,7 +58,8 @@ namespace Essentials.NativeModules.Warp {
                 .Submit();
         }
 
-        public override void OnUnload() {
+        public override void OnUnload()
+        {
             WarpManager.Save();
             EventManager.UnregisterAll<WarpEventHandler>();
             CommandManager.UnregisterAll(kCommandsNamespace);

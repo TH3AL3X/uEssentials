@@ -33,9 +33,11 @@ using Essentials.Core;
 using Essentials.Economy;
 using Essentials.Logging;
 
-namespace Essentials.Api {
+namespace Essentials.Api
+{
 
-    public static class UEssentials {
+    public static class UEssentials
+    {
 
         /// <summary>
         /// Version of uEssentials
@@ -114,8 +116,10 @@ namespace Essentials.Api {
         /// <summary>
         /// Singleton instance of Plugin
         /// </summary>
-        public static EssCore Core {
-            get {
+        public static EssCore Core
+        {
+            get
+            {
                 Preconditions.CheckState(EssCore.Instance != null, "Essentials isn't initialized");
 
                 return EssCore.Instance;

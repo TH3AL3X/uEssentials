@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Api.Event {
+namespace Essentials.Api.Event
+{
 
-    public interface ICancellable {
+    public interface ICancellable
+    {
 
         bool Cancelled { get; set; }
 

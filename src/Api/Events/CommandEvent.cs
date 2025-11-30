@@ -26,9 +26,11 @@ using Essentials.Api.Command.Source;
 using Essentials.CodeAnalysis;
 using Essentials.Common;
 
-namespace Essentials.Api.Events {
+namespace Essentials.Api.Events
+{
 
-    public class CommandEvent {
+    public class CommandEvent
+    {
 
         /// <summary>
         /// Command that was/will be executed.
@@ -38,11 +40,14 @@ namespace Essentials.Api.Events {
         /// <summary>
         /// Arguments
         /// </summary>
-        public ICommandArgs Arguments {
-            get {
+        public ICommandArgs Arguments
+        {
+            get
+            {
                 return _args;
             }
-            set {
+            set
+            {
                 _args = Preconditions.NotNull(value, "args cannot be null");
             }
         }
@@ -50,16 +55,20 @@ namespace Essentials.Api.Events {
         /// <summary>
         /// Who is executing the <see cref="Command"/>.
         /// </summary>
-        public ICommandSource Source {
-            get {
+        public ICommandSource Source
+        {
+            get
+            {
                 return _source;
             }
-            set {
+            set
+            {
                 _source = Preconditions.NotNull(value, "source cannot be null");
             }
         }
 
-        public CommandEvent([NotNull] ICommand command, ICommandArgs args, ICommandSource src) {
+        public CommandEvent([NotNull] ICommand command, ICommandArgs args, ICommandSource src)
+        {
             Command = command;
             Arguments = args;
             Source = src;

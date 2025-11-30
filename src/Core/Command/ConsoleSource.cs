@@ -31,7 +31,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Essentials.Core.Command {
+namespace Essentials.Core.Command
+{
 
 
     internal class ConsoleSource : ICommandSource
@@ -50,9 +51,12 @@ namespace Essentials.Core.Command {
 
         public List<string> Permissions => new List<string> { "*" };
 
-        internal static ConsoleSource Instance {
-            get {
-                lock (LockObj) {
+        internal static ConsoleSource Instance
+        {
+            get
+            {
+                lock (LockObj)
+                {
                     return _instance ?? (_instance = new ConsoleSource());
                 }
             }
@@ -60,20 +64,26 @@ namespace Essentials.Core.Command {
 
         public bool HasPermission(string permission) => true;
 
-        public void SendMessage(object message) {
+        public void SendMessage(object message)
+        {
             SendMessage(message, Color.green);
         }
 
-        public void SendMessage(object message, Color color) {
+        public void SendMessage(object message, Color color)
+        {
             string sMessage = message is string
-                ? AeiouToAscii((string) message)
+                ? AeiouToAscii((string)message)
                 : message.ToString();
 
-            try {
-                if (R.Settings.Instance.RCON.Enabled) {
+            try
+            {
+                if (R.Settings.Instance.RCON.Enabled)
+                {
                     RCONServer.Broadcast(sMessage);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 UEssentials.Logger.LogError("Failed to broadcast a message to RCON.");
                 UEssentials.Logger.LogException(ex);
             }
@@ -85,14 +95,17 @@ namespace Essentials.Core.Command {
         }
 
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return DisplayName;
         }
 
-        private static string AeiouToAscii(string str) {
+        private static string AeiouToAscii(string str)
+        {
             var chars = str.ToCharArray();
 
-            for (var i = 0; i < chars.Length; i++) {
+            for (var i = 0; i < chars.Length; i++)
+            {
                 if (chars[i] >= 224 && chars[i] <= 229) chars[i] = 'a';
                 if (chars[i] >= 192 && chars[i] <= 197) chars[i] = 'A';
 

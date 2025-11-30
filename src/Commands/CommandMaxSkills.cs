@@ -23,13 +23,19 @@
 
 #endregion
 
-using System.Linq;
-using Essentials.I18n;
+using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
+using Essentials.I18n;
+using Rocket.Unturned;
+using Rocket.Unturned.Events;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
-
+using Steamworks;
+using System;
+using System.Linq;
+using UnityEngine;
 namespace Essentials.Commands
 {
     [CommandInfo(
@@ -39,6 +45,14 @@ namespace Essentials.Commands
     )]
     public class CommandMaxSkills : EssCommand
     {
+        public CommandMaxSkills()
+        {
+            if (UEssentials.Config.All_auto_max_skill)
+            {
+                U.Events.OnPlayerConnected += forcemaxskillall;
+                UnturnedPlayerEvents.OnPlayerRevive += revforcemaxskillall;
+            }
+        }
         public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
         {
             if (args.IsEmpty)
@@ -63,7 +77,7 @@ namespace Essentials.Commands
                     GiveMaxSkills(src.ToPlayer(), overpower);
                     return CommandResult.Success();
                 }
-                
+
                 // player or all
                 if (args.Length > 1)
                 {
@@ -80,7 +94,7 @@ namespace Essentials.Commands
                             GiveMaxSkills(UPlayer.From(sPlayer), overpower);
                         }
 
-                        EssLang.Send(src, "MAX_SKILLS_ALL");
+                        EssLang.Send("generalicon", src, "MAX_SKILLS_ALL");
                     }
                     else
                     {
@@ -91,12 +105,12 @@ namespace Essentials.Commands
 
                         if (!args[1].IsValidPlayerIdentifier)
                         {
-                            return CommandResult.LangError("PLAYER_NOT_FOUND", args[1]);
+                            return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[1]);
                         }
 
                         var targetPlayer = args[1].ToPlayer;
                         GiveMaxSkills(targetPlayer, overpower);
-                        EssLang.Send(src, "MAX_SKILLS_TARGET", targetPlayer.DisplayName);
+                         EssLang.Send("generalicon", src, "MAX_SKILLS_TARGET", targetPlayer.DisplayName);
                     }
                 }
             }
@@ -104,7 +118,7 @@ namespace Essentials.Commands
             return CommandResult.Success();
         }
 
-        private void GiveMaxSkills(UPlayer player, bool overpower)
+        public void GiveMaxSkills(UPlayer player, bool overpower)
         {
             switch (overpower)
             {
@@ -132,7 +146,35 @@ namespace Essentials.Commands
                     break;
             }
 
-            EssLang.Send(player, "MAX_SKILLS");
+            if (!UEssentials.Config.All_auto_max_skill) EssLang.Send("generalicon", player, "MAX_SKILLS");
+        }
+
+        public void forcemaxskillall(UnturnedPlayer player)
+        {
+            var uPlayer = UPlayer.From(player);
+
+            if (uPlayer != null)
+            {
+                GiveMaxSkills(uPlayer, false);
+            }
+            else
+            {
+                EssLang.Send("generalicon", uPlayer, "PLAYER_CONVERSION_FAILED");
+            }
+        }
+        private void revforcemaxskillall(UnturnedPlayer player, Vector3 position, byte angle)
+        {
+            var uPlayer = UPlayer.From(player);
+
+            if (uPlayer != null)
+            {
+                GiveMaxSkills(uPlayer, false);
+            }
+            else
+            {
+                EssLang.Send("generalicon", uPlayer, "PLAYER_CONVERSION_FAILED");
+            }
         }
     }
 }
+

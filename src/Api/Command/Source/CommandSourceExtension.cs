@@ -24,11 +24,14 @@
 using Essentials.Api.Unturned;
 using Essentials.Common;
 
-namespace Essentials.Api.Command.Source {
+namespace Essentials.Api.Command.Source
+{
 
-    public static class CommandSourceExtension {
+    public static class CommandSourceExtension
+    {
 
-        public static UPlayer ToPlayer(this ICommandSource src) {
+        public static UPlayer ToPlayer(this ICommandSource src)
+        {
             Preconditions.CheckState(!src.IsConsole, "Cannot convert Console to Player");
 
             return src as UPlayer;

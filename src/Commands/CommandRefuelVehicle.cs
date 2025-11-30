@@ -21,15 +21,16 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
 using Essentials.I18n;
 using SDG.Unturned;
+using System.Linq;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "refuelvehicle",
@@ -38,40 +39,52 @@ namespace Essentials.Commands {
         Usage = "<all>",
         MaxArgs = 1
     )]
-    public class CommandRefuelVehicle : EssCommand {
+    public class CommandRefuelVehicle : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty) {
-                if (src.IsConsole) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty)
+            {
+                if (src.IsConsole)
+                {
                     return CommandResult.ShowUsage();
                 }
 
                 var currentVeh = src.ToPlayer().CurrentVehicle;
 
-                if (currentVeh != null) {
+                if (currentVeh != null)
+                {
                     RefuelVehicle(currentVeh);
-                    EssLang.Send(src, "VEHICLE_REFUELED");
-                } else {
-                    return CommandResult.LangError("NOT_IN_VEHICLE");
+                    EssLang.Send("generalicon", src, "VEHICLE_REFUELED");
                 }
-            } else if (args[0].Equals("all")) {
-                if (!src.HasPermission($"{Permission}.all")) {
+                else
+                {
+                    return CommandResult.LangError("icon_error_general", "NOT_IN_VEHICLE");
+                }
+            }
+            else if (args[0].Equals("all"))
+            {
+                if (!src.HasPermission($"{Permission}.all"))
+                {
                     return CommandResult.NoPermission($"{Permission}.all");
                 }
 
-                lock (UWorld.Vehicles) {
+                lock (UWorld.Vehicles)
+                {
                     UWorld.Vehicles
                         .Where(veh => !veh.isExploded && !veh.isUnderwater)
                         .ForEach(RefuelVehicle);
 
-                    EssLang.Send(src, "VEHICLE_REFUELED_ALL");
+                    EssLang.Send("generalicon", src, "VEHICLE_REFUELED_ALL");
                 }
             }
 
             return CommandResult.Success();
         }
 
-        private void RefuelVehicle(InteractableVehicle veh) {
+        private void RefuelVehicle(InteractableVehicle veh)
+        {
             VehicleManager.instance.channel.send("tellVehicleFuel", ESteamCall.ALL,
                 ESteamPacket.UPDATE_UNRELIABLE_BUFFER, veh.instanceID, veh.asset.fuel);
         }

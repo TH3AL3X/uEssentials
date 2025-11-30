@@ -30,12 +30,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Essentials.NativeModules.Warp.Data {
+namespace Essentials.NativeModules.Warp.Data
+{
 
-    public class WarpData : IData<Dictionary<string, Warp>> {
+    public class WarpData : IData<Dictionary<string, Warp>>
+    {
 
-        private static string DataFilePath {
-            get {
+        private static string DataFilePath
+        {
+            get
+            {
                 var dataFolder = UEssentials.DataFolder;
                 var filePath = $"{dataFolder}warps.json";
 
@@ -49,15 +53,18 @@ namespace Essentials.NativeModules.Warp.Data {
             }
         }
 
-        public void Save(Dictionary<string, Warp> warps) {
+        public void Save(Dictionary<string, Warp> warps)
+        {
             JsonUtil.Serialize(DataFilePath, warps.Values.ToArray());
         }
 
-        public Dictionary<string, Warp> Load() {
+        public Dictionary<string, Warp> Load()
+        {
             var loadedWarps = new Dictionary<string, Warp>();
             var deserializedWarpArray = JsonConvert.DeserializeObject<Warp[]>(File.ReadAllText(DataFilePath));
 
-            deserializedWarpArray?.ForEach(warp => {
+            deserializedWarpArray?.ForEach(warp =>
+            {
                 loadedWarps.Add(warp.Name.ToLowerInvariant(), warp);
             });
             return loadedWarps;

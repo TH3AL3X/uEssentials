@@ -21,18 +21,19 @@
 */
 #endregion
 
-using System;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Task;
 using Essentials.Common.Util;
-using Essentials.I18n;
-using UnityEngine;
-using SDG.Unturned;
 using Essentials.Event.Handling;
+using Essentials.I18n;
+using SDG.Unturned;
+using System;
+using UnityEngine;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "home",
@@ -40,7 +41,8 @@ namespace Essentials.Commands {
         Description = "Teleport to your bed.",
         AllowedSource = AllowedSource.PLAYER
     )]
-    public class CommandHome : EssCommand {
+    public class CommandHome : EssCommand
+    {
 
         internal static PlayerDictionary<Task> Delay = new PlayerDictionary<Task>(
             PlayerDictionaryOptions.LAZY_REGISTER_HANDLERS |
@@ -49,40 +51,47 @@ namespace Essentials.Commands {
             task => task.Cancel()
         );
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var player = src.ToPlayer();
             var playerId = player.CSteamId;
-
+            //corregir futuros errores y optimizar  discord ellocoed
             if (player.Stance == EPlayerStance.DRIVING ||
-                player.Stance == EPlayerStance.SITTING) {
-                return CommandResult.LangError("CANNOT_TELEPORT_DRIVING");
+                player.Stance == EPlayerStance.SITTING)
+            {
+                return CommandResult.LangError("icon_error_general", "CANNOT_TELEPORT_IN_VEHICLE");
             }
 
-            if (!BarricadeManager.tryGetBed(player.CSteamId, out var bedPosition, out var bedAngle)) {
-                return CommandResult.LangError("WITHOUT_BED");
+            if (!BarricadeManager.tryGetBed(player.CSteamId, out var bedPosition, out var bedAngle))
+            {
+                return CommandResult.LangError("icon_error_general", "WITHOUT_BED");
             }
 
-            if (Delay.ContainsKey(player.CSteamId.m_SteamID)) {
-                return CommandResult.LangError("ALREADY_WAITING");
+            if (Delay.ContainsKey(player.CSteamId.m_SteamID))
+            {
+                return CommandResult.LangError("icon_error_general", "ALREADY_WAITING");
             }
 
             var homeCommand = UEssentials.Config.Home;
             var delay = homeCommand.TeleportDelay;
 
-            if (player.HasPermission("essentials.bypass.homecooldown")) {
+            if (player.HasPermission("essentials.bypass.homecooldown"))
+            {
                 delay = 0;
             }
 
-            if (delay > 0) {
-                EssLang.Send(src, "TELEPORT_DELAY", TimeUtil.FormatSeconds((uint) delay));
+            if (delay > 0)
+            {
+                EssLang.Send("generalicon", src, "TELEPORT_DELAY", TimeUtil.FormatSeconds((uint)delay));
             }
 
             var task = Task.Create()
                    .Delay(TimeSpan.FromSeconds(delay))
-                   .Action(t => {
+                   .Action(t =>
+                   {
                        Delay.Remove(playerId.m_SteamID);
                        player.Teleport(bedPosition + new Vector3(0f, 0.5f, 0f), bedAngle);
-                       EssLang.Send(src, "TELEPORTED_BED");
+                       EssLang.Send("generalicon", src, "TELEPORTED_BED");
                    })
                    .Submit();
 
@@ -91,9 +100,10 @@ namespace Essentials.Commands {
             return CommandResult.Success();
         }
 
-        protected override void OnUnregistered() {
-          Delay.Clear();
-          UEssentials.EventManager.Unregister<EssentialsEventHandler>("HomePlayerMove");
+        protected override void OnUnregistered()
+        {
+            Delay.Clear();
+            UEssentials.EventManager.Unregister<EssentialsEventHandler>("HomePlayerMove");
         }
 
     }

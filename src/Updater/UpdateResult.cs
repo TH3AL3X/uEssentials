@@ -21,21 +21,25 @@
 */
 #endregion
 
-namespace Essentials.Updater {
+namespace Essentials.Updater
+{
 
-    public class UpdateResult {
+    public class UpdateResult
+    {
 
         public string LatestVersion;
         public uint LatestVersionDecimal;
         public string AdditionalData;
 
-        public UpdateResult(string latestVersion, uint latestVersionDecimal, string additionalData) {
+        public UpdateResult(string latestVersion, uint latestVersionDecimal, string additionalData)
+        {
             LatestVersion = latestVersion;
             LatestVersionDecimal = latestVersionDecimal;
             AdditionalData = additionalData;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"LatestVersion: {LatestVersion}, " +
                    $"LatestVersionDecimal: {LatestVersionDecimal}, " +
                    $"AdditionalData: {AdditionalData}";

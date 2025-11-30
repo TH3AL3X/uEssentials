@@ -28,9 +28,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Essentials.NativeModules.Kit {
+namespace Essentials.NativeModules.Kit
+{
 
-    public sealed class KitManager {
+    public sealed class KitManager
+    {
 
         internal IData<Dictionary<string, Kit>> KitData { get; }
         internal CooldownData CooldownData { get; }
@@ -38,65 +40,82 @@ namespace Essentials.NativeModules.Kit {
         public IEnumerable<Kit> Kits => KitMap.Values;
         public int Count => KitMap.Count;
 
-        internal KitManager() {
+        internal KitManager()
+        {
             CooldownData = new CooldownData();
             KitMap = new Dictionary<string, Kit>();
             KitData = new KitData();
 
             var webResources = UEssentials.Core.WebResources;
-            if (webResources.Loaded.ContainsKey("Kits")) {
+            if (webResources.Loaded.ContainsKey("Kits"))
+            {
                 File.WriteAllText(Data.KitData.DataFilePath, webResources.Loaded["Kits"]);
             }
         }
 
-        public bool Contains(string kitName) {
+        public bool Contains(string kitName)
+        {
             return KitMap.ContainsKey(kitName.ToLowerInvariant());
         }
 
-        public bool Contains(Kit kit) {
+        public bool Contains(Kit kit)
+        {
             return KitMap.ContainsValue(kit);
         }
 
-        public void Add(Kit kit) {
+        public void Add(Kit kit)
+        {
             KitMap.Add(kit.Name.ToLowerInvariant(), kit);
             KitData.Save(KitMap);
         }
 
-        public void Remove(Kit kit) {
+        public void Remove(Kit kit)
+        {
             KitMap.Remove(kit.Name.ToLowerInvariant());
             KitData.Save(KitMap);
         }
 
-        public Kit GetByName(string kitName) {
+        public Kit GetByName(string kitName)
+        {
             return Contains(kitName)
                 ? KitMap[kitName.ToLowerInvariant()]
                 : null;
         }
 
-        public void LoadKits() {
+        public void LoadKits()
+        {
             KitMap = KitData.Load();
         }
 
-        public void SaveKits() {
+        public void SaveKits()
+        {
             KitData.Save(KitMap);
         }
 
-        public void Load() {
-            try {
+        public void Load()
+        {
+            try
+            {
                 LoadKits();
                 CooldownData.Load();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 UEssentials.Logger.LogError("An error ocurred while loading kits...");
                 UEssentials.Logger.LogException(ex);
             }
         }
 
-        public void Save() {
+        public void Save()
+        {
             Console.WriteLine("kits saved");
-            try {
+            try
+            {
                 SaveKits();
                 CooldownData.Save();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 UEssentials.Logger.LogError("An error ocurred while saving kits...");
                 UEssentials.Logger.LogException(ex);
             }

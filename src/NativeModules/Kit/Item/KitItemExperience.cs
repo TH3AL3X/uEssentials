@@ -24,23 +24,28 @@
 using Essentials.Api.Unturned;
 using Newtonsoft.Json;
 
-namespace Essentials.NativeModules.Kit.Item {
+namespace Essentials.NativeModules.Kit.Item
+{
 
-    public class KitItemExperience : AbstractKitItem {
+    public class KitItemExperience : AbstractKitItem
+    {
 
         [JsonProperty("Xp")]
         public uint Amount { get; set; }
 
-        public KitItemExperience(uint amount) {
+        public KitItemExperience(uint amount)
+        {
             Amount = amount;
         }
 
-        public override bool GiveTo(UPlayer player, bool dropIfInventoryFull = true) {
+        public override bool GiveTo(UPlayer player, bool dropIfInventoryFull = true)
+        {
             player.UnturnedPlayer.skills.askAward(Amount);
             return true;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"Xp: {Amount}";
         }
 

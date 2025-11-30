@@ -22,9 +22,7 @@
 #endregion
 
 using Essentials.Api.Unturned;
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Essentials.Components.Player
 {

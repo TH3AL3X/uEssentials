@@ -21,24 +21,26 @@
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Essentials.Api;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
+using Essentials.Common.Util;
+using Essentials.Components.Player;
 using Essentials.Core.Command;
 using Essentials.I18n;
 using SDG.Unturned;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Essentials.Common.Util;
-using Essentials.Components.Player;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
-    public class MiscCommands {
+    public class MiscCommands
+    {
 
         private static readonly ICommandArgument One = new CommandArgument(0, "1");
         internal static readonly HashSet<ulong> Spies = new HashSet<ulong>();
@@ -50,15 +52,18 @@ namespace Essentials.Commands {
             Description = "Ascend X \"meters\".",
             AllowedSource = AllowedSource.PLAYER
         )]
-        private CommandResult AscendCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
+        private CommandResult AscendCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
             var player = src.ToPlayer();
 
-            if (args.IsEmpty) {
+            if (args.IsEmpty)
+            {
                 // Raycast up
                 Physics.Raycast(player.Position, Vector3.up, out var raycastHit, 1000, RayMasks.BLOCK_COLLISION & ~RayMasks.CLIP);
 
-                if (raycastHit.transform == null) {
-                    return CommandResult.LangError("ASCEND_NOTHING_ABOVE");
+                if (raycastHit.transform == null)
+                {
+                    return CommandResult.LangError("icon_error_general", "ASCEND_NOTHING_ABOVE");
                 }
 
                 var yDelta = raycastHit.point.y - player.Position.y;
@@ -68,12 +73,14 @@ namespace Essentials.Commands {
                 return CommandResult.LangSuccess("ASCENDED", yDelta);
             }
 
-            if (!args[0].IsFloat) {
-                return CommandResult.LangError("INVALID_NUMBER", args[0]);
+            if (!args[0].IsFloat)
+            {
+                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[0]);
             }
 
-            if (args[0].ToFloat <= 0) {
-                return CommandResult.LangError("MUST_POSITIVE", args[0]);
+            if (args[0].ToFloat <= 0)
+            {
+                return CommandResult.LangError("icon_error_general", "MUST_POSITIVE", args[0]);
             }
 
             var amount = args[0].ToFloat;
@@ -91,17 +98,21 @@ namespace Essentials.Commands {
             Description = "Descend X \"meters\".",
             AllowedSource = AllowedSource.PLAYER
         )]
-        private CommandResult DescendCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
-            if (args.IsEmpty) {
+        private CommandResult DescendCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
+            if (args.IsEmpty)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            if (!args[0].IsFloat) {
-                return CommandResult.LangError("INVALID_NUMBER", args[0]);
+            if (!args[0].IsFloat)
+            {
+                return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[0]);
             }
 
-            if (args[0].ToFloat <= 0) {
-                return CommandResult.LangError("MUST_POSITIVE", args[0]);
+            if (args[0].ToFloat <= 0)
+            {
+                return CommandResult.LangError("icon_error_general", "MUST_POSITIVE", args[0]);
             }
 
             var player = src.ToPlayer();
@@ -112,7 +123,7 @@ namespace Essentials.Commands {
             // fix
             player.UnturnedPlayer.teleportToLocationUnsafe(pos, player.Rotation);
 
-            EssLang.Send(src, "DESCENDED", num);
+            EssLang.Send("generalicon", src, "DESCENDED", num);
 
             return CommandResult.Success();
         }
@@ -153,12 +164,12 @@ namespace Essentials.Commands {
 
                 if (!args[1].IsInt)
                 {
-                    return CommandResult.LangError("INVALID_NUMBER", args[1]);
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[1]);
                 }
 
                 if (args[1].ToInt < 1)
                 {
-                    return CommandResult.LangError("NUMBER_BETWEEN", 1, int.MaxValue);
+                    return CommandResult.LangError("icon_error_general", "NUMBER_BETWEEN", 1, int.MaxValue);
                 }
 
                 distance = args[1].ToInt;
@@ -171,7 +182,7 @@ namespace Essentials.Commands {
                 case "emptyvehicles":
                     if (!src.HasPermission(cmd.Permission + ".emptyvehicles"))
                     {
-                        return CommandResult.LangError("COMMAND_NO_PERMISSION");
+                        return CommandResult.LangError("icon_error_general", "COMMAND_NO_PERMISSION");
                     }
                     UWorld.Vehicles
                     .Where(v => v.passengers.All(p => p?.player == null)) // Check if it's has no passengers
@@ -189,14 +200,14 @@ namespace Essentials.Commands {
                         numRemoved++;
                     });
 
-                    EssLang.Send(src, "CLEAR_EMPTY_VEHICLES", numRemoved);
+                    EssLang.Send("generalicon", src, "CLEAR_EMPTY_VEHICLES", numRemoved);
                     break;
 
                 case "i":
                 case "items":
                     if (!src.HasPermission(cmd.Permission + ".items"))
                     {
-                        return CommandResult.LangError("COMMAND_NO_PERMISSION");
+                        return CommandResult.LangError("icon_error_general", "COMMAND_NO_PERMISSION");
                     }
 
                     if (args.Length > 1)
@@ -208,7 +219,7 @@ namespace Essentials.Commands {
                         ItemManager.askClearAllItems();
                     }
 
-                    EssLang.Send(src, "CLEAR_ITEMS");
+                    EssLang.Send("generalicon", src, "CLEAR_ITEMS");
                     break;
                 case "z":
                 case "zombies":
@@ -226,9 +237,9 @@ namespace Essentials.Commands {
                         numRemoved++;
                     });
 
-                    EssLang.Send(src, "CLEAR_ZOMBIES", numRemoved);
+                    EssLang.Send("generalicon", src, "CLEAR_ZOMBIES", numRemoved);
                     break;
-                 default:
+                default:
                     return CommandResult.ShowUsage();
             }
 
@@ -242,14 +253,17 @@ namespace Essentials.Commands {
             Usage = "[item] <amount> or [player|* = all] [item] [amount]",
             Aliases = new[] { "i" }
         )]
-        private CommandResult ItemCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
+        private CommandResult ItemCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
 
-            switch (args.Length) {
+            switch (args.Length)
+            {
                 /*
                     /i [item]
                  */
                 case 1:
-                    if (src.IsConsole) {
+                    if (src.IsConsole)
+                    {
                         return CommandResult.ShowUsage();
                     }
                     GiveItem(src, src.ToPlayer(), args[0], One);
@@ -261,16 +275,24 @@ namespace Essentials.Commands {
                     /i all [item]
                  */
                 case 2:
-                    if (args[1].IsInt) {
-                        if (src.IsConsole) {
+                    if (args[1].IsInt)
+                    {
+                        if (src.IsConsole)
+                        {
                             return CommandResult.ShowUsage();
                         }
                         GiveItem(src, src.ToPlayer(), args[0], args[1]);
-                    } else if (args[0].Equals("*")) {
+                    }
+                    else if (args[0].Equals("*"))
+                    {
                         GiveItem(src, null, args[1], One, true);
-                    } else if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
-                    } else {
+                    }
+                    else if (!args[0].IsValidPlayerIdentifier)
+                    {
+                        return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
+                    }
+                    else
+                    {
                         GiveItem(src, args[0].ToPlayer, args[1], One);
                     }
                     break;
@@ -280,11 +302,16 @@ namespace Essentials.Commands {
                     /i all [item] [amount]
                  */
                 case 3:
-                    if (args[0].Equals("*")) {
+                    if (args[0].Equals("*"))
+                    {
                         GiveItem(src, null, args[1], args[2], true);
-                    } else if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
-                    } else {
+                    }
+                    else if (!args[0].IsValidPlayerIdentifier)
+                    {
+                        return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
+                    }
+                    else
+                    {
                         GiveItem(src, args[0].ToPlayer, args[1], args[2]);
                     }
                     break;
@@ -303,33 +330,39 @@ namespace Essentials.Commands {
             Description = "See information on an item.",
             Usage = "<item id>"
         )]
-        private CommandResult ItemInfoCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
-            if (src.IsConsole && args.Length != 1) {
+        private CommandResult ItemInfoCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
+            if (src.IsConsole && args.Length != 1)
+            {
                 return CommandResult.ShowUsage();
             }
 
             ItemAsset asset;
 
-            if (args.Length == 0) {
+            if (args.Length == 0)
+            {
                 var equipment = src.ToPlayer().Equipment;
 
-                if (equipment.itemID == 0) { // TODO: Check
-                    return CommandResult.LangError("EMPTY_HANDS");
+                if (equipment.itemID == 0)
+                { // TODO: Check
+                    return CommandResult.LangError("icon_error_general", "EMPTY_HANDS");
                 }
 
                 asset = equipment.asset;
-            } else if (!args[0].IsUShort || (asset = Assets.find(EAssetType.ITEM, args[0].ToUShort) as ItemAsset) == null) {
-                return CommandResult.LangError("INVALID_ITEM_ID", args[0]);
+            }
+            else if (!args[0].IsUShort || (asset = Assets.find(EAssetType.ITEM, args[0].ToUShort) as ItemAsset) == null)
+            {
+                return CommandResult.LangError("icon_error_general", "INVALID_ITEM_ID", args[0]);
             }
 
             var name = WrapMessage(src, asset.itemName);
             var description = WrapMessage(src, asset.itemDescription);
             var type = WrapMessage(src, asset.type.ToString());
 
-            EssLang.Send(src, "ITEMINFO_NAME", name);
-            EssLang.Send(src, "ITEMINFO_DESCRIPTION", description);
-            EssLang.Send(src, "ITEMINFO_ID", asset.id);
-            EssLang.Send(src, "ITEMINFO_TYPE", type);
+            EssLang.Send("generalicon", src, "ITEMINFO_NAME", name);
+            EssLang.Send("generalicon", src, "ITEMINFO_DESCRIPTION", description);
+            EssLang.Send("generalicon", src, "ITEMINFO_ID", asset.id);
+            EssLang.Send("generalicon", src, "ITEMINFO_TYPE", type);
 
             return CommandResult.Success();
         }
@@ -344,57 +377,72 @@ namespace Essentials.Commands {
             MinArgs = 2,
             MaxArgs = 2
         )]
-        private CommandResult ItemFeaturesCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
+        private CommandResult ItemFeaturesCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
             var toggleVal = GetToggleValue(args[1]);
 
-            if (!toggleVal.HasValue) {
-                return CommandResult.LangError("INVALID_BOOLEAN", args[1]);
+            if (!toggleVal.HasValue)
+            {
+                return CommandResult.LangError("icon_error_general", "INVALID_BOOLEAN", args[1]);
             }
 
             var player = src.ToPlayer();
             var component = player.GetComponent<ItemFeatures>() ?? player.AddComponent<ItemFeatures>();
 
-            switch (args[0].ToLowerString) {
+            switch (args[0].ToLowerString)
+            {
                 case "autoreload":
-                    if (!src.HasPermission($"{cmd.Permission}.autoreload")) {
+                    if (!src.HasPermission($"{cmd.Permission}.autoreload"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.autoreload");
                     }
-                    if (toggleVal.Value) {
+                    if (toggleVal.Value)
+                    {
                         component.AutoReload = true;
-                        EssLang.Send(src, "AUTO_RELOAD_ENABLED");
-                    } else {
+                        EssLang.Send("generalicon", src, "AUTO_RELOAD_ENABLED");
+                    }
+                    else
+                    {
                         component.AutoReload = false;
-                        EssLang.Send(src, "AUTO_RELOAD_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_RELOAD_DISABLED");
                     }
                     break;
 
                 case "autorepair":
-                    if (!src.HasPermission($"{cmd.Permission}.autorepair")) {
+                    if (!src.HasPermission($"{cmd.Permission}.autorepair"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.autorepair");
                     }
-                    if (toggleVal.Value) {
+                    if (toggleVal.Value)
+                    {
                         component.AutoRepair = true;
-                        EssLang.Send(src, "AUTO_REPAIR_ENABLED");
-                    } else {
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_ENABLED");
+                    }
+                    else
+                    {
                         component.AutoRepair = false;
-                        EssLang.Send(src, "AUTO_REPAIR_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_DISABLED");
                     }
                     break;
 
                 case "all":
-                    if (!src.HasPermission($"{cmd.Permission}.all")) {
+                    if (!src.HasPermission($"{cmd.Permission}.all"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.all");
                     }
-                    if (toggleVal.Value) {
+                    if (toggleVal.Value)
+                    {
                         component.AutoReload = true;
                         component.AutoRepair = true;
-                        EssLang.Send(src, "AUTO_RELOAD_ENABLED");
-                        EssLang.Send(src, "AUTO_REPAIR_ENABLED");
-                    } else {
+                        EssLang.Send("generalicon", src, "AUTO_RELOAD_ENABLED");
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_ENABLED");
+                    }
+                    else
+                    {
                         component.AutoReload = false;
                         component.AutoRepair = false;
-                        EssLang.Send(src, "AUTO_RELOAD_DISABLED");
-                        EssLang.Send(src, "AUTO_REPAIR_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_RELOAD_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_DISABLED");
                     }
                     break;
 
@@ -415,45 +463,57 @@ namespace Essentials.Commands {
             MinArgs = 2,
             MaxArgs = 2
         )]
-        private CommandResult VehicleFeaturesCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
+        private CommandResult VehicleFeaturesCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
             var toggleVal = GetToggleValue(args[1]);
 
-            if (!toggleVal.HasValue) {
-                return CommandResult.LangError("INVALID_BOOLEAN", args[1]);
+            if (!toggleVal.HasValue)
+            {
+                return CommandResult.LangError("icon_error_general", "INVALID_BOOLEAN", args[1]);
             }
 
             var player = src.ToPlayer();
             var component = player.GetComponent<VehicleFeatures>() ?? player.AddComponent<VehicleFeatures>();
 
-            switch (args[0].ToLowerString) {
+            switch (args[0].ToLowerString)
+            {
                 case "autorefuel":
-                    if (!src.HasPermission($"{cmd.Permission}.autorefuel")) {
+                    if (!src.HasPermission($"{cmd.Permission}.autorefuel"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.autorefuel");
                     }
-                    if (toggleVal.Value) {
+                    if (toggleVal.Value)
+                    {
                         component.AutoRefuel = true;
-                        EssLang.Send(src, "AUTO_REFUEL_ENABLED");
-                    } else {
+                        EssLang.Send("generalicon", src, "AUTO_REFUEL_ENABLED");
+                    }
+                    else
+                    {
                         component.AutoRefuel = false;
-                        EssLang.Send(src, "AUTO_REFUEL_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_REFUEL_DISABLED");
                     }
                     break;
 
                 case "autorepair":
-                    if (!src.HasPermission($"{cmd.Permission}.autorepair")) {
+                    if (!src.HasPermission($"{cmd.Permission}.autorepair"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.autorepair");
                     }
-                    if (toggleVal.Value) {
+                    if (toggleVal.Value)
+                    {
                         component.AutoRepair = true;
-                        EssLang.Send(src, "AUTO_REPAIR_ENABLED");
-                    } else {
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_ENABLED");
+                    }
+                    else
+                    {
                         component.AutoRepair = false;
-                        EssLang.Send(src, "AUTO_REPAIR_DISABLED");
+                        EssLang.Send("generalicon", src, "AUTO_REPAIR_DISABLED");
                     }
                     break;
 
                 case "all":
-                    if (!src.HasPermission($"{cmd.Permission}.all")) {
+                    if (!src.HasPermission($"{cmd.Permission}.all"))
+                    {
                         return CommandResult.NoPermission($"{cmd.Permission}.all");
                     }
 
@@ -461,29 +521,30 @@ namespace Essentials.Commands {
 
                     if (players.Count == 0)
                     {
-                        return CommandResult.LangError("NO_PLAYERS_FOR_KICK");
+                        return CommandResult.LangError("icon_error_general", "NO_PLAYERS_FOR_KICK");
                     }
 
                     var reason = args.IsEmpty
                         ? EssLang.Translate("KICK_NO_SPECIFIED_REASON")
                         : args.Join(0);
 
-                    players.ForEach(player => {
+                    players.ForEach(player =>
+                    {
                         var component_all = player.GetComponent<VehicleFeatures>() ?? player.AddComponent<VehicleFeatures>();
 
                         if (toggleVal.Value)
                         {
                             component_all.AutoRepair = true;
                             component_all.AutoRefuel = true;
-                            EssLang.Send(src, "AUTO_REPAIR_ENABLED");
-                            EssLang.Send(src, "AUTO_REFUEL_ENABLED");
+                            EssLang.Send("generalicon", src, "AUTO_REPAIR_ENABLED");
+                            EssLang.Send("generalicon", src, "AUTO_REFUEL_ENABLED");
                         }
                         else
                         {
                             component_all.AutoRepair = false;
                             component_all.AutoRefuel = false;
-                            EssLang.Send(src, "AUTO_REPAIR_DISABLED");
-                            EssLang.Send(src, "AUTO_REFUEL_DISABLED");
+                            EssLang.Send("generalicon", src, "AUTO_REPAIR_DISABLED");
+                            EssLang.Send("generalicon", src, "AUTO_REFUEL_DISABLED");
                         }
                     });
                     break;
@@ -501,16 +562,20 @@ namespace Essentials.Commands {
             Description = "Allows you to see private messages.",
             AllowedSource = AllowedSource.PLAYER
         )]
-        private CommandResult SpyCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult SpyCommand(ICommandSource src, ICommandArgs args)
+        {
             var player = src.ToPlayer();
             var playerId = player.CSteamId.m_SteamID;
 
-            if (Spies.Contains(playerId)) {
+            if (Spies.Contains(playerId))
+            {
                 Spies.Remove(playerId);
-                EssLang.Send(src, "SPY_MODE_OFF");
-            } else {
+                EssLang.Send("generalicon", src, "SPY_MODE_OFF");
+            }
+            else
+            {
                 Spies.Add(playerId);
-                EssLang.Send(src, "SPY_MODE_ON");
+                EssLang.Send("generalicon", src, "SPY_MODE_ON");
             }
 
             return CommandResult.Success();
@@ -522,7 +587,8 @@ namespace Essentials.Commands {
             Description = "Kill yourself",
             AllowedSource = AllowedSource.PLAYER
         )]
-        private CommandResult SuicideCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult SuicideCommand(ICommandSource src, ICommandArgs args)
+        {
             src.ToPlayer().Suicide();
 
             return CommandResult.Success();
@@ -535,25 +601,32 @@ namespace Essentials.Commands {
             Description = "View your/another player position.",
             Usage = "<player>"
         )]
-        private CommandResult PositionCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
-            if (args.Length == 0) {
-                if (src.IsConsole) {
+        private CommandResult PositionCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
+            if (args.Length == 0)
+            {
+                if (src.IsConsole)
+                {
                     return CommandResult.ShowUsage();
                 }
 
                 var p = src.ToPlayer();
-                EssLang.Send(src, "POSITION", p.Position.x, p.Position.y, p.Position.z);
-            } else {
-                if (!src.HasPermission($"{cmd.Permission}.other")) {
+                EssLang.Send("generalicon", src, "POSITION", p.Position.x, p.Position.y, p.Position.z);
+            }
+            else
+            {
+                if (!src.HasPermission($"{cmd.Permission}.other"))
+                {
                     return CommandResult.NoPermission($"{cmd.Permission}.other");
                 }
 
-                if (!args[0].IsValidPlayerIdentifier) {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                if (!args[0].IsValidPlayerIdentifier)
+                {
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 var p = args[0].ToPlayer;
-                EssLang.Send(src, "POSITION_OTHER", p.DisplayName, p.Position.x, p.Position.y, p.Position.z);
+                EssLang.Send("generalicon", src, "POSITION_OTHER", p.DisplayName, p.Position.x, p.Position.y, p.Position.z);
             }
 
             return CommandResult.Success();
@@ -564,8 +637,9 @@ namespace Essentials.Commands {
             Name = "online",
             Description = "View the number of online players"
         )]
-        private CommandResult OnlineCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
-            EssLang.Send(src, "ONLINE_PLAYERS", UServer.Players.Count(), UServer.MaxPlayers);
+        private CommandResult OnlineCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
+            EssLang.Send("generalicon", src, "ONLINE_PLAYERS", UServer.Players.Count(), UServer.MaxPlayers);
 
             return CommandResult.Success();
         }
@@ -575,14 +649,18 @@ namespace Essentials.Commands {
             Name = "respawnitems",
             Description = "Respawn all items."
         )]
-        private CommandResult RespawnItemsCommand(ICommandSource src, ICommandArgs args) {
-            for (byte x = 0; x < Regions.WORLD_SIZE; x++) {
-                for (byte y = 0; y < Regions.WORLD_SIZE; y++) {
+        private CommandResult RespawnItemsCommand(ICommandSource src, ICommandArgs args)
+        {
+            for (byte x = 0; x < Regions.WORLD_SIZE; x++)
+            {
+                for (byte y = 0; y < Regions.WORLD_SIZE; y++)
+                {
 
                     var itemsCount = LevelItems.spawns[x, y].Count;
                     if (itemsCount <= 0) continue;
 
-                    for (var i = 0; i < itemsCount; i++) {
+                    for (var i = 0; i < itemsCount; i++)
+                    {
                         var itemSpawnpoint = LevelItems.spawns[x, y][i];
                         var itemId = LevelItems.getItem(itemSpawnpoint);
 
@@ -593,7 +671,7 @@ namespace Essentials.Commands {
                     }
                 }
             }
-            EssLang.Send(src, "RESPAWNED_ITEMS");
+            EssLang.Send("generalicon", src, "RESPAWNED_ITEMS");
             return CommandResult.Success();
         }
 
@@ -603,21 +681,28 @@ namespace Essentials.Commands {
             Description = "Shutdown server",
             Usage = "<delay in seconds> <reason>"
         )]
-        private CommandResult ShutdownCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult ShutdownCommand(ICommandSource src, ICommandArgs args)
+        {
             int delay = 0;
-            if (args.Length > 0) {
-                if (!args[0].IsInt) {
-                    return CommandResult.LangError("INVALID_NUMBER", args[0]);
-                } else if ((delay = args[0].ToInt) < 0) {
+            if (args.Length > 0)
+            {
+                if (!args[0].IsInt)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[0]);
+                }
+                else if ((delay = args[0].ToInt) < 0)
+                {
                     delay = 0;
                 }
             }
             // Will only send the messages if delay > 0
-            if (delay > 0) {
-                if (args.Length > 1) {
+            if (delay > 0)
+            {
+                if (args.Length > 1)
+                {
                     EssLang.SendGlobal(args.Join(1), null, Color.green);
                 }
-                EssLang.SendGlobal("SHUTDOWN_DELAY_SENDER", TimeUtil.FormatSeconds((uint) delay));
+                EssLang.SendGlobal("SHUTDOWN_DELAY_SENDER", TimeUtil.FormatSeconds((uint)delay));
             }
             Provider.shutdown(delay);
             return CommandResult.Success();
@@ -631,10 +716,13 @@ namespace Essentials.Commands {
             Description = "",
             Usage = "[vehicle] or [player|* = all] [vehicle]"
         )]
-        private CommandResult VehicleCommand(ICommandSource src, ICommandArgs args, ICommand cmd) {
-            switch (args.Length) {
+        private CommandResult VehicleCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
+        {
+            switch (args.Length)
+            {
                 case 1:
-                    if (src.IsConsole) {
+                    if (src.IsConsole)
+                    {
                         return CommandResult.ShowUsage();
                     }
 
@@ -642,44 +730,55 @@ namespace Essentials.Commands {
 
                     if (optAsset == null)
                     {
-                        return CommandResult.LangError("INVALID_VEHICLE_ID", args[0]);
+                        return CommandResult.LangError("icon_error_general", "INVALID_VEHICLE_ID", args[0]);
                     }
 
                     if (UEssentials.Config.VehicleBlacklist.Contains(optAsset.id) &&
                         !src.HasPermission("essentials.bypass.blacklist.vehicle"))
                     {
-                        return CommandResult.LangError("BLACKLISTED_VEHICLE", $"{optAsset.FriendlyName} ({optAsset.id})");
+                        return CommandResult.LangError("icon_error_general", "BLACKLISTED_VEHICLE", $"{optAsset.FriendlyName} ({optAsset.id})");
                     }
 
                     VehicleTool.giveVehicle(src.ToPlayer().UnturnedPlayer, optAsset.id);
 
-                    EssLang.Send(src, "RECEIVED_VEHICLE", optAsset.FriendlyName, optAsset.id);
+                    EssLang.Send("generalicon", src, "RECEIVED_VEHICLE", optAsset.FriendlyName, optAsset.id);
                     break;
 
                 case 2:
-                    if (!src.HasPermission($"{cmd.Permission}.other")) {
-                        return CommandResult.LangError("COMMAND_NO_PERMISSION");
+                    if (!src.HasPermission($"{cmd.Permission}.other"))
+                    {
+                        return CommandResult.LangError("icon_error_general", "COMMAND_NO_PERMISSION");
                     }
 
                     optAsset = VehicleUtil.GetVehicle(args[1].ToString());
 
-                    if(optAsset == null) {
-                        return CommandResult.LangError("INVALID_VEHICLE_ID", args[1]);
+                    if (optAsset == null)
+                    {
+                        EssLang.Send("generalicon", src, "INVALID_VEHICLE_ID", args[1]);
+                        return CommandResult.LangError("icon_error_general", "");
+
+
                     }
 
-                    if (args[0].Equals("*")) {
-                        UServer.Players.ForEach(p => {
+                    if (args[0].Equals("*"))
+                    {
+                        UServer.Players.ForEach(p =>
+                        {
                             VehicleTool.giveVehicle(p.UnturnedPlayer, optAsset.id);
                         });
 
-                        EssLang.Send(src, "GIVEN_VEHICLE_ALL", optAsset.FriendlyName, optAsset.id);
-                    } else if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
-                    } else {
+                        EssLang.Send("generalicon", src, "GIVEN_VEHICLE_ALL", optAsset.FriendlyName, optAsset.id);
+                    }
+                    else if (!args[0].IsValidPlayerIdentifier)
+                    {
+                        return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
+                    }
+                    else
+                    {
                         var target = args[0].ToPlayer;
                         VehicleTool.giveVehicle(target.UnturnedPlayer, optAsset.id);
 
-                        EssLang.Send(src, "GIVEN_VEHICLE", optAsset.FriendlyName, optAsset.id, target.DisplayName);
+                        EssLang.Send("generalicon", src, "GIVEN_VEHICLE", optAsset.FriendlyName, optAsset.id, target.DisplayName);
                     }
                     break;
 
@@ -696,7 +795,8 @@ namespace Essentials.Commands {
             Aliases = new[] { "stime" },
             Description = "Show system time."
         )]
-        private CommandResult SystemTimeCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult SystemTimeCommand(ICommandSource src, ICommandArgs args)
+        {
             src.SendMessage(DateTime.Now, Color.yellow);
             return CommandResult.Success();
         }
@@ -706,7 +806,8 @@ namespace Essentials.Commands {
             Name = "tps",
             Description = "Show tps."
         )]
-        private CommandResult TpsCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult TpsCommand(ICommandSource src, ICommandArgs args)
+        {
             var tps = Provider.debugTPS;
             var color =
                 tps > 40 ? Color.green :
@@ -723,40 +824,51 @@ namespace Essentials.Commands {
             Description = "Set the skill level of a player",
             Usage = "[skill] [value|max] or [player|*] [skill] [value|max]"
         )]
-        private CommandResult SkillCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult SkillCommand(ICommandSource src, ICommandArgs args)
+        {
             // skill [skill] [value]
-            if (args.Length == 2) {
-                if (src.IsConsole) {
+            if (args.Length == 2)
+            {
+                if (src.IsConsole)
+                {
                     return CommandResult.ShowUsage();
                 }
 
-                if (!USkill.FromName(args[0].ToString(), out var skill)) {
-                    return CommandResult.LangError("INVALID_SKILL", args[0]);
+                if (!USkill.FromName(args[0].ToString(), out var skill))
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_SKILL", args[0]);
                 }
 
                 var player = src.ToPlayer();
                 byte value;
 
-                if (args[1].ToLowerString == "max") {
+                if (args[1].ToLowerString == "max")
+                {
                     value = player.GetSkill(skill).max;
-                } else if (!args[1].TryConvertToByte(out value, out var error)) {
+                }
+                else if (!args[1].TryConvertToByte(out value, out var error))
+                {
                     return error;
                 }
 
                 player.SetSkillLevel(skill, value);
-                EssLang.Send(src, "SKILL_SET", skill.Name.Capitalize(), args[1]);
+                EssLang.Send("generalicon", src, "SKILL_SET", skill.Name.Capitalize(), args[1]);
                 return CommandResult.Success();
             }
 
             // skill [player|*] [skill] [value]
-            if (args.Length == 3) {
-                if (!USkill.FromName(args[1].ToString(), out var skill)) {
-                    return CommandResult.LangError("INVALID_SKILL", args[1]);
+            if (args.Length == 3)
+            {
+                if (!USkill.FromName(args[1].ToString(), out var skill))
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_SKILL", args[1]);
                 }
 
-                if (args[0].ToLowerString == "*") { // All players
-                    if (!UServer.Players.Any()) {
-                        return CommandResult.LangError("ANYONE_ONLINE");
+                if (args[0].ToLowerString == "*")
+                { // All players
+                    if (!UServer.Players.Any())
+                    {
+                        return CommandResult.LangError("icon_error_general", "ANYONE_ONLINE");
                     }
 
                     bool isMax = args[2].ToLowerString == "max";
@@ -764,31 +876,37 @@ namespace Essentials.Commands {
 
                     // If it's not 'max', we convert to to byte once.
                     // Otherwise the value will be get inside the loop above
-                    if (!isMax && !args[2].TryConvertToByte(out value, out var error)) {
+                    if (!isMax && !args[2].TryConvertToByte(out value, out var error))
+                    {
                         return error;
                     }
 
                     UServer.Players.ForEach(p => p.SetSkillLevel(skill, isMax ? p.GetSkill(skill).max : value));
 
-                    EssLang.Send(src, "SKILL_SET_ALL", skill.Name.Capitalize(), args[2]);
+                    EssLang.Send("generalicon", src, "SKILL_SET_ALL", skill.Name.Capitalize(), args[2]);
                     return CommandResult.Success();
                 }
-                else { // Specific player
-                    if (!args[0].IsValidPlayerIdentifier) {
-                        return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                else
+                { // Specific player
+                    if (!args[0].IsValidPlayerIdentifier)
+                    {
+                        return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                     }
 
                     var player = args[0].ToPlayer;
                     byte value;
 
-                    if (args[2].ToLowerString == "max") {
+                    if (args[2].ToLowerString == "max")
+                    {
                         value = player.GetSkill(skill).max;
-                    } else if (!args[2].TryConvertToByte(out value, out var error)) {
+                    }
+                    else if (!args[2].TryConvertToByte(out value, out var error))
+                    {
                         return error;
                     }
 
                     player.SetSkillLevel(skill, value);
-                    EssLang.Send(src, "SKILL_SET_PLAYER", skill.Name.Capitalize(), player.CharacterName, args[2]);
+                    EssLang.Send("generalicon", src, "SKILL_SET_PLAYER", skill.Name.Capitalize(), player.CharacterName, args[2]);
                     return CommandResult.Success();
                 }
             }
@@ -796,50 +914,62 @@ namespace Essentials.Commands {
         }
 
         [CommandInfo(
-            Name = "refuelgenerator",
-            Aliases = new [] {"refuelgen"},
+            Name = "refuel",
+            Aliases = new[] { "re" },
             Description = "Refuel generators in specific radius (default 20).",
             Usage = "<radius> <percentage> <x> <y> <z>",
             AllowedSource = AllowedSource.BOTH
         )]
-        private CommandResult RefuelGeneratorCommand(ICommandSource src, ICommandArgs args) {
+        private CommandResult RefuelGeneratorCommand(ICommandSource src, ICommandArgs args)
+        {
             float radius = 20;
             float percentage = 100;
 
             // Console should explicitly provide a position
-            if (src.IsConsole && args.Length < 5) {
+            if (src.IsConsole && args.Length < 5)
+            {
                 return CommandResult.ShowUsage();
             }
 
-            if (args.Length > 0) {
-                if (!args[0].IsFloat) {
-                    return CommandResult.LangError("INVALID_NUMBER", args[0]);
+            if (args.Length > 0)
+            {
+                if (!args[0].IsFloat)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[0]);
                 }
-                if ((radius = args[0].ToFloat) <= 0) {
-                     return CommandResult.LangError("MUST_POSITIVE");
+                if ((radius = args[0].ToFloat) <= 0)
+                {
+                    return CommandResult.LangError("icon_error_general", "MUST_POSITIVE");
                 }
             }
-            if (args.Length > 1) {
-                if (!args[1].IsFloat) {
-                    return CommandResult.LangError("INVALID_NUMBER", args[1]);
+            if (args.Length > 1)
+            {
+                if (!args[1].IsFloat)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_NUMBER", args[1]);
                 }
-                if (!args[1].IsInRange(0, 100)) {
-                     return CommandResult.LangError("NUMBER_BETWEEN", 0, 100);
+                if (!args[1].IsInRange(0, 100))
+                {
+                    return CommandResult.LangError("icon_error_general", "NUMBER_BETWEEN", 0, 100);
                 }
                 percentage = args[1].ToFloat / 100;
             }
 
             Vector3 position;
 
-            if (args.Length > 4) {
+            if (args.Length > 4)
+            {
                 var argPos = args.GetVector3(2);
 
-                if (!argPos.HasValue) {
-                    return CommandResult.LangError("INVALID_COORDS", args[2], args[3], args[4]);
+                if (!argPos.HasValue)
+                {
+                    return CommandResult.LangError("icon_error_general", "INVALID_COORDS", args[2], args[3], args[4]);
                 }
 
                 position = argPos.Value;
-            } else {
+            }
+            else
+            {
                 position = src.ToPlayer().Position;
             }
 
@@ -849,12 +979,13 @@ namespace Essentials.Commands {
             rayResult
                 .Select(r => r.transform.GetComponent<InteractableGenerator>())
                 .Where(r => r != null)
-                .ForEach(r => {
-                    BarricadeManager.sendFuel(r.transform, (ushort) System.Math.Floor(r.capacity * percentage));
+                .ForEach(r =>
+                {
+                    BarricadeManager.sendFuel(r.transform, (ushort)System.Math.Floor(r.capacity * percentage));
                     count++;
                 });
 
-            EssLang.Send(src, "REFUEL_GENERATOR_REFUELED", count);
+            EssLang.Send("generalicon", src, "REFUEL_GENERATOR_REFUELED", count);
             return CommandResult.Success();
         }
 
@@ -863,30 +994,38 @@ namespace Essentials.Commands {
             Description = "Enable or disable server pvp.",
             Usage = "[on|off]"
         )]
-        private CommandResult PvpCommand(ICommandSource src, ICommandArgs args) {
-            if (args.IsEmpty) {
+        private CommandResult PvpCommand(ICommandSource src, ICommandArgs args)
+        {
+            if (args.IsEmpty)
+            {
                 return CommandResult.ShowUsage();
             }
 
             var toggleVal = GetToggleValue(args[0]);
 
-            if (!toggleVal.HasValue) {
+            if (!toggleVal.HasValue)
+            {
                 return CommandResult.ShowUsage();
             }
-            if (toggleVal.Value) {
+            if (toggleVal.Value)
+            {
                 Provider.isPvP = true;
-                EssLang.Send(src, "PVP_ENABLED");
-            } else {
+                EssLang.Send("generalicon", src, "PVP_ENABLED");
+            }
+            else
+            {
                 Provider.isPvP = false;
-                EssLang.Send(src, "PVP_DISABLED");
+                EssLang.Send("generalicon", src, "PVP_DISABLED");
             }
             return CommandResult.Success();
         }
 
         #region HELPER METHODS
 
-        private static bool? GetToggleValue(ICommandArgument arg) {
-            switch (arg.RawValue.ToLowerInvariant()) {
+        private static bool? GetToggleValue(ICommandArgument arg)
+        {
+            switch (arg.RawValue.ToLowerInvariant())
+            {
                 case "true":
                 case "on":
                 case "1":
@@ -902,7 +1041,8 @@ namespace Essentials.Commands {
             }
         }
 
-        private static string WrapMessage(ICommandSource src, string str) {
+        private static string WrapMessage(ICommandSource src, string str)
+        {
             if (str == null)
                 return "null";
 
@@ -913,79 +1053,96 @@ namespace Essentials.Commands {
         }
 
         private static void GiveItem(ICommandSource src, UPlayer target, ICommandArgument itemArg,
-                                     ICommandArgument amountArg, bool allPlayers = false) {
-            if (!src.HasPermission("essentials.command.item.other") && target != src) {
-                EssLang.Send(src, "COMMAND_NO_PERMISSION");
+                                     ICommandArgument amountArg, bool allPlayers = false)
+        {
+            if (!src.HasPermission("essentials.command.item.other") && target != src)
+            {
+                EssLang.Send("generalicon", src, "COMMAND_NO_PERMISSION");
                 return;
             }
 
             var optAsset = ItemUtil.GetItem(itemArg.ToString());
 
-            if (optAsset.IsAbsent) {
-                EssLang.Send(src, "ITEM_NOT_FOUND", itemArg);
+            if (optAsset.IsAbsent)
+            {
+                EssLang.Send("generalicon", src, "ITEM_NOT_FOUND", itemArg);
                 return;
             }
 
             if (UEssentials.Config.GiveItemBlacklist.Contains(optAsset.Value.id) &&
-                !src.HasPermission("essentials.bypass.blacklist.item")) {
-                EssLang.Send(src, "BLACKLISTED_ITEM", $"{optAsset.Value.itemName} ({optAsset.Value.id})");
+                !src.HasPermission("essentials.bypass.blacklist.item"))
+            {
+                EssLang.Send("generalicon", src, "BLACKLISTED_ITEM", $"{optAsset.Value.itemName} ({optAsset.Value.id})");
                 return;
             }
 
             ushort amt = 1;
 
-            if (amountArg != null) {
-                if (!amountArg.IsShort) {
-                    EssLang.Send(src, "INVALID_NUMBER", amountArg);
-                } else if (amountArg.ToShort <= 0) {
-                    EssLang.Send(src, "MUST_POSITIVE");
-                } else {
+            if (amountArg != null)
+            {
+                if (!amountArg.IsShort)
+                {
+                    EssLang.Send("generalicon", src, "INVALID_NUMBER", amountArg);
+                }
+                else if (amountArg.ToShort <= 0)
+                {
+                    EssLang.Send("generalicon", src, "MUST_POSITIVE");
+                }
+                else
+                {
                     amt = amountArg.ToUShort;
                     goto give;
                 }
                 return;
             }
 
-            give:
+        give:
             var asset = optAsset.Value;
             var playersToReceive = new List<UPlayer>();
             var item = new Item(asset.id, true);
 
-            if (asset is ItemFuelAsset) {
+            if (asset is ItemFuelAsset)
+            {
                 ItemUtil.Refuel(item);
             }
 
-            if (!src.HasPermission("essentials.bypass.itemlimit") && amt > UEssentials.Config.ItemSpawnLimit) {
+            if (!src.HasPermission("essentials.bypass.itemlimit") && amt > UEssentials.Config.ItemSpawnLimit)
+            {
                 amt = UEssentials.Config.ItemSpawnLimit;
-                EssLang.Send(src, "ITEM_LIMIT", amt);
+                EssLang.Send("generalicon", src, "ITEM_LIMIT", amt);
             }
 
-            if (allPlayers) {
+            if (allPlayers)
+            {
                 UServer.Players.ForEach(playersToReceive.Add);
-                EssLang.Send(src, "GIVEN_ITEM_ALL", amt, asset.itemName, asset.id);
-            } else {
+                EssLang.Send("generalicon", src, "GIVEN_ITEM_ALL", amt, asset.itemName, asset.id);
+            }
+            else
+            {
                 playersToReceive.Add(target);
 
-                if (!src.IsConsole && src.ToPlayer() == target) {
+                if (!src.IsConsole && src.ToPlayer() == target)
+                {
                     goto give2;
                 }
 
-                EssLang.Send(src, "GIVEN_ITEM", amt, asset.itemName, asset.id, target.CharacterName);
+                EssLang.Send("icongiven_item", src, "GIVEN_ITEM", amt, asset.itemName, asset.id, target.CharacterName);
             }
 
-            give2:
-            playersToReceive.ForEach(p => {
+        give2:
+            playersToReceive.ForEach(p =>
+            {
                 var success = p.GiveItem(item, amt, true);
 
-                EssLang.Send(p, "RECEIVED_ITEM", amt, asset.itemName, asset.id);
+                EssLang.Send("iconreceiven_item", p, "RECEIVED_ITEM", amt, asset.itemName, asset.id);
 
-                if (!success) {
-                    EssLang.Send(p, "INVENTORY_FULL");
+                if (!success)
+                {
+                    EssLang.Send("iconinventory_full", p, "INVENTORY_FULL");
                 }
             });
         }
-
-        #endregion
     }
 
 }
+#endregion

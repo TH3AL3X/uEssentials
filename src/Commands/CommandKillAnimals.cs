@@ -21,33 +21,37 @@
 */
 #endregion
 
-using System.Linq;
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.Common;
-using SDG.Unturned;
-using UnityEngine;
 using Essentials.I18n;
+using SDG.Unturned;
+using System.Linq;
+using UnityEngine;
 
-namespace Essentials.Commands {
+namespace Essentials.Commands
+{
 
     [CommandInfo(
         Name = "killanimals",
         Aliases = new[] { "clearanimals" },
         Description = "Kill all animals"
     )]
-    public class CommandKillAnimals : EssCommand {
+    public class CommandKillAnimals : EssCommand
+    {
 
-        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args) {
+        public override CommandResult OnExecute(ICommandSource src, ICommandArgs args)
+        {
             var killedCount = 0;
 
-            UWorld.Animals.Where(animal => !animal.isDead).ForEach(animal => {
+            UWorld.Animals.Where(animal => !animal.isDead).ForEach(animal =>
+            {
                 AnimalManager.sendAnimalDead(animal, Vector3.zero);
                 killedCount++;
             });
 
-            EssLang.Send(src, "KILLED_ANIMALS", killedCount);
+            EssLang.Send("generalicon", src, "KILLED_ANIMALS", killedCount);
 
             return CommandResult.Success();
         }

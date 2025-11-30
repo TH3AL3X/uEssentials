@@ -2,8 +2,6 @@
 using HarmonyLib;
 using SDG.Unturned;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Essentials.src.Patches
 {

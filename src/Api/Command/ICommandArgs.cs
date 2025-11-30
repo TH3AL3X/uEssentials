@@ -23,9 +23,11 @@
 
 using Essentials.Api.Unturned;
 
-namespace Essentials.Api.Command {
+namespace Essentials.Api.Command
+{
 
-    public interface ICommandArgs {
+    public interface ICommandArgs
+    {
 
         /// <summary>
         /// Array containing raw arguments.
@@ -77,7 +79,8 @@ namespace Essentials.Api.Command {
     /// <summary>
     /// Represent an argument
     /// </summary>
-    public interface ICommandArgument {
+    public interface ICommandArgument
+    {
         int Index { get; }
 
         string RawValue { get; }

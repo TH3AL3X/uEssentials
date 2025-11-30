@@ -22,7 +22,6 @@
 */
 
 #endregion
-
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
@@ -35,7 +34,7 @@ namespace Essentials.Commands
     [CommandInfo(
         Name = "clearinventory",
         Description = "Clear your/player's inventory",
-        Aliases = new[] {"ci"},
+        Aliases = new[] { "ci" },
         Usage = "<player | *>"
     )]
     public class CommandClearInventory : EssCommand
@@ -63,14 +62,14 @@ namespace Essentials.Commands
                 }
 
                 UServer.Players.ForEach(ClearInventory);
-                EssLang.Send(src, "INVENTORY_CLEARED_ALL");
+                EssLang.Send("generalicon", src, "INVENTORY_CLEARED_ALL");
             }
             else
             {
                 if (!args[0].IsValidPlayerIdentifier)
                 {
                     // specific player
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    return CommandResult.LangError("generalicon", "PLAYER_NOT_FOUND", args[0]);
                 }
 
                 if (!src.HasPermission($"{Permission}.other"))
@@ -79,7 +78,7 @@ namespace Essentials.Commands
                 }
 
                 ClearInventory(args[0].ToPlayer);
-                EssLang.Send(src, "INVENTORY_CLEARED_PLAYER", args[0].ToPlayer.DisplayName);
+                EssLang.Send("generalicon", src, "INVENTORY_CLEARED_PLAYER", args[0].ToPlayer.DisplayName);
             }
 
             return CommandResult.Success();
@@ -150,7 +149,7 @@ namespace Essentials.Commands
             player.UnturnedPlayer.clothing.askWearVest(0, 0, EMPTY_BYTE_ARRAY, true);
             RemoveUnequipped();
 
-            EssLang.Send(player, "INVENTORY_CLEARED");
+            EssLang.Send("generalicon", player, "INVENTORY_CLEARED");
         }
     }
 }

@@ -24,9 +24,11 @@
 using System;
 using System.Reflection;
 
-namespace Essentials.Api.Event {
+namespace Essentials.Api.Event
+{
 
-    public interface IEventManager {
+    public interface IEventManager
+    {
 
         void RegisterAll(object instance);
 

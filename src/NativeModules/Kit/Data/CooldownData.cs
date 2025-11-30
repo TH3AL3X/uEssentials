@@ -29,14 +29,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Essentials.NativeModules.Kit.Data {
+namespace Essentials.NativeModules.Kit.Data
+{
 
-    public class CooldownData {
+    public class CooldownData
+    {
 
         public string FilePath => UEssentials.DataFolder + Path.DirectorySeparatorChar + "kit_cooldowns.json";
 
-        public void Load() {
-            if (!File.Exists(FilePath)) {
+        public void Load()
+        {
+            if (!File.Exists(FilePath))
+            {
                 return;
             }
 
@@ -45,18 +49,22 @@ namespace Essentials.NativeModules.Kit.Data {
             CommandKit.Cooldowns.Clear();
             CommandKit.GlobalCooldown.Clear();
 
-            saved.ForEach(kv => {
-                if (kv.Value.Kits != null) {
+            saved.ForEach(kv =>
+            {
+                if (kv.Value.Kits != null)
+                {
                     CommandKit.Cooldowns.Add(kv.Key, kv.Value.Kits);
                 }
-                if (!kv.Value.Global.Equals(default)) {
+                if (!kv.Value.Global.Equals(default))
+                {
                     CommandKit.GlobalCooldown.Add(kv.Key, kv.Value.Global);
                 }
                 ClearCooldowns(kv.Key);
             });
         }
 
-        public void Save() {
+        public void Save()
+        {
             var toSave = new Dictionary<ulong, PlayerCooldown>();
             var playerIds = new HashSet<ulong>();
             var kitCooldowns = CommandKit.Cooldowns;
@@ -65,7 +73,8 @@ namespace Essentials.NativeModules.Kit.Data {
             kitCooldowns.ForEach(k => playerIds.Add(k.Key));
             globalCooldowns.ForEach(k => playerIds.Add(k.Key));
 
-            playerIds.ForEach(id => {
+            playerIds.ForEach(id =>
+            {
                 ClearCooldowns(id);
 
                 var pCooldown = new PlayerCooldown();
@@ -82,20 +91,24 @@ namespace Essentials.NativeModules.Kit.Data {
         /// Remove 'expired' cooldowns.
         /// </summary>
         /// <param name="playerId"></param>
-        private void ClearCooldowns(ulong playerId) {
-            var km = KitModule.Instance.KitManager;
+        private void ClearCooldowns(ulong playerId)
+        {
+            var km = KItModule.Instance.KitManager;
             var gCooldown = UEssentials.Config.Kit.GlobalCooldown;
 
             if (CommandKit.GlobalCooldown.ContainsKey(playerId) &&
-                CommandKit.GlobalCooldown[playerId].AddSeconds(gCooldown) < DateTime.Now) {
+                CommandKit.GlobalCooldown[playerId].AddSeconds(gCooldown) < DateTime.Now)
+            {
                 CommandKit.GlobalCooldown.Remove(playerId);
             }
 
-            if (!CommandKit.Cooldowns.ContainsKey(playerId)) {
+            if (!CommandKit.Cooldowns.ContainsKey(playerId))
+            {
                 return;
             }
 
-            if (CommandKit.Cooldowns[playerId] == null) {
+            if (CommandKit.Cooldowns[playerId] == null)
+            {
                 CommandKit.Cooldowns.Remove(playerId);
                 return;
             }
@@ -103,22 +116,26 @@ namespace Essentials.NativeModules.Kit.Data {
             var playerCooldowns = CommandKit.Cooldowns[playerId];
             var keys = new List<string>(playerCooldowns.Keys);
 
-            foreach (var kitName in keys) {
+            foreach (var kitName in keys)
+            {
                 var kit = km.GetByName(kitName);
 
-                if (kit == null || playerCooldowns[kitName].AddSeconds(kit.Cooldown) < DateTime.Now) {
+                if (kit == null || playerCooldowns[kitName].AddSeconds(kit.Cooldown) < DateTime.Now)
+                {
                     playerCooldowns.Remove(kitName);
                 }
             }
 
-            if (playerCooldowns.Count == 0) {
+            if (playerCooldowns.Count == 0)
+            {
                 CommandKit.Cooldowns.Remove(playerId);
             }
         }
 
     }
 
-    internal struct PlayerCooldown {
+    internal struct PlayerCooldown
+    {
         public Dictionary<string, DateTime> Kits;
         public DateTime Global;
     }

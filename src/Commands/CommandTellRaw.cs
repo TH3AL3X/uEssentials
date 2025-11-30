@@ -4,7 +4,7 @@ using Essentials.Api.Command.Source;
 using Essentials.Common.Util;
 
 namespace Essentials.Commands
-{ 
+{
     [CommandInfo(
         Name = "tellraw",
         Description = "Send raw message to a player.",
@@ -27,7 +27,7 @@ namespace Essentials.Commands
             {
                 if (!args[0].IsValidPlayerIdentifier)
                 {
-                    return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
+                    return CommandResult.LangError("icon_error_general", "PLAYER_NOT_FOUND", args[0]);
                 }
                 args[0].ToPlayer.SendMessage(msg, color);
             }

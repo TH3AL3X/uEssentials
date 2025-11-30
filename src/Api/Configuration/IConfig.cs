@@ -21,9 +21,11 @@
 */
 #endregion
 
-namespace Essentials.Api.Configuration {
+namespace Essentials.Api.Configuration
+{
 
-    public interface IConfig {
+    public interface IConfig
+    {
 
         string FileName { get; }
 

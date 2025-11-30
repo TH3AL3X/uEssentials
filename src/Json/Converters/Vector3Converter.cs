@@ -25,35 +25,42 @@ using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
-namespace Essentials.Json.Converters {
+namespace Essentials.Json.Converters
+{
 
-    public class Vector3Converter : JsonConverter {
+    public class Vector3Converter : JsonConverter
+    {
 
         private readonly string[] _propNames = { "X", "Y", "Z" };
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
-            var vec = (Vector3) value;
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var vec = (Vector3)value;
 
             writer.WriteStartObject();
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < 3; i++)
+            {
                 writer.WritePropertyName(_propNames[i]);
                 writer.WriteValue(vec[i]);
             }
             writer.WriteEndObject();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
             var ret = new Vector3();
             reader.Read(); // Read StartObject
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < 3; i++)
+            {
                 reader.Read(); // Read Value
-                ret[i] = (float) (double) reader.Value;
+                ret[i] = (float)(double)reader.Value;
                 reader.Read(); // Read PropertyName & EndObject
             }
             return ret;
         }
 
-        public override bool CanConvert(Type objectType) {
+        public override bool CanConvert(Type objectType)
+        {
             return objectType == typeof(Vector3);
         }
 

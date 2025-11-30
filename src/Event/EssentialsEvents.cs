@@ -25,9 +25,11 @@ using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 using Essentials.Api.Events;
 
-namespace Essentials.Event {
+namespace Essentials.Event
+{
 
-    public class EssentialsEvents {
+    public class EssentialsEvents
+    {
 
         public delegate void CommandPreExecute(CommandPreExecuteEvent e);
         public static event CommandPreExecute OnCommandPreExecute;
@@ -37,7 +39,8 @@ namespace Essentials.Event {
 
 
         internal static CommandPreExecuteEvent CallCommandPreExecute(ICommand command, ref ICommandArgs cmdArgs,
-                                                                     ref ICommandSource commandSource) {
+                                                                     ref ICommandSource commandSource)
+        {
             var evt = new CommandPreExecuteEvent(command, cmdArgs, commandSource);
             OnCommandPreExecute?.Invoke(evt);
             cmdArgs = evt.Arguments;
@@ -46,7 +49,8 @@ namespace Essentials.Event {
         }
 
         internal static CommandPosExecuteEvent CallCommandPosExecute(ICommand command, ref ICommandArgs cmdArgs,
-                                                                     ref ICommandSource commandSource, ref CommandResult result) {
+                                                                     ref ICommandSource commandSource, ref CommandResult result)
+        {
             var evt = new CommandPosExecuteEvent(command, cmdArgs, commandSource, result);
             OnCommandPosExecute?.Invoke(evt);
             cmdArgs = evt.Arguments;

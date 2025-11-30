@@ -24,9 +24,11 @@
 using Essentials.Api.Command;
 using Essentials.Api.Command.Source;
 
-namespace Essentials.Api.Events {
+namespace Essentials.Api.Events
+{
 
-    public class CommandPreExecuteEvent : CommandEvent {
+    public class CommandPreExecuteEvent : CommandEvent
+    {
 
         /// <summary>
         /// Define if this event will be cancelled.
@@ -34,7 +36,7 @@ namespace Essentials.Api.Events {
         public bool Cancelled { get; set; }
 
         public CommandPreExecuteEvent(ICommand command, ICommandArgs args,
-            ICommandSource src) : base(command, args, src) {}
+            ICommandSource src) : base(command, args, src) { }
 
     }
 

@@ -35,9 +35,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Essentials.Core.Command {
+namespace Essentials.Core.Command
+{
 
-    internal class CommandAdapter : IRocketCommand {
+    internal class CommandAdapter : IRocketCommand
+    {
 
         public List<string> Aliases { get; }
         public AllowedCaller AllowedCaller { get; }
@@ -50,7 +52,8 @@ namespace Essentials.Core.Command {
 
         private readonly CommandInfo _info;
 
-        internal CommandAdapter(ICommand command) {
+        internal CommandAdapter(ICommand command)
+        {
             Command = command;
             Name = command.Name;
             Aliases = command.Aliases.ToList();
@@ -59,54 +62,74 @@ namespace Essentials.Core.Command {
             Permissions = new List<string>(1) { command.Permission };
             AllowedCaller = AllowedCaller.Both;
 
-            if (command is EssCommand) {
-                _info = ((EssCommand) command).Info;
+            if (command is EssCommand)
+            {
+                _info = ((EssCommand)command).Info;
             }
         }
 
-        public void Execute(IRocketPlayer caller, string[] args) {
+        public void Execute(IRocketPlayer caller, string[] args)
+        {
             var sw = (EssCore.DebugFlags & EssCore.kDebugCommands) != 0 ? Stopwatch.StartNew() : null;
 
             CommandResult result = null;
             var commandSource = caller is UnturnedPlayer
-                    ? UPlayer.From((UnturnedPlayer) caller)
+                    ? UPlayer.From((UnturnedPlayer)caller)
                     : UEssentials.ConsoleSource;
 
-            try {
-                if (commandSource.IsConsole && Command.AllowedSource == AllowedSource.PLAYER) {
-                    EssLang.Send(commandSource, "CONSOLE_CANNOT_EXECUTE");
-                } else if (!commandSource.IsConsole && Command.AllowedSource == AllowedSource.CONSOLE) {
-                    EssLang.Send(commandSource, "PLAYER_CANNOT_EXECUTE");
-                } else {
-                    var cmdArgs = (ICommandArgs) new CommandArgs(args);
+            try
+            {
+                if (commandSource.IsConsole && Command.AllowedSource == AllowedSource.PLAYER)
+                {
+                    EssLang.Send("iconconsole_cannot_execute", commandSource, "CONSOLE_CANNOT_EXECUTE");
+                }
+                else if (!commandSource.IsConsole && Command.AllowedSource == AllowedSource.CONSOLE)
+                {
+                    EssLang.Send("generalicon", commandSource, "PLAYER_CANNOT_EXECUTE");
+                }
+                else
+                {
+                    var cmdArgs = (ICommandArgs)new CommandArgs(args);
                     var preExec = EssentialsEvents.CallCommandPreExecute(Command, ref cmdArgs, ref commandSource);
 
-                    if (preExec.Cancelled) {
+                    if (preExec.Cancelled)
+                    {
                         return;
                     }
 
-                    if (_info != null && (_info.MinArgs > cmdArgs.Length || cmdArgs.Length > _info.MaxArgs)) {
+                    if (_info != null && (_info.MinArgs > cmdArgs.Length || cmdArgs.Length > _info.MaxArgs))
+                    {
                         result = CommandResult.ShowUsage();
-                    } else {
+                    }
+                    else
+                    {
                         result = Command.OnExecute(commandSource, cmdArgs);
                     }
 
                     EssentialsEvents.CallCommandPosExecute(Command, ref cmdArgs, ref commandSource, ref result);
 
-                    if (result != null) {
-                        if (result.Type == CommandResult.ResultType.SHOW_USAGE) {
-                            EssLang.Send(commandSource, "COMMAND_USAGE_TEMPLATE", Command.Name, Command.Usage);
-                        } else if (result.Message != null) {
+                    if (result != null)
+                    {
+                        if (result.Type == CommandResult.ResultType.SHOW_USAGE)
+                        {
+                            EssLang.Send("generalicon", commandSource, "COMMAND_USAGE_TEMPLATE", Command.Name, Command.Usage);
+                        }
+                        else if (result.Message != null)
+                        {
                             var message = result.Message;
                             var color = ColorUtil.GetColorFromString(ref message);
                             commandSource.SendMessage(message, color);
                         }
                     }
                 }
-            } catch (Exception e) {
-                if (caller is UnturnedPlayer) {
-                    UPlayer.TryGet((UnturnedPlayer) caller, p => {
-                        EssLang.Send(p, p.IsAdmin ? "COMMAND_ERROR_OCURRED_ADMIN" : "COMMAND_ERROR_OCURRED");
+            }
+            catch (Exception e)
+            {
+                if (caller is UnturnedPlayer)
+                {
+                    UPlayer.TryGet((UnturnedPlayer)caller, p =>
+                    {
+                        EssLang.Send("generalicon", p, p.IsAdmin ? "COMMAND_ERROR_OCURRED_ADMIN" : "COMMAND_ERROR_OCURRED");
                     });
                 }
                 UEssentials.Logger.LogError($"An error ocurred while executing command: '{Name} " +
@@ -114,7 +137,8 @@ namespace Essentials.Core.Command {
                 UEssentials.Logger.LogException(e);
             }
 
-            if ((EssCore.DebugFlags & EssCore.kDebugCommands) != 0 && sw != null) {
+            if ((EssCore.DebugFlags & EssCore.kDebugCommands) != 0 && sw != null)
+            {
                 sw.Stop();
                 UEssentials.Logger.LogDebug("Executed command {");
                 UEssentials.Logger.LogDebug($"  Source: '{commandSource.GetType()}:{commandSource}'");
@@ -127,8 +151,10 @@ namespace Essentials.Core.Command {
             }
         }
 
-        internal class CommandAliasAdapter : CommandAdapter {
-            internal CommandAliasAdapter(ICommand command, string alias) : base(command) {
+        internal class CommandAliasAdapter : CommandAdapter
+        {
+            internal CommandAliasAdapter(ICommand command, string alias) : base(command)
+            {
                 Name = alias;
             }
         }

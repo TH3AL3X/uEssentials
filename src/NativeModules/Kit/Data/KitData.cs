@@ -24,6 +24,7 @@
 
 using Essentials.Api;
 using Essentials.Common.Util;
+using Essentials.Core;
 using Essentials.Core.Storage;
 using Essentials.NativeModules.Kit.Item;
 using Newtonsoft.Json;
@@ -35,9 +36,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Essentials.NativeModules.Kit.Data {
+namespace Essentials.NativeModules.Kit.Data
+{
 
-    internal class KitData : IData<Dictionary<string, Kit>> {
+    internal class KitData : IData<Dictionary<string, Kit>>
+    {
 
 
 
@@ -46,26 +49,28 @@ namespace Essentials.NativeModules.Kit.Data {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // windows
-                return Rocket.Core.Environment.PluginsDirectory + "//uEssentials";
+                return Path.Combine(EssCore.Instance.Directory, "data");
             }
             else
             {
                 // linux
-                return Rocket.Core.Environment.PluginsDirectory + "/uEssentials";
+                return Path.Combine(EssCore.Instance.Directory, "data");
             }
         }
 
 
         internal static string DataFilePath => Path.Combine(FixDeleteKits(), "kits.json");
 
-        public virtual void Save(Dictionary<string, Kit> kits) {
+        public virtual void Save(Dictionary<string, Kit> kits)
+        {
             JsonUtil.Serialize(DataFilePath, kits.Values);
         }
 
-        public virtual Dictionary<string, Kit> Load() {
+        public virtual Dictionary<string, Kit> Load()
+        {
             var loadedKits = new Dictionary<string, Kit>();
 
-            if (!File.Exists(DataFilePath)) 
+            if (!File.Exists(DataFilePath))
             {
                 File.Create(DataFilePath).Close();
                 LoadDefault();
@@ -73,42 +78,54 @@ namespace Essentials.NativeModules.Kit.Data {
 
             JArray kitArr;
 
-            try {
+            try
+            {
                 kitArr = JArray.Parse(File.ReadAllText(DataFilePath));
-            } catch (JsonReaderException ex) {
+            }
+            catch (JsonReaderException ex)
+            {
                 UEssentials.Logger.LogError($"Failed to parse kit configuration ({DataFilePath}). Invalid JSON!");
                 UEssentials.Logger.LogException(ex);
                 return new Dictionary<string, Kit>();
             }
 
-            foreach (var kitObj in kitArr.Children<JObject>()) {
-                T GetKitObjValueOrDefault<T>(string key) {
+            foreach (var kitObj in kitArr.Children<JObject>())
+            {
+                T GetKitObjValueOrDefault<T>(string key)
+                {
                     var val = kitObj.GetValue(key, StringComparison.InvariantCultureIgnoreCase);
                     return val == null ? default(T) : val.Value<T>();
                 }
-
+                // terminar errores  discord ellocoed
                 var name = GetKitObjValueOrDefault<string>("Name");
 
-                if (name == null) {
+                if (name == null)
+                {
                     UEssentials.Logger.LogError($"Missing required attribute 'Name' in the kit at index {kitObj.Path}.");
                     continue;
                 }
 
-                if (loadedKits.ContainsKey(name.ToLowerInvariant())) {
+                if (loadedKits.ContainsKey(name.ToLowerInvariant()))
+                {
                     UEssentials.Logger.LogWarning($"Duplicated kit ({name})");
                     continue;
                 }
 
                 var kit = new Kit(
                     name,
+                    GetKitObjValueOrDefault<string>("Messageaddon"),
                     GetKitObjValueOrDefault<uint>("Cooldown"),
                     GetKitObjValueOrDefault<decimal>("Cost"),
-                    GetKitObjValueOrDefault<bool>("ResetCooldownWhenDie")
+                    GetKitObjValueOrDefault<bool>("ResetCooldownWhenDie"),
+                    GetKitObjValueOrDefault<int>("Repuacces")
+
                 );
 
-                foreach (var itemObj in kitObj.GetValue("Items", StringComparison.InvariantCultureIgnoreCase).Children<JObject>()) {
+                foreach (var itemObj in kitObj.GetValue("Items", StringComparison.InvariantCultureIgnoreCase).Children<JObject>())
+                {
                     var kitItem = ParseKitItem(kit, itemObj);
-                    if (kitItem != null) {
+                    if (kitItem != null)
+                    {
                         kit.Items.Add(kitItem);
                     }
                 }
@@ -118,25 +135,31 @@ namespace Essentials.NativeModules.Kit.Data {
             return loadedKits;
         }
 
-        private AbstractKitItem ParseKitItem(Kit kit, JObject itemObj) {
+        private AbstractKitItem ParseKitItem(Kit kit, JObject itemObj)
+        {
             const StringComparison strCmp = StringComparison.InvariantCultureIgnoreCase;
 
-            if (itemObj.TryGetValue("money", strCmp, out var moneyToken)) {
-                if (!UEssentials.EconomyProvider.IsPresent) {
+            if (itemObj.TryGetValue("money", strCmp, out var moneyToken))
+            {
+                if (!UEssentials.EconomyProvider.IsPresent)
+                {
                     UEssentials.Logger.LogWarning("Cannot add 'Money' item because there is no active economy system.");
                     return null;
                 }
                 return new KitItemMoney(moneyToken.Value<decimal>());
             }
 
-            if (itemObj.TryGetValue("xp", strCmp, out var expToken)) {
+            if (itemObj.TryGetValue("xp", strCmp, out var expToken))
+            {
                 return new KitItemExperience(expToken.Value<uint>());
             }
 
-            if (itemObj.TryGetValue("vehicle", strCmp, out var vehicleIdToken)) {
+            if (itemObj.TryGetValue("vehicle", strCmp, out var vehicleIdToken))
+            {
                 var vehicleId = vehicleIdToken.Value<ushort>();
 
-                if (Assets.find(EAssetType.VEHICLE, vehicleId) == null) {
+                if (Assets.find(EAssetType.VEHICLE, vehicleId) == null)
+                {
                     UEssentials.Logger.LogWarning($"Invalid vehicle id '{vehicleId}' in the item at {itemObj.Path} in the kit '{kit.Name}'");
                     return null;
                 }
@@ -146,13 +169,14 @@ namespace Essentials.NativeModules.Kit.Data {
 
             var itemIdToken = itemObj.GetValue("id", strCmp);
 
-            if (itemIdToken == null) {
+            if (itemIdToken == null)
+            {
                 UEssentials.Logger.LogWarning($"Missing attribute 'Id' in the item at {itemObj.Path} in the kit '{kit.Name}'");
                 return null;
             }
 
             var itemId = itemIdToken.Value<ushort>();
-            var itemAsset = (ItemAsset) Assets.find(EAssetType.ITEM, itemId);
+            var itemAsset = (ItemAsset)Assets.find(EAssetType.ITEM, itemId);
 
             var tokKitItemDurability = itemObj.GetValue("Durability", strCmp);
             var tokKitItemAmount = itemObj.GetValue("Amount", strCmp);
@@ -162,15 +186,20 @@ namespace Essentials.NativeModules.Kit.Data {
             var kitItemDurability = tokKitItemDurability?.Value<byte>() ?? 100;
 
             // Parse weapon specific attributes
-            if (itemAsset is ItemGunAsset) {
+            if (itemAsset is ItemGunAsset)
+            {
                 var tokFireMode = itemObj.GetValue("FireMode", strCmp);
 
                 EFiremode? fireMode = null;
 
-                if (tokFireMode != null) {
-                    try {
-                        fireMode = (EFiremode) Enum.Parse(typeof(EFiremode), tokFireMode.Value<string>(), true);
-                    } catch (ArgumentException) {
+                if (tokFireMode != null)
+                {
+                    try
+                    {
+                        fireMode = (EFiremode)Enum.Parse(typeof(EFiremode), tokFireMode.Value<string>(), true);
+                    }
+                    catch (ArgumentException)
+                    {
                         UEssentials.Logger.LogWarning($"Invalid firemode '{tokFireMode}' in the item at {itemObj.Path} in the kit '{kit.Name}'. " +
                                                       $"Valid Firemodes: ${string.Join(", ", Enum.GetNames(typeof(EFiremode)))}");
                     }
@@ -192,13 +221,15 @@ namespace Essentials.NativeModules.Kit.Data {
                 return weaponItem;
             }
 
-            if (itemAsset is ItemMagazineAsset || itemAsset is ItemSupplyAsset) {
+            if (itemAsset is ItemMagazineAsset || itemAsset is ItemSupplyAsset)
+            {
                 var magazineAmmo = tokAmmo?.Value<byte>() ?? itemAsset.amount;
                 return new KitItemMagazine(itemId, kitItemDurability, kitItemAmount, magazineAmmo);
             }
 
             var kitItem = new KitItem(itemId, kitItemDurability, kitItemAmount);
-            if (itemAsset is ItemFuelAsset) {
+            if (itemAsset is ItemFuelAsset)
+            {
                 var item = kitItem;
                 var fuelPercentage = itemObj.GetValue("FuelPercentage", strCmp)?.Value<float>() ?? 100;
                 ItemUtil.Refuel(item.Metadata, item.Id, fuelPercentage);
@@ -206,19 +237,21 @@ namespace Essentials.NativeModules.Kit.Data {
             return kitItem;
         }
 
-        private void LoadDefault() {
+        private void LoadDefault()
+        {
             var defaultKits = new Dictionary<string, Kit>();
 
-            var defaultKit = new Kit("default", 120, true);
-            var weaponKit = new Kit("default2", 1200, false);
-            var planeKit = new Kit("plane", 9000, 100.0m, false);
-            var xpKit = new Kit("xp", 1200, 50.0m, false);
+            var defaultKit = new Kit("default", "<color=#ffffff>", 120, true, 100);
+            var weaponKit = new Kit("default2", "<color=#ffffff>", 1200, false, 1);
+            var planeKit = new Kit("plane", "<color=#ffffff>", 9000,  false, 1);
+            var xpKit = new Kit("xp", "<color=#ffffff>", 1200, false, 1);
 
             defaultKit.Items.Add(new KitItem(16, 100, 1));
             defaultKit.Items.Add(new KitItem(13, 100, 2));
             defaultKit.Items.Add(new KitItem(14, 100, 1));
 
-            weaponKit.Items.Add(new KitItemWeapon(4, 100, 1, 30, EFiremode.BURST) {
+            weaponKit.Items.Add(new KitItemWeapon(4, 100, 1, 30, EFiremode.BURST)
+            {
                 Barrel = new Attachment(7, 100),
                 Grip = new Attachment(8, 100),
                 Sight = new Attachment(146, 100),

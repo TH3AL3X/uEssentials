@@ -23,9 +23,11 @@
 
 using Essentials.Api.Unturned;
 
-namespace Essentials.Economy {
+namespace Essentials.Economy
+{
 
-    public interface IEconomyProvider {
+    public interface IEconomyProvider
+    {
 
         string CurrencySymbol { get; }
 

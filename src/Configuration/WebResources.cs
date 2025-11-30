@@ -28,9 +28,11 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace Essentials.Configuration {
+namespace Essentials.Configuration
+{
 
-    public class WebResources : JsonConfig {
+    public class WebResources : JsonConfig
+    {
 
         public override string FileName => "web_resources.json";
 
@@ -45,20 +47,26 @@ namespace Essentials.Configuration {
         [JsonIgnore]
         public Dictionary<string, string> Loaded { get; } = new Dictionary<string, string>();
 
-        public override void Load(string filePath) {
-            try {
+        public override void Load(string filePath)
+        {
+            try
+            {
                 base.Load(filePath);
 
-                if (!Enabled) {
+                if (!Enabled)
+                {
                     return;
                 }
 
-                using (var webClient = new WebClient()) {
+                using (var webClient = new WebClient())
+                {
                     var logger = UEssentials.Logger;
-                    foreach (var urL in URLs) {
+                    foreach (var urL in URLs)
+                    {
                         logger.LogInfo($"WebResources: Loading '{urL.Key}' from '{urL.Value}'...");
                         var fileContents = webClient.DownloadString(urL.Value);
-                        if (string.IsNullOrEmpty(fileContents)) {
+                        if (string.IsNullOrEmpty(fileContents))
+                        {
                             logger.LogWarning($"WebResources: The fileContents of '{urL.Key}' " +
                                                "is null or empty. skipping...");
                             continue;
@@ -67,13 +75,16 @@ namespace Essentials.Configuration {
                         logger.LogInfo($"WebResources: Successfully loaded '{urL.Key}' from '{urL.Value}'.");
                     }
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 UEssentials.Logger.LogError("Failed to load WebResources.");
                 UEssentials.Logger.LogException(ex);
             }
         }
 
-        public override void LoadDefaults() {
+        public override void LoadDefaults()
+        {
             Enabled = false;
             URLs = new Dictionary<string, string> {
                 { "Config", "http://example.com/config.json" },
