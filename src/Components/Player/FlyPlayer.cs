@@ -59,7 +59,7 @@ namespace Essentials.Components.Player
 
         private bool NeedUpdateGravity = false;
 
-        // Drift fix: Track position and velocity for drift correction
+        // Drift fix: Track position for drift correction
         private Vector3 _lastPosition;
         private Vector3 _targetPosition;
         private bool _isMovementInputActive = false;
@@ -68,6 +68,7 @@ namespace Essentials.Components.Player
         private const float DRIFT_CORRECTION_STRENGTH = 0.3f;
         private const float HORIZONTAL_MOVEMENT_THRESHOLD = 0.1f;
         private const int MIN_INPUT_ARRAY_LENGTH = 12; // Minimum length for Unturned input keys array
+        private const int MIN_DRIFT_FRAMES_BEFORE_CORRECTION = 1; // Frames to wait before applying correction
 
         public void SetReady(UPlayer Player)
         {
@@ -240,9 +241,11 @@ namespace Essentials.Components.Player
                     _driftCorrectionFrames++;
                     
                     // Apply correction if drift persists for a few frames
-                    if (_driftCorrectionFrames > 1)
+                    if (_driftCorrectionFrames > MIN_DRIFT_FRAMES_BEFORE_CORRECTION)
                     {
-                        // Gradually move back towards target position
+                        // Use teleport with Lerp for gradual correction
+                        // Note: Teleport is only called when drift persists, not every frame
+                        // This provides the most reliable correction given Unturned's physics system
                         Vector3 correctedPos = Vector3.Lerp(currentPos, _targetPosition, DRIFT_CORRECTION_STRENGTH);
                         correctedPos.y = currentPos.y; // Preserve vertical position
                         
