@@ -3,6 +3,7 @@ bin/
 publish/Release/
 .vs/
 .vscode/
+.nuget/
 
 experimental.bat
 release.bat
