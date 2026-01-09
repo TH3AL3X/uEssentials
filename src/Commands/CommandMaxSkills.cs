@@ -53,6 +53,7 @@ namespace Essentials.Commands
             else
             {
                 bool overpower = args[0].ToBool;
+
                 if (args.Length < 2 && src.IsConsole)
                 {
                     return CommandResult.ShowUsage();
@@ -106,31 +107,31 @@ namespace Essentials.Commands
 
         private void GiveMaxSkills(UPlayer player, bool overpower)
         {
-            switch (overpower)
+            if(overpower && player.HasPermission($"{Permission}.true"))
             {
-                case true:
-                    foreach (var skills in player.UnturnedPlayer.skills.skills)
+                foreach (var skills in player.UnturnedPlayer.skills.skills)
+                {
+                    foreach (var skill in skills)
                     {
-                        foreach (var skill in skills)
-                        {
-                            skill.maxUnlockableLevel = byte.MaxValue;
-                            skill.max = byte.MaxValue;
-                        }
+                        skill.maxUnlockableLevel = byte.MaxValue;
+                        skill.max = byte.MaxValue;
                     }
-                    player.UnturnedPlayer.skills.ServerUnlockAllSkills();
-                    break;
-                case false:
-                    for (var i = 0; i < player.UnturnedPlayer.skills.skills.Length; i++)
-                    {
-                        for (var j = 0; j < player.UnturnedPlayer.skills.skills[i].Length; j++)
-                        {
-                            var uSkill = USkill.Skills.First(x => x.SpecialityIndex == i && x.SkillIndex == j);
-                            player.UnturnedPlayer.skills.skills[i][j].max = uSkill.Max;
-                        }
-                    }
-                    player.UnturnedPlayer.skills.ServerUnlockAllSkills();
-                    break;
+                }
             }
+
+            if(!overpower && player.HasPermission($"{Permission}.false"))
+            {
+                for (var i = 0; i < player.UnturnedPlayer.skills.skills.Length; i++)
+                {
+                    for (var j = 0; j < player.UnturnedPlayer.skills.skills[i].Length; j++)
+                    {
+                        var uSkill = USkill.Skills.First(x => x.SpecialityIndex == i && x.SkillIndex == j);
+                        player.UnturnedPlayer.skills.skills[i][j].max = uSkill.Max;
+                    }
+                }
+            }
+
+            player.UnturnedPlayer.skills.ServerUnlockAllSkills();
 
             EssLang.Send(player, "MAX_SKILLS");
         }
