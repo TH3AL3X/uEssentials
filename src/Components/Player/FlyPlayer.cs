@@ -66,6 +66,8 @@ namespace Essentials.Components.Player
         private int _driftCorrectionFrames = 0;
         private const float DRIFT_THRESHOLD = 0.01f;
         private const float DRIFT_CORRECTION_STRENGTH = 0.3f;
+        private const float HORIZONTAL_MOVEMENT_THRESHOLD = 0.1f;
+        private const int MIN_INPUT_ARRAY_LENGTH = 12; // Minimum length for Unturned input keys array
 
         public void SetReady(UPlayer Player)
         {
@@ -180,7 +182,7 @@ namespace Essentials.Components.Player
             if (awake && Ready)
             {
                 bool[] Inputs = Player.UnturnedPlayer.input.keys;
-                if (Inputs.Length >= 12)
+                if (Inputs.Length >= MIN_INPUT_ARRAY_LENGTH)
                 {
                     CheckState(UnturnedKey.Jump, Inputs);
                     CheckState(UnturnedKey.Sprint, Inputs);
@@ -202,7 +204,7 @@ namespace Essentials.Components.Player
         // Drift fix: Check if player has active movement input
         private bool IsPlayerMoving(bool[] inputs)
         {
-            if (inputs.Length < 12) return false;
+            if (inputs.Length < MIN_INPUT_ARRAY_LENGTH) return false;
             
             // Check for vertical movement keys which we track
             bool jump = inputs[(int)UnturnedKey.Jump];
@@ -227,7 +229,7 @@ namespace Essentials.Components.Player
             
             // Detect if player is actively moving horizontally (large movement = intentional)
             // Small movement = drift
-            bool isActivelyMovingHorizontally = movementMagnitude > 0.1f;
+            bool isActivelyMovingHorizontally = movementMagnitude > HORIZONTAL_MOVEMENT_THRESHOLD;
             
             // If player is not actively moving, apply drift correction
             if (!_isMovementInputActive && !isActivelyMovingHorizontally)
