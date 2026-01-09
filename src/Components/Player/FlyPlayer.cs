@@ -59,6 +59,14 @@ namespace Essentials.Components.Player
 
         private bool NeedUpdateGravity = false;
 
+        // Drift fix: Track position and velocity for drift correction
+        private Vector3 _lastPosition;
+        private Vector3 _targetPosition;
+        private bool _isMovementInputActive = false;
+        private int _driftCorrectionFrames = 0;
+        private const float DRIFT_THRESHOLD = 0.01f;
+        private const float DRIFT_CORRECTION_STRENGTH = 0.3f;
+
         public void SetReady(UPlayer Player)
         {
             this.Player = Player.ToPlayer();
@@ -67,6 +75,10 @@ namespace Essentials.Components.Player
             Ready = true;
             Player.Movement.sendPluginGravityMultiplier(Gravity);
             Player.Movement.sendPluginSpeedMultiplier(Speed);
+            
+            // Drift fix: Initialize position tracking
+            _lastPosition = Player.Position;
+            _targetPosition = Player.Position;
         }
 
         public void Awake()
@@ -175,9 +187,81 @@ namespace Essentials.Components.Player
                     CheckState(UnturnedKey.CodeHotkey1, Inputs);
                     CheckState(UnturnedKey.CodeHotkey2, Inputs);
                     CheckState(UnturnedKey.CodeHotkey3, Inputs);
+                    
+                    // Drift fix: Check if player is actively moving
+                    _isMovementInputActive = IsPlayerMoving(Inputs);
                 }
+                
                 CheckNeeds();
+                
+                // Drift fix: Apply drift correction
+                ApplyDriftCorrection();
             }
+        }
+
+        // Drift fix: Check if player has active movement input
+        private bool IsPlayerMoving(bool[] inputs)
+        {
+            if (inputs.Length < 12) return false;
+            
+            // Check for vertical movement keys which we track
+            bool jump = inputs[(int)UnturnedKey.Jump];
+            bool sprint = inputs[(int)UnturnedKey.Sprint];
+            
+            // For horizontal movement, we'll detect it by position change magnitude
+            // This is handled in ApplyDriftCorrection
+            return jump || (sprint && IsDescending);
+        }
+
+        // Drift fix: Apply velocity damping and position correction
+        private void ApplyDriftCorrection()
+        {
+            if (Player == null || Player.UnturnedPlayer == null) return;
+            
+            Vector3 currentPos = Player.Position;
+            
+            // Calculate horizontal movement
+            Vector3 horizontalMovement = currentPos - _lastPosition;
+            horizontalMovement.y = 0; // Only care about horizontal drift
+            float movementMagnitude = horizontalMovement.magnitude;
+            
+            // Detect if player is actively moving horizontally (large movement = intentional)
+            // Small movement = drift
+            bool isActivelyMovingHorizontally = movementMagnitude > 0.1f;
+            
+            // If player is not actively moving, apply drift correction
+            if (!_isMovementInputActive && !isActivelyMovingHorizontally)
+            {
+                // If there's any horizontal drift
+                if (movementMagnitude > DRIFT_THRESHOLD)
+                {
+                    _driftCorrectionFrames++;
+                    
+                    // Apply correction if drift persists for a few frames
+                    if (_driftCorrectionFrames > 1)
+                    {
+                        // Gradually move back towards target position
+                        Vector3 correctedPos = Vector3.Lerp(currentPos, _targetPosition, DRIFT_CORRECTION_STRENGTH);
+                        correctedPos.y = currentPos.y; // Preserve vertical position
+                        
+                        Player.Teleport(correctedPos);
+                    }
+                }
+                else
+                {
+                    // No significant drift, reset counter and update target
+                    _driftCorrectionFrames = 0;
+                    _targetPosition = currentPos;
+                }
+            }
+            else
+            {
+                // Player is actively moving, update target position
+                _targetPosition = currentPos;
+                _driftCorrectionFrames = 0;
+            }
+            
+            _lastPosition = currentPos;
         }
 
         private void CheckNeeds()
