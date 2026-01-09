@@ -82,7 +82,18 @@ namespace Essentials.Commands {
 
             return CommandResult.LangSuccess("ASCENDED", amount);
         }
-
+        
+       /*
+            Options
+                -i = items
+                -v = vehicles
+                -z = zombies
+                -b = barricades
+                -s = structures
+                -a = ALL
+    
+            /clear -i -z -v -b -s -a = items, zombies, vehicles, barricades, structures, all
+        */
 
         [CommandInfo(
             Name = "descend",
@@ -118,123 +129,232 @@ namespace Essentials.Commands {
         }
 
 
+        private static int _clearVerboseLeft = 0;
+        private static bool _dumpedStructureMethodsThisRun = false;
+
+        private static void ClearLog(string msg) => Debug.Log($"[UEssentials][clear] {msg}");
+        private static void ClearWarn(string msg) => Debug.LogWarning($"[UEssentials][clear] {msg}");
+
+        private static void ClearLogVerbose(string msg)
+        {
+            if (_clearVerboseLeft <= 0) return;
+            _clearVerboseLeft--;
+            ClearLog(msg);
+        }
+
+        private static void ClearWarnVerbose(string msg)
+        {
+            if (_clearVerboseLeft <= 0) return;
+            _clearVerboseLeft--;
+            ClearWarn(msg);
+        }
+
+        private static string FormatMethod(MethodInfo m)
+        {
+            var ps = m.GetParameters();
+            var sig = string.Join(", ", ps.Select(p => p.ParameterType.Name));
+            return $"{m.DeclaringType?.Name}.{m.Name}({sig})";
+        }
+
+        private static void DumpStructureDestroyMethodsOnce()
+        {
+            if (_dumpedStructureMethodsThisRun) return;
+            _dumpedStructureMethodsThisRun = true;
+
+            var methods = typeof(StructureManager)
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                .Where(m => m.Name.IndexOf("destroy", StringComparison.OrdinalIgnoreCase) >= 0
+                         || m.Name.IndexOf("remove", StringComparison.OrdinalIgnoreCase) >= 0)
+                .OrderBy(m => m.Name)
+                .ToArray();
+
+            ClearLog($"StructureManager candidate methods ({methods.Length}):");
+            foreach (var m in methods) ClearLog($"  - {FormatMethod(m)}");
+        }
+
+        private static MethodInfo _miDestroyBarricadesInSphere;
+
         [CommandInfo(
             Name = "clear",
-            Description = "Clear things",
-            Usage = "[i = items, ev = empty vehicles, z = zombies] <distance>" //v = vehicles,
+            Description = "Clear entities",
+            Usage = "[-i] [-ev] [-z] [-b] [-s] [-a] <distance>"
         )]
         private CommandResult ClearCommand(ICommandSource src, ICommandArgs args, ICommand cmd)
         {
             if (args.IsEmpty)
-            {
                 return CommandResult.ShowUsage();
+
+            bool clearItems = false;
+            bool clearEmptyVehicles = false;
+            bool clearZombies = false;
+            bool clearBarricades = false;
+            bool clearStructures = false;
+
+            int distance = -1;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                switch (args[i].ToLowerString)
+                {
+                    case "-i": clearItems = true; break;
+                    case "-ev": clearEmptyVehicles = true; break;
+                    case "-z": clearZombies = true; break;
+                    case "-b": clearBarricades = true; break;
+                    case "-s": clearStructures = true; break;
+                    case "-a":
+                        clearItems = clearEmptyVehicles = clearZombies = clearBarricades = clearStructures = true;
+                        break;
+                    default:
+                        if (!args[i].IsInt)
+                            return CommandResult.LangError("INVALID_NUMBER", args[i]);
+
+                        distance = args[i].ToInt;
+                        if (distance < 1)
+                            return CommandResult.LangError("NUMBER_BETWEEN", 1, int.MaxValue);
+                        break;
+                }
             }
 
-            /*
-                TODO: Options
-                    -i = items
-                    -v = vehicles
-                    -z = zombies
-                    -b = barricades
-                    -s = structures
-                    -a = ALL
+            if (src.IsConsole && (clearEmptyVehicles || clearZombies || clearBarricades || clearStructures))
+                return CommandResult.ShowUsage();
 
-                /clear -i -z -v = items, zombies, vehicles
-            */
+            Vector3 origin = src.IsConsole ? Vector3.zero : src.ToPlayer().Position;
 
-            var distance = -1;
-
-            if (args.Length > 1)
+            if (clearItems)
             {
-                if (src.IsConsole)
-                {
-                    return CommandResult.ShowUsage();
-                }
+                if (!src.HasPermission(cmd.Permission + ".items"))
+                    return CommandResult.NoPermission(cmd.Permission + ".items");
 
-                if (!args[1].IsInt)
-                {
-                    return CommandResult.LangError("INVALID_NUMBER", args[1]);
-                }
+                if (distance > 0)
+                    ItemManager.ServerClearItemsInSphere(origin, distance);
+                else
+                    ItemManager.askClearAllItems();
 
-                if (args[1].ToInt < 1)
-                {
-                    return CommandResult.LangError("NUMBER_BETWEEN", 1, int.MaxValue);
-                }
-
-                distance = args[1].ToInt;
+                SendChat(src, "Items cleared.", Color.green);
             }
-            var numRemoved = 0;
 
-            switch (args[0].ToLowerString)
+            if (clearEmptyVehicles)
             {
-                case "ev":
-                case "emptyvehicles":
-                    if (!src.HasPermission(cmd.Permission + ".emptyvehicles"))
-                    {
-                        return CommandResult.LangError("COMMAND_NO_PERMISSION");
-                    }
-                    UWorld.Vehicles
-                    .Where(v => v.passengers.All(p => p?.player == null)) // Check if it's has no passengers
-                    .Where(v =>
-                    {
-                        if (v.id == 186 || v.id == 187) return false; // Ignore trains; TODO: config blacklist for this?
+                if (!src.HasPermission(cmd.Permission + ".emptyvehicles"))
+                    return CommandResult.NoPermission(cmd.Permission + ".emptyvehicles");
 
-                        if (distance == -1) return true;
+                int removed = 0;
 
-                        return Vector3.Distance(v.transform.position, src.ToPlayer().Position) <= distance;
-                    })
+                UWorld.Vehicles
+                    .Where(v => v.passengers.All(p => p?.player == null))
+                    .Where(v => v.id != 186 && v.id != 187)
+                    .Where(v => distance == -1 || Vector3.Distance(v.transform.position, origin) <= distance)
                     .ForEach(v =>
                     {
                         VehicleManager.askVehicleDestroy(v);
-                        numRemoved++;
+                        removed++;
                     });
 
-                    EssLang.Send(src, "CLEAR_EMPTY_VEHICLES", numRemoved);
-                    break;
+                SendChat(src, $"Cleared empty vehicles: {removed}", Color.green);
+            }
 
-                case "i":
-                case "items":
-                    if (!src.HasPermission(cmd.Permission + ".items"))
-                    {
-                        return CommandResult.LangError("COMMAND_NO_PERMISSION");
-                    }
+            if (clearZombies)
+            {
+                if (!src.HasPermission(cmd.Permission + ".zombies"))
+                    return CommandResult.NoPermission(cmd.Permission + ".zombies");
 
-                    if (args.Length > 1)
-                    {
-                        ItemManager.ServerClearItemsInSphere(src.ToPlayer().Position, distance);
-                    }
-                    else
-                    {
-                        ItemManager.askClearAllItems();
-                    }
+                int removed = 0;
 
-                    EssLang.Send(src, "CLEAR_ITEMS");
-                    break;
-                case "z":
-                case "zombies":
-                    UWorld.Zombies
-                    .Where(z =>
-                    {
-                        if (distance == -1) return true;
-
-                        return Vector3.Distance(z.transform.position, src.ToPlayer().Position) <= distance;
-                    })
+                UWorld.Zombies
+                    .Where(z => distance == -1 || Vector3.Distance(z.transform.position, origin) <= distance)
                     .ForEach(z =>
                     {
-                        // Need some changes, cuz you can still see the zombie modal, and i dont know why
-                        z.tellDead(new Vector3(0, 0, 0), ERagdollEffect.NONE);
-                        numRemoved++;
+                        z.tellDead(Vector3.zero, ERagdollEffect.NONE);
+                        removed++;
                     });
 
-                    EssLang.Send(src, "CLEAR_ZOMBIES", numRemoved);
-                    break;
-                 default:
-                    return CommandResult.ShowUsage();
+                SendChat(src, $"Cleared zombies: {removed}", Color.green);
+            }
+
+            if (clearBarricades)
+            {
+                if (!src.HasPermission(cmd.Permission + ".barricades"))
+                    return CommandResult.NoPermission(cmd.Permission + ".barricades");
+
+                if (distance == -1)
+                    return CommandResult.LangError("NUMBER_BETWEEN", 1, int.MaxValue);
+
+                int removed = ClearBarricadesInSphereWithCount(origin, distance);
+                SendChat(src, $"Cleared barricades: {removed}", Color.green);
+            }
+
+            if (clearStructures)
+            {
+                if (!src.HasPermission(cmd.Permission + ".structures"))
+                    return CommandResult.NoPermission(cmd.Permission + ".structures");
+
+                if (distance == -1)
+                    return CommandResult.LangError("NUMBER_BETWEEN", 1, int.MaxValue);
+
+                int removed = ClearStructures(origin, distance);
+                SendChat(src, $"Cleared structures: {removed}", Color.green);
             }
 
             return CommandResult.Success();
         }
 
+        private static int CountBarricadeHits(Vector3 origin, float radius)
+        {
+            var hits = Physics.SphereCastAll(origin, radius, Vector3.forward, 0f, RayMasks.BARRICADE);
+            return hits.Select(h => h.transform).Where(t => t != null).Distinct().Count();
+        }
+
+        private static void DestroyBarricadesReflect(Vector3 origin, float radius)
+        {
+            if (_miDestroyBarricadesInSphere == null)
+            {
+                _miDestroyBarricadesInSphere =
+                    typeof(BarricadeManager).GetMethod(
+                        "DestroyBarricadesInSphere",
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+                        null,
+                        new[] { typeof(Vector3), typeof(float), typeof(bool), typeof(bool) },
+                        null
+                    );
+            }
+
+            _miDestroyBarricadesInSphere?.Invoke(null, new object[] { origin, radius, true, true });
+        }
+
+        private static int ClearBarricadesInSphereWithCount(Vector3 origin, float radius)
+        {
+            int before = CountBarricadeHits(origin, radius);
+            DestroyBarricadesReflect(origin, radius);
+            int after = CountBarricadeHits(origin, radius);
+
+            return Math.Max(0, before - after);
+        }
+
+        private static int ClearStructures(Vector3 origin, float radius)
+        {
+            int removed = 0;
+
+            var hits = Physics.SphereCastAll(origin, radius, Vector3.forward, 0f, RayMasks.STRUCTURE);
+            foreach (var hit in hits)
+            {
+                var t = hit.transform;
+                if (t == null) continue;
+
+                if (StructureManager.tryGetInfo(t, out byte x, out byte y, out ushort index, out StructureRegion region))
+                {
+                    StructureManager.destroyStructure(region, x, y, index, hit.point);
+                    removed++;
+                }
+            }
+
+            return removed;
+        }
+
+        private static void SendChat(ICommandSource src, string msg, Color color)
+        {
+            if (!src.IsConsole)
+                src.SendMessage(msg, color);
+        }
 
         [CommandInfo(
             Name = "item",
