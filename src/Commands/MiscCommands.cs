@@ -36,7 +36,6 @@ using SDG.Unturned;
 using UnityEngine;
 using Essentials.Common.Util;
 using Essentials.Components.Player;
-using System.Reflection;
 
 namespace Essentials.Commands {
 
@@ -791,7 +790,7 @@ namespace Essentials.Commands {
 
                     if (args[0].Equals("*")) {
                         UServer.Players.ForEach(p => {
-                            VehicleTool.giveVehicle(p.UnturnedPlayer, optAsset.id);
+                            VehicleTool.SpawnVehicleForPlayer(p.UnturnedPlayer, optAsset);
                         });
 
                         EssLang.Send(src, "GIVEN_VEHICLE_ALL", optAsset.FriendlyName, optAsset.id);
@@ -799,7 +798,7 @@ namespace Essentials.Commands {
                         return CommandResult.LangError("PLAYER_NOT_FOUND", args[0]);
                     } else {
                         var target = args[0].ToPlayer;
-                        VehicleTool.giveVehicle(target.UnturnedPlayer, optAsset.id);
+                        VehicleTool.SpawnVehicleForPlayer(target.UnturnedPlayer, optAsset);
 
                         EssLang.Send(src, "GIVEN_VEHICLE", optAsset.FriendlyName, optAsset.id, target.DisplayName);
                     }
