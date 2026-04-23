@@ -772,7 +772,7 @@ namespace Essentials.Commands {
                         return CommandResult.LangError("BLACKLISTED_VEHICLE", $"{optAsset.FriendlyName} ({optAsset.id})");
                     }
 
-                    VehicleTool.giveVehicle(src.ToPlayer().UnturnedPlayer, optAsset.id);
+                    VehicleTool.SpawnVehicleForPlayer(src.ToPlayer().UnturnedPlayer, optAsset);
 
                     EssLang.Send(src, "RECEIVED_VEHICLE", optAsset.FriendlyName, optAsset.id);
                     break;
