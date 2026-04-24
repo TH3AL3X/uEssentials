@@ -31,7 +31,7 @@ namespace Essentials.Common.Util {
 
     public static class ItemUtil {
 
-        private static IOrderedEnumerable<ItemAsset> _cachedAssets;
+        private static readonly System.Collections.Generic.List<ItemAsset> _cachedAssets = new System.Collections.Generic.List<ItemAsset>(); // avoid re-allocation per usage
 
         public static Optional<ItemAsset> GetItem(ushort id) {
             return Optional<ItemAsset>.OfNullable((ItemAsset) Assets.find(EAssetType.ITEM, id));
@@ -46,40 +46,61 @@ namespace Essentials.Common.Util {
                 return GetItem(id);
             }
 
-            if (_cachedAssets == null) {
-                _cachedAssets = Assets.find(EAssetType.ITEM)
-                    .Cast<ItemAsset>()
-                    .Where(i => i.itemName != null)
-                    .OrderBy(i => i.id);
+            if (_cachedAssets.Count == 0) {
+                // Update obsolete list-fetch
+                Assets.find(_cachedAssets); // only updated on server load (i.e. after Workshop downloads)
+                _cachedAssets.RemoveAll(a => a.itemName == null); // clear all nullNames
+                _cachedAssets.Sort((a, b) => a.id - b.id); // order by ID
             }
 
-            var lastAsset = null as ItemAsset;
-            var lastPriority = 0;
+            name = name.Trim(); // trim beforehand
+            string[] parts = null;
+            bool hasSpaces = name.IndexOf(' ') > 0; // used later inside the for-loop
+            if (hasSpaces)
+                parts = name.Split(' '); // pre-compute
+            int bestPriority = 0;
+            ItemAsset bestAssetMatch = null;
 
-            foreach (var asset in _cachedAssets) {
-                var itemPriority = 0;
+            for (int i = 0; i < _cachedAssets.Count; i++) // faster than foreach (esp. until dotnet 10)
+            {
+                var asset = _cachedAssets[i];
                 var itemName = asset.itemName;
+                if (string.Equals(itemName, name, StringComparison.OrdinalIgnoreCase)) // Exact match (fast exit) (rare)
+                    return Optional<ItemAsset>.OfNullable(asset);
 
-                if (itemName.EqualsIgnoreCase(name)) {
-                    lastAsset = asset;
-                    break;
-                }
+                int itemPriority = 0;
 
-                if (itemName.StartsWith(name, true, CultureInfo.InvariantCulture)) {
+                if (itemName.StartsWith(name, StringComparison.OrdinalIgnoreCase))
+                {
                     itemPriority = 3;
-                } else if (itemName.ContainsIgnoreCase(name)) {
+                }
+                else if (itemName.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
                     itemPriority = 2;
-                } else if (name.IndexOf(' ') > 0 && name.Split(' ').All(p => itemName.ContainsIgnoreCase(p))) {
-                    itemPriority = 1;
+                }
+                else if (hasSpaces)
+                {
+                    bool allMatch = true;
+                    for (int p = 0; p < parts.Length; p++)
+                    {
+                        if (itemName.IndexOf(parts[p], StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            allMatch = false;
+                            break;
+                        }
+                    }
+                    if (allMatch)
+                        itemPriority = 1;
                 }
 
-                if (itemPriority > lastPriority) {
-                    lastAsset = asset;
-                    lastPriority = itemPriority;
+                if (itemPriority > bestPriority)
+                {
+                    bestAssetMatch = asset;
+                    bestPriority = itemPriority;
                 }
             }
 
-            return Optional<ItemAsset>.OfNullable(lastAsset);
+            return Optional<ItemAsset>.OfNullable(bestAssetMatch);
         }
 
         public static Optional<T> GetItemAs<T>(string name) where T : ItemAsset {
