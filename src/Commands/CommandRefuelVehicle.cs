@@ -72,8 +72,8 @@ namespace Essentials.Commands {
         }
 
         private void RefuelVehicle(InteractableVehicle veh) {
-            VehicleManager.instance.channel.send("tellVehicleFuel", ESteamCall.ALL,
-                ESteamPacket.UPDATE_UNRELIABLE_BUFFER, veh.instanceID, veh.asset.fuel);
+            veh.tellFuel(veh.asset.fuel); // Actually refuels
+            VehicleManager.sendVehicleFuel(veh, veh.asset.fuel); // Sends update to player inside
         }
 
     }
