@@ -47,7 +47,7 @@ namespace Essentials.Commands
             var player = src.ToPlayer();
             var look = player.Look;
 
-            if (PhysicsUtility.raycast(new Ray(look.aim.position, look.aim.forward), out RaycastHit hit, Mathf.Infinity, RayMasks.BARRICADE))
+            if (Physics.Raycast(look.aim.position, look.aim.forward, out RaycastHit hit, Mathf.Infinity, RayMasks.BARRICADE))
             {
                 InteractableStorage storage = hit.transform.GetComponent<InteractableStorage>();
 
