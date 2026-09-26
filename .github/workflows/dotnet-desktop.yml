@@ -1,73 +1,104 @@
-name: Build and Release
+name: Build and Release Plugin
 
 on:
   push:
     branches:
       - master
+    paths:
+      - "src/**"
+      - "default/**"
+      - "Libraries/**"
+      - "Properties/**"
+      - "uEssentials.csproj"
+      - "uEssentials.sln"
+      - "packages.config"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plugin-release
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./uEssentials.csproj
 
-      - name: Build project
-        run: dotnet build --configuration Release
+      - name: Build plugin
+        run: dotnet build ./uEssentials.csproj --configuration Release --no-restore
 
-      - name: Package artifacts
+      - name: Package plugin
+        shell: bash
         run: |
-          dotnet publish -c Release --no-build --output ./publish
-          mkdir ./publish/uEssentials
-          mkdir ./publish/uEssentials/Libraries
-          mv ./publish/uEssentials.dll ./publish/uEssentials/uEssentials.dll
-          mv ./Libraries/* ./publish/uEssentials/Libraries/
+          set -euo pipefail
+          dotnet publish ./uEssentials.csproj --configuration Release --no-build --output ./publish
+          mkdir -p ./dist/uEssentials/Libraries
+          cp ./publish/uEssentials.dll ./dist/uEssentials/uEssentials.dll
+          cp -R ./Libraries/. ./dist/uEssentials/Libraries/
+          (
+            cd ./dist
+            zip -r ../uEssentials.zip ./uEssentials
+          )
 
-
-      - name: Git Semantic Version
+      - name: Calculate version
         id: version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          major_pattern: "major:"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}"
-
-      - name: Create and push new tag
+        shell: bash
         run: |
-          git tag v${{ steps.version.outputs.version }}
-          git push origin v${{ steps.version.outputs.version }}
+          set -euo pipefail
+          git fetch --tags --force
+          latest_tag="$(git tag --list | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)"
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+          if [[ -z "$latest_tag" ]]; then
+            major=0
+            minor=0
+            patch=0
+            commit_range="HEAD"
+          else
+            version="${latest_tag#v}"
+            IFS='.' read -r major minor patch <<< "$version"
+            commit_range="${latest_tag}..HEAD"
+          fi
+
+          messages="$(git log "$commit_range" --pretty=%B)"
+
+          if printf '%s' "$messages" | grep -qi 'major:'; then
+            major=$((major + 1))
+            minor=0
+            patch=0
+          elif printf '%s' "$messages" | grep -qi 'feat:'; then
+            minor=$((minor + 1))
+            patch=0
+          else
+            patch=$((patch + 1))
+          fi
+
+          next_version="${major}.${minor}.${patch}"
+          echo "version=$next_version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$next_version" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: Release ${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: false
-
-      - name: ZIP File
-        run: zip -r uEssentials.zip ./publish/uEssentials/
-
-      - name: Upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./uEssentials.zip
-          asset_name: uEssentials.zip
-          asset_content_type: application/zip
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          gh release create "$RELEASE_TAG" ./uEssentials.zip \
+            --target "$GITHUB_SHA" \
+            --title "Release $RELEASE_VERSION" \
+            --generate-notes

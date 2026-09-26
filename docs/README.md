@@ -9,7 +9,9 @@ La interfaz, la wiki, la política de privacidad y las 86 descripciones de coman
 1. En GitHub, abre Settings → Pages.
 2. En Build and deployment, elige Deploy from a branch.
 3. Selecciona la rama principal y la carpeta /docs.
-4. Guarda. La URL de este repositorio será https://th3al3x.github.io/uEssentials/.
+4. Guarda. La web estará disponible en https://uessentials.terror.lol/.
+
+El archivo CNAME incluido en esta carpeta mantiene asociado el dominio personalizado durante los despliegues.
 
 ## Activar AdSense
 
@@ -22,4 +24,4 @@ La interfaz, la wiki, la política de privacidad y las 86 descripciones de coman
 
 No publiques un ads.txt o un identificador ca-pub de ejemplo: utiliza únicamente los valores reales de tu cuenta.
 
-En una web de proyecto como th3al3x.github.io/uEssentials/, Google buscará normalmente ads.txt en la raíz del host (th3al3x.github.io/ads.txt), no dentro de /uEssentials/. Para controlarlo sin un dominio propio necesitarías además el repositorio de sitio personal TH3AL3X.github.io.
+Con el dominio personalizado, el archivo debe quedar accesible como https://uessentials.terror.lol/ads.txt.
