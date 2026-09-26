@@ -4,10 +4,10 @@
 
 # uEssentials Maintained
 
-[![Documentation](https://img.shields.io/badge/docs-commands_%26_wiki-c9ff45?style=flat-square)](https://th3al3x.github.io/uEssentials/)
+[![Documentation](https://img.shields.io/badge/docs-commands_%26_wiki-607a86?style=flat-square)](https://th3al3x.github.io/uEssentials/)
 
 [![Join in our discord](https://discordapp.com/api/guilds/869187450159923221/widget.png)](https://discord.gg/wWtjUcvXQp)
-[![Download latest release here](https://img.shields.io/badge/download-latest_release-brightgreen.svg?maxAge=2592000)](https://github.com/TH3AL3X/uEssentials/releases/)
+[![Download latest release here](https://img.shields.io/badge/download-latest_release-607a86.svg?maxAge=2592000)](https://github.com/TH3AL3X/uEssentials/releases/)
 [![Build and Release](https://github.com/TH3AL3X/uEssentials/actions/workflows/dotnet-desktop.yml/badge.svg?branch=dev)](https://github.com/TH3AL3X/uEssentials/actions/workflows/dotnet-desktop.yml)
 
 # Real uEssentials
