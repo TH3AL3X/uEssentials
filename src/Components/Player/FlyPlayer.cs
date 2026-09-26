@@ -24,10 +24,12 @@
 using Essentials.Api.Command.Source;
 using Essentials.Api.Unturned;
 using Essentials.src.Misc;
+using HarmonyLib;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 // This component was copied from ShimmyTools...
@@ -59,16 +61,14 @@ namespace Essentials.Components.Player
 
         private bool NeedUpdateGravity = false;
 
-        // Drift fix: Track position for drift correction
-        private Vector3 _lastPosition;
-        private Vector3 _targetPosition;
-        private bool _isMovementInputActive = false;
-        private int _driftCorrectionFrames = 0;
-        private const float DRIFT_THRESHOLD = 0.01f;
-        private const float DRIFT_CORRECTION_STRENGTH = 0.3f;
-        private const float HORIZONTAL_MOVEMENT_THRESHOLD = 0.1f;
+        // Unturned keeps acceleration in this velocity vector even when the
+        // gravity multiplier is zero. PlayerMovement.move contains the
+        // server-authoritative directional input, so we can stop only the
+        // axes the player has released without interfering with WASD input.
+        private static readonly FieldInfo MovementVelocityField =
+            AccessTools.Field(typeof(PlayerMovement), "velocity");
+
         private const int MIN_INPUT_ARRAY_LENGTH = 12; // Minimum length for Unturned input keys array
-        private const int MIN_DRIFT_FRAMES_BEFORE_CORRECTION = 1; // Frames to wait before applying correction
 
         public void SetReady(UPlayer Player)
         {
@@ -78,10 +78,7 @@ namespace Essentials.Components.Player
             Ready = true;
             Player.Movement.sendPluginGravityMultiplier(Gravity);
             Player.Movement.sendPluginSpeedMultiplier(Speed);
-            
-            // Drift fix: Initialize position tracking
-            _lastPosition = Player.Position;
-            _targetPosition = Player.Position;
+            ResetMovementVelocity();
         }
 
         public void Awake()
@@ -190,83 +187,68 @@ namespace Essentials.Components.Player
                     CheckState(UnturnedKey.CodeHotkey1, Inputs);
                     CheckState(UnturnedKey.CodeHotkey2, Inputs);
                     CheckState(UnturnedKey.CodeHotkey3, Inputs);
-                    
-                    // Drift fix: Check if player is actively moving
-                    _isMovementInputActive = IsPlayerMoving(Inputs);
                 }
                 
                 CheckNeeds();
-                
-                // Drift fix: Apply drift correction
-                ApplyDriftCorrection();
             }
         }
 
-        // Drift fix: Check if player has active movement input
-        private bool IsPlayerMoving(bool[] inputs)
+        // PlayerMovement performs its simulation in Update. LateUpdate runs
+        // afterwards, so momentum is cleared before it can carry into the
+        // next frame.
+        private void LateUpdate()
         {
-            if (inputs.Length < MIN_INPUT_ARRAY_LENGTH) return false;
-            
-            // Check for vertical movement keys which we track
-            bool jump = inputs[(int)UnturnedKey.Jump];
-            bool sprint = inputs[(int)UnturnedKey.Sprint];
-            
-            // For horizontal movement, we'll detect it by position change magnitude
-            // This is handled in ApplyDriftCorrection
-            return jump || (sprint && IsDescending);
+            if (awake && Ready)
+            {
+                StabilizeMovementVelocity();
+            }
         }
 
-        // Drift fix: Apply velocity damping and position correction
-        private void ApplyDriftCorrection()
+        private void StabilizeMovementVelocity()
         {
-            if (Player == null || Player.UnturnedPlayer == null) return;
-            
-            Vector3 currentPos = Player.Position;
-            
-            // Calculate horizontal movement
-            Vector3 horizontalMovement = currentPos - _lastPosition;
-            horizontalMovement.y = 0; // Only care about horizontal drift
-            float movementMagnitude = horizontalMovement.magnitude;
-            
-            // Detect if player is actively moving horizontally (large movement = intentional)
-            // Small movement = drift
-            bool isActivelyMovingHorizontally = movementMagnitude > HORIZONTAL_MOVEMENT_THRESHOLD;
-            
-            // If player is not actively moving, apply drift correction
-            if (!_isMovementInputActive && !isActivelyMovingHorizontally)
+            PlayerMovement movement = Player?.Movement;
+            if (movement == null || MovementVelocityField == null)
             {
-                // If there's any horizontal drift
-                if (movementMagnitude > DRIFT_THRESHOLD)
-                {
-                    _driftCorrectionFrames++;
-                    
-                    // Apply correction if drift persists for a few frames
-                    if (_driftCorrectionFrames > MIN_DRIFT_FRAMES_BEFORE_CORRECTION)
-                    {
-                        // Use teleport with Lerp for gradual correction
-                        // Note: Teleport is only called when drift persists, not every frame
-                        // This provides the most reliable correction given Unturned's physics system
-                        Vector3 correctedPos = Vector3.Lerp(currentPos, _targetPosition, DRIFT_CORRECTION_STRENGTH);
-                        correctedPos.y = currentPos.y; // Preserve vertical position
-                        
-                        Player.Teleport(correctedPos);
-                    }
-                }
-                else
-                {
-                    // No significant drift, reset counter and update target
-                    _driftCorrectionFrames = 0;
-                    _targetPosition = currentPos;
-                }
+                return;
             }
-            else
+
+            object rawVelocity = MovementVelocityField.GetValue(movement);
+            if (!(rawVelocity is Vector3 velocity))
             {
-                // Player is actively moving, update target position
-                _targetPosition = currentPos;
-                _driftCorrectionFrames = 0;
+                return;
             }
-            
-            _lastPosition = currentPos;
+
+            bool hasHorizontalInput = HasHorizontalInput(movement);
+            bool hasVerticalInput = !Mathf.Approximately(Gravity, 0f);
+
+            if (!hasHorizontalInput)
+            {
+                velocity.x = 0f;
+                velocity.z = 0f;
+            }
+
+            if (!hasVerticalInput)
+            {
+                velocity.y = 0f;
+            }
+
+            MovementVelocityField.SetValue(movement, velocity);
+        }
+
+        private static bool HasHorizontalInput(PlayerMovement movement)
+        {
+            Vector3 input = movement.move;
+            return !Mathf.Approximately(input.x, 0f) ||
+                   !Mathf.Approximately(input.z, 0f);
+        }
+
+        private void ResetMovementVelocity()
+        {
+            PlayerMovement movement = Player?.Movement;
+            if (movement != null && MovementVelocityField != null)
+            {
+                MovementVelocityField.SetValue(movement, Vector3.zero);
+            }
         }
 
         private void CheckNeeds()
@@ -287,6 +269,7 @@ namespace Essentials.Components.Player
         public void Stop()
         {
             awake = false;
+            ResetMovementVelocity();
             Player.Movement.sendPluginGravityMultiplier(1);
             Player.Movement.sendPluginSpeedMultiplier(1);
         }
