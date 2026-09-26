@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentación, comandos y permisos de uEssentials para servidores de Unturned." id="meta-description">
+  <meta name="theme-color" content="#0b0f14">
+  <title>uEssentials — Comandos, permisos y wiki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <!-- AdSense: pega aquí tu script cuando Google apruebe el sitio.
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-TU_ID" crossorigin="anonymous"></script>
+  -->
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Saltar al contenido</a>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="uEssentials, inicio">
+      <span class="brand-mark"><img src="https://vignette1.wikia.nocookie.net/unturned-bunker/images/b/b5/Blowtorch-icon.png" alt=""></span>
+      <span><strong>uEssentials</strong><small>server toolkit</small></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Abrir navegación" data-i18n-aria-label="nav_open" aria-expanded="false"><span></span><span></span></button>
+    <nav class="site-nav" aria-label="Navegación principal" data-i18n-aria-label="nav_label">
+      <a href="#commands" data-i18n="nav_commands">Comandos</a>
+      <a href="#wiki">Wiki</a>
+      <a href="#install" data-i18n="nav_install">Instalación</a>
+      <label class="language-picker" for="language-select">
+        <span aria-hidden="true">文</span>
+        <select id="language-select" aria-label="Idioma" data-i18n-aria-label="language">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+          <option value="pt">PT</option>
+          <option value="ru">RU</option>
+        </select>
+      </label>
+      <a class="nav-github" href="https://github.com/TH3AL3X/uEssentials" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> <b data-i18n="eyebrow">Documentación de la comunidad · 2026</b></div>
+        <h1 id="hero-title" data-i18n-html="hero_title">Tu servidor.<br><em>Bajo control.</em></h1>
+        <p class="hero-lead" data-i18n="hero_lead">La referencia práctica de uEssentials: encuentra cualquier comando, copia sus permisos y configura tu servidor de Unturned sin perder tiempo.</p>
+        <form class="hero-search" id="hero-search" role="search">
+          <label class="sr-only" for="hero-query" data-i18n="search_label">Buscar un comando o permiso</label>
+          <span aria-hidden="true">⌕</span>
+          <input id="hero-query" type="search" placeholder="Prueba “teleport”, “kit” o “essentials.command.fly”" data-i18n-placeholder="hero_placeholder" autocomplete="off">
+          <kbd>/</kbd>
+          <button type="submit" data-i18n="search">Buscar</button>
+        </form>
+        <div class="quick-queries" aria-label="Búsquedas sugeridas">
+          <span data-i18n="popular">Popular:</span>
+          <button type="button" data-query="teleport">teleport</button>
+          <button type="button" data-query="kit">kit</button>
+          <button type="button" data-query="vehicle">vehicle</button>
+        </div>
+      </div>
+
+      <div class="hero-panel" aria-label="Ejemplo de comando" data-i18n-aria-label="command_example">
+        <div class="panel-top"><span>COMMAND_PREVIEW</span><div><i></i><i></i><i></i></div></div>
+        <div class="panel-body">
+          <span class="panel-index">01 / LIVE</span>
+          <div class="command-glyph">/</div>
+          <h2>tp</h2>
+          <p data-i18n="preview_desc">Teletransporta a un jugador o a una posición.</p>
+          <dl>
+            <div><dt data-i18n="syntax">Sintaxis</dt><dd>/tp [player | place | x y z]</dd></div>
+            <div><dt data-i18n="permission">Permiso</dt><dd>essentials.command.tp</dd></div>
+            <div><dt data-i18n="source">Origen</dt><dd data-i18n="both">Jugador + consola</dd></div>
+          </dl>
+        </div>
+        <div class="panel-grid" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="Resumen del proyecto" data-i18n-aria-label="summary">
+      <div><strong id="stat-commands">—</strong><span data-i18n="documented_commands">comandos documentados</span></div>
+      <div><strong>100%</strong><span data-i18n="open_source">código abierto</span></div>
+      <div><strong>GPL v2</strong><span data-i18n="license">licencia</span></div>
+      <div><strong>.NET</strong><span>RocketMod / Unturned</span></div>
+    </section>
+
+    <section class="commands section" id="commands" aria-labelledby="commands-title">
+      <div class="section-heading">
+        <div><span class="section-number">01</span><div><p class="kicker" data-i18n="full_reference">Referencia completa</p><h2 id="commands-title" data-i18n="commands_title">Comandos y permisos</h2></div></div>
+        <p data-i18n="commands_intro">Los permisos base se derivan directamente del código del plugin. Abre una ficha para ver sintaxis, aliases y permisos adicionales.</p>
+      </div>
+
+      <div class="command-toolbar">
+        <label class="catalog-search" for="command-search"><span>⌕</span><input id="command-search" type="search" placeholder="Buscar por nombre, función, alias o permiso…" data-i18n-placeholder="catalog_placeholder"></label>
+        <div class="filter-row" role="group" aria-label="Filtrar comandos" data-i18n-aria-label="filter_label">
+          <button class="filter active" type="button" data-filter="all" data-i18n="filter_all">Todos</button>
+          <button class="filter" type="button" data-filter="PLAYER" data-i18n="filter_player">Jugador</button>
+          <button class="filter" type="button" data-filter="BOTH" data-i18n="filter_console">Consola</button>
+          <button class="filter" type="button" data-filter="module" data-i18n="filter_modules">Módulos</button>
+        </div>
+      </div>
+
+      <div class="result-line" aria-live="polite"><span id="result-count">0 comandos</span><button id="clear-search" type="button" hidden data-i18n="clear_search">Limpiar búsqueda ×</button></div>
+      <div class="command-grid" id="command-grid"></div>
+      <div class="empty-state" id="empty-state" hidden><span>404</span><h3 data-i18n="empty_title">No encontramos ese comando</h3><p data-i18n="empty_text">Prueba con el nombre, un alias o parte del permiso.</p></div>
+    </section>
+
+    <aside class="ad-shell" aria-label="Espacio publicitario" data-i18n-aria-label="ad_space">
+      <span data-i18n="advertising">PUBLICIDAD</span>
+      <div class="ad-placeholder" data-i18n="ad_placeholder">Tu anuncio de AdSense aparecerá aquí</div>
+    </aside>
+
+    <section class="wiki section" id="wiki" aria-labelledby="wiki-title">
+      <div class="section-heading inverse">
+        <div><span class="section-number">02</span><div><p class="kicker" data-i18n="getting_started">Primeros pasos</p><h2 id="wiki-title" data-i18n="wiki_title">Wiki esencial</h2></div></div>
+        <p data-i18n="wiki_intro">Una guía corta para pasar de cero a un servidor listo. Todo lo importante, sin enterrarlo bajo veinte páginas.</p>
+      </div>
+
+      <div class="wiki-layout">
+        <nav class="wiki-nav" aria-label="Contenido de la wiki" data-i18n-aria-label="wiki_contents">
+          <span data-i18n="on_page">EN ESTA PÁGINA</span>
+          <a class="active" href="#install" data-i18n="wiki_nav_install">01. Instalación</a>
+          <a href="#permission-guide" data-i18n="wiki_nav_permissions">02. Permisos</a>
+          <a href="#syntax-guide" data-i18n="wiki_nav_syntax">03. Sintaxis</a>
+          <a href="#modules-guide" data-i18n="wiki_nav_modules">04. Kits y warps</a>
+          <a href="#adsense-guide" data-i18n="wiki_nav_ads">05. Publicidad</a>
+        </nav>
+
+        <div class="wiki-content">
+          <article id="install">
+            <div class="article-label" data-i18n="install_label">01 / INSTALACIÓN</div>
+            <h3 data-i18n="install_title">En marcha en pocos minutos</h3>
+            <p data-i18n-html="install_text">Descarga la última release y extrae su contenido en la carpeta <code>Rocket</code> del servidor. Las carpetas <code>Libraries</code> y <code>Plugins</code> deben terminar en <code>Servers/TuServidor/Rocket/</code>.</p>
+            <ol class="steps">
+              <li><span>01</span><div><strong data-i18n="step_download">Descarga la release</strong><p data-i18n="step_download_text">Usa siempre el paquete publicado más reciente.</p></div><a href="https://github.com/TH3AL3X/uEssentials/releases/latest" data-i18n="go_releases">Ir a releases ↗</a></li>
+              <li><span>02</span><div><strong data-i18n="step_extract">Extrae los archivos</strong><p data-i18n="step_extract_text">Copia las carpetas conservando su estructura.</p></div><code>/Rocket/Plugins</code></li>
+              <li><span>03</span><div><strong data-i18n="step_restart">Reinicia y configura</strong><p data-i18n="step_restart_text">Arranca el servidor una vez para generar la configuración.</p></div><code>uEssentials/config.json</code></li>
+            </ol>
+          </article>
+
+          <article id="permission-guide">
+            <div class="article-label" data-i18n="permissions_label">02 / PERMISOS</div>
+            <h3 data-i18n="permissions_title">Un patrón fácil de recordar</h3>
+            <p data-i18n-html="permissions_text">Cada comando usa el permiso <code>essentials.command.&lt;comando&gt;</code>. Algunas acciones sensibles añaden un sufijo, por ejemplo <code>.other</code> o <code>.all</code>.</p>
+            <div class="code-block"><div><span>permissions.config</span><button class="copy-code" type="button" data-copy="essentials.command.tp" data-i18n="copy">Copiar</button></div><pre><code data-i18n="permission_example"># Teletransporte normal
+essentials.command.tp
+
+# Volar y aplicarlo a otra persona
+essentials.command.fly
+essentials.command.fly.other
+
+# Acceso global (administradores)
+*</code></pre></div>
+            <div class="callout"><strong data-i18n="important">Importante</strong><p data-i18n-html="permission_warning">Conceder <code>*</code> da acceso total. Para moderadores, asigna solamente los nodos que realmente necesiten.</p></div>
+          </article>
+
+          <article id="syntax-guide">
+            <div class="article-label" data-i18n="syntax_label">03 / SINTAXIS</div>
+            <h3 data-i18n="syntax_title">Cómo leer los ejemplos</h3>
+            <div class="notation-grid">
+              <div><code>[value]</code><strong data-i18n="required">Obligatorio</strong><p data-i18n="required_text">Debes indicar este argumento.</p></div>
+              <div><code>&lt;value&gt;</code><strong data-i18n="optional">Opcional</strong><p data-i18n="optional_text">El comando funciona sin él.</p></div>
+              <div><code>a | b</code><strong data-i18n="alternatives">Alternativas</strong><p data-i18n="alternatives_text">Elige uno de los valores.</p></div>
+              <div><code>*</code><strong data-i18n="everyone">Todos</strong><p data-i18n="everyone_text">Aplica la acción a todos.</p></div>
+            </div>
+          </article>
+
+          <article id="modules-guide">
+            <div class="article-label" data-i18n="modules_label">04 / MÓDULOS</div>
+            <h3 data-i18n="modules_title">Kits y warps</h3>
+            <p data-i18n-html="modules_text">Los módulos nativos añaden permisos por recurso. Un kit llamado <code>starter</code> usa <code>essentials.kit.starter</code>; un warp llamado <code>shop</code> usa <code>essentials.warp.shop</code>. También existen los bypass <code>essentials.bypass.kitcooldown</code>, <code>essentials.bypass.kitcost</code> y <code>essentials.bypass.warpcooldown</code>.</p>
+          </article>
+
+          <article id="adsense-guide">
+            <div class="article-label" data-i18n="ads_label">05 / PUBLICIDAD</div>
+            <h3 data-i18n="ads_title">Preparada para AdSense</h3>
+            <p data-i18n-html="ads_text">La plantilla ya reserva espacios publicitarios y tiene una página de privacidad. Cuando Google apruebe el dominio, sustituye el marcador del <code>&lt;head&gt;</code> por tu script real y crea tu <code>ads.txt</code> con el identificador que te entregue AdSense.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div><p class="kicker" data-i18n="open_source_always">Open source, siempre</p><h2 data-i18n="community_title">Construido para la comunidad de Unturned.</h2></div>
+      <div><a class="button primary" href="https://github.com/TH3AL3X/uEssentials/releases/latest"><b data-i18n="download_release">Descargar última release</b> <span>↓</span></a><a class="button secondary" href="https://discord.gg/wWtjUcvXQp"><b data-i18n="join_discord">Entrar en Discord</b> <span>↗</span></a></div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#top"><span class="brand-mark"><img src="https://vignette1.wikia.nocookie.net/unturned-bunker/images/b/b5/Blowtorch-icon.png" alt=""></span><span><strong>uEssentials</strong><small>server toolkit</small></span></a>
+    <p data-i18n="footer_note">Proyecto comunitario no afiliado con Smartly Dressed Games.</p>
+    <div><a href="privacy.html" data-i18n="privacy">Privacidad</a><a href="https://github.com/TH3AL3X/uEssentials/issues">Issues</a><a href="https://github.com/TH3AL3X/uEssentials/blob/master/LICENSE">GPL v2</a></div>
+  </footer>
+
+  <dialog id="command-dialog" aria-labelledby="dialog-title">
+    <button class="dialog-close" type="button" aria-label="Cerrar" data-i18n-aria-label="close">×</button>
+    <div id="dialog-content"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" data-i18n="copied">Copiado al portapapeles</div>
+  <script src="assets/commands.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
