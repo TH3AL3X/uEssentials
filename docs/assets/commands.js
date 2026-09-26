@@ -74,7 +74,7 @@ window.UESSENTIALS_COMMANDS = [
   {n:"tell",d:"Envía un mensaje privado a un jugador.",u:"[jugador] [mensaje]",a:["msg","pm"],s:"BOTH",c:"Comunicación"},
   {n:"tellraw",d:"Envía un mensaje sin procesar a un jugador o a la consola.",u:"[jugador | *console*] [mensaje]",a:[],s:"BOTH",c:"Comunicación"},
   {n:"tp",d:"Teletransporta a un jugador, lugar o coordenadas.",u:"[jugador | lugar | x y z] o [jugador] [destino]",a:[],s:"BOTH",c:"Teletransporte"},
-  {n:"tpa",d:"Gestiona solicitudes de teletransporte entre jugadores.",u:"[jugador | accept | deny | cancel | autoaccept add:remove]",a:[],s:"PLAYER",c:"Teletransporte",x:["send","accept","deny","cancel"]},
+  {n:"tpa",d:"Gestiona solicitudes de teletransporte entre jugadores y activa su aceptación automática.",u:"[jugador | accept | deny | cancel | autoaccept]",a:[],s:"PLAYER",c:"Teletransporte",x:["send","accept","deny","cancel","autoaccept"],p:["essentials.command.tpa.autoaccept"]},
   {n:"tpall",d:"Teletransporta a todos hacia un jugador o posición.",u:"[jugador | x y z]",a:[],s:"BOTH",c:"Teletransporte"},
   {n:"tps",d:"Muestra los ticks por segundo del servidor.",u:"",a:[],s:"BOTH",c:"Servidor"},
   {n:"unfreeze",d:"Descongela a un jugador o a todos.",u:"[jugador | *]",a:[],s:"BOTH",c:"Moderación"},

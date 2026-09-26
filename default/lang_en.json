@@ -269,6 +269,8 @@
   "TPA_SENT_SENDER": "You sent a tpa request to {0}, use '/tpa cancel' to cancel.",
   "TPA_YOURSELF": "You cannot send a tpa request to yourself.",
   "TPA_ALREADY_SENT": "You already sent a tpa request to {0}!",
+  "TPA_AUTOACCEPT_ENABLED": "Auto-accept for tpa requests is now enabled.",
+  "TPA_AUTOACCEPT_DISABLED": "Auto-accept for tpa requests is now disabled.",
   "UNFROZEN_ALL": "You unfroze all players!",
   "UNFROZEN_PLAYER": "You were unfrozen by {0}!",
   "UNFROZEN_SENDER": "Player {0} has been unfrozen!",
